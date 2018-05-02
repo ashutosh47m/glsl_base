@@ -8,6 +8,8 @@
 #ifndef SCENE_HANDLER_H
 #define SCENE_HANDLER_H
 
+#define GLM_FORCE_RADIANS
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <gl/glew.h>
 #include <gl/GL.h>

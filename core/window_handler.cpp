@@ -158,7 +158,11 @@ bool win32_window_handler::createWindow(LPTSTR title, float w, float h, int bits
 		winExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;// | WS_EX_TOPMOST;           
 		winStyle = WS_OVERLAPPEDWINDOW;  
 	}
-	ShowCursor(FALSE);    
+#ifdef _DEBUG
+	ShowCursor(TRUE);
+#else
+	ShowCursor(FALSE);
+#endif
 
 	//not applicable in fullscreen
 	AdjustWindowRectEx(&rc, winStyle, FALSE, winExStyle);  
