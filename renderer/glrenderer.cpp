@@ -10,6 +10,8 @@
 
 using namespace opengl_renderer;
 
+#define DEFAULT_FOV 1.0472f
+
 void renderer::initGL()
 {
 	glewInit();
@@ -47,7 +49,7 @@ void renderer::resizeGL(float w, float h)
 	// the first param of perspective projection function is the FoV.
 	// ideally its represented in degrees, which can vary from 45-120, but in this case we represent it 
 	// using radians, so converting 60 degrees <--> radians comes out to be 1.0472f
-	default_scn.data.glm_projection = glm::perspective(1.0472f, (float) (w/h), 0.1f, 400.0f);
+	default_scn.data.glm_projection = glm::perspective(1.5708f, (float) (w/h), 0.1f, 400.0f);
 
 	//use following aspect ratio for 1280/720 resolution
 	//default_scene.data.glm_projection = glm::perspective(49.0f, 2.6f, 0.1f, 8000.0f);
