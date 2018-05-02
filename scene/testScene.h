@@ -43,7 +43,7 @@ namespace usr_scene
 			loadShaders();
 			// set the camera here.
 			// since the camera is a part of the scene we will be initializing it here.
-			data.glm_view = glm::lookAt(glm::vec3(0, 0, -3), glm::vec3(00, 0, 0), glm::vec3(0.0f, 1.0f, 0.0f));
+			data.glm_view = glm::lookAt(glm::vec3(0, 0, -3), glm::vec3(0, 0, 0), glm::vec3(0.0f, 1.0f, 0.0f));
 
 			// the global camera matrix, represents where the camera is in the scene 
 			data.glm_model = glm::mat4(1.0f);
