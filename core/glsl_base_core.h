@@ -9,7 +9,7 @@
 
 #include "window_handler.h"
 #include "..\renderer\glrenderer.h"
-#include "..\core\window_input.h"
+
 class CORE
 {
 public:
@@ -30,7 +30,6 @@ public:
 
 	opengl_renderer::renderer *glrenderer;
 	WINDOW_WIN32::win32_window_handler *window;
-	//W_INPUT::win32_input *input;
 };
 CORE *reactor = new CORE();
 

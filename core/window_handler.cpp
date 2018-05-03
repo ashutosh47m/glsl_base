@@ -374,6 +374,13 @@ void keyProcess(WPARAM wParam, LPARAM lParam)
 
 	switch(wParam )
 	{
+	case 37: //left
+			 //rotate left
+		break;
+	case 39: //right
+			 //rotate right
+		break;
+
 		/*
 		case 'W':	
 			printf("keydwn w\n");
