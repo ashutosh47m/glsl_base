@@ -14,7 +14,6 @@ using namespace opengl_renderer;
 
 void renderer::initGL()
 {
-	glewInit();
 	glEnable    (GL_DEPTH_TEST);
 	glEnable    (GL_BLEND);
 	glEnable	(GL_TEXTURE_2D);

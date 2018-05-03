@@ -25,78 +25,83 @@ CORE::~CORE()
 	delete glrenderer;
 }
 
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	reactor->glrenderer->getScene()->keyProcess(key, scancode, action, mods);
+
+	if (key == GLFW_KEY_ESCAPE)
+	{
+		reactor->shuttingDown = true;
+		delete reactor;
+	}
+}
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lmCmdLine, int nCmdShow)
 {
-
 #ifdef _DEBUG
 	reactor->enableConsole();
 #endif
-
-	MSG msg;
-
-	/*
-		get the resolution for full screen here.. and set w and h accordingly..
-		also get all the possible resolutions on a given screen,. and show it to the user if no fullscreen is selected.
-	*/
-	 
-	//	if (reactor->window.adialog(L"Do you want the application to run in FullScreen??", L"You can always switch from fullscreen to window mode by presgrassg <F1> while running the program." ,YES_NO_EXCLAMATION)==IDNO)
-	{ 
-		// if you want the resolution to be anything other that the default system full screen resolution then uncomment code below.
-		reactor->window->setWidth((float)1280);
-		reactor->window->setHeight((float)720);
-
-		reactor->window->fullscreen = false;
-
-		if (!reactor->window->createWindow(reactor->window->getName(), reactor->window->getWidth(), reactor->window->getHeight(), 32, reactor->window->fullscreen))
-		{
-			OutputDebugStringA("window not created exiting\n");
-			exit(0);                           
-		}
-		
-		reactor->window->createSplashWindow();
-
-		reactor->glrenderer->initGL();
-		
-		ShowWindow(reactor->window->splash_hwnd, SW_HIDE);
-	 
-		// test if the window is getting created
-		if(reactor->window->hwnd != NULL)
-			ShowWindow(reactor->window->hwnd,SW_SHOW);
-
-		reactor->glrenderer->resizeGL(reactor->window->getWidth(), reactor->window->getHeight());
-	} 
-/*	else
+	if (!glfwInit())
 	{
-	RegisterClass
-		reactor->window.setWidth(1366);
-		reactor->window.setHeight(768);
-
-		reactor->window.fullscreen = true;	
-		if (!reactor->window.createWindow(reactor->window.getName(), reactor->window.getWidth(), reactor->window.getHeight(), 32, reactor->window.fullscreen))
-		{
-			exit(0);                           
-		}
-		reactor->window.initGL();
-		reactor->window.resizeGL(reactor->window.getWidth(), reactor->window.getHeight());	
+		printf("glfw not initialized\n");
 	}
-*/
-	while(TRUE)
+
+	reactor->window->setWidth(1280);
+	reactor->window->setHeight(720);
+	reactor->window->setName("2am engine : glsl_base");
+	reactor->window->fullscreen = false;
+
+	GLFWwindow* window2;
+	window2 = glfwCreateWindow(
+							reactor->window->getWidth(), 
+							reactor->window->getHeight(),
+							reactor->window->getName(), NULL, NULL);
+	if (!window2)
 	{
-		while(PeekMessage(&msg, NULL, 0,0, PM_REMOVE))
+		glfwTerminate();
+		return -1;
+	}
+
+	// Make the window's context current 
+	glfwMakeContextCurrent(window2);
+
+	// THIS ORDER IS REALLY IMPORTANT,
+	// YOU FIRST HAVE TO CREATE OPENGL CONTEXT, AND THEN ONLY YOU CAN CALL GLEWINIT().
+	// IF YOU TRY TO CALL GLEWINIT BEFORE CREATING CONTEXT, BAD THINGS WILL HAPPEN.
+	GLint GlewInitResult = glewInit();
+	if (GLEW_OK != GlewInitResult)
+	{
+		const GLubyte *s = glewGetErrorString(GlewInitResult);
+		printf("ERROR: %s\n", glewGetErrorString(GlewInitResult));
+	}
+
+	reactor->glrenderer->initGL();
+	reactor->glrenderer->resizeGL((float)reactor->window->getWidth(), (float)reactor->window->getHeight());
+	
+	glfwSetKeyCallback(window2, key_callback);
+
+	// Loop until the user closes the window 
+	while (!glfwWindowShouldClose(window2))
+	{
+		// Render here 
+		glDisable(GL_DEPTH_TEST);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClearColor(1.4f, .4f, .4f, 1);
+
+		if (! reactor->shuttingDown)
 		{
-			TranslateMessage(&msg);
-			DispatchMessage (&msg);
+			reactor->glrenderer->updateGL();
+			reactor->glrenderer->displayGL();
 		}
-		if(msg.message == WM_QUIT)
-		{
-			reactor->window->closeWindow();
-			delete reactor;
+		else 
 			break;
-		}
 
-		reactor->glrenderer->updateGL();
-		reactor->glrenderer->displayGL();
-		SwapBuffers(reactor->window->hdc);
+		glfwSwapBuffers(window2);
+//		int state = glfwGetKey(window2, GLFW_KEY_ESCAPE);
+//		if (state == GLFW_PRESS)
+//			break;	
+
+		glfwPollEvents();
 	}
-	return ((int)msg.wParam);
+	return 0;
 }

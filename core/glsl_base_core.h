@@ -18,10 +18,10 @@ public:
 	{
 		glrenderer = new opengl_renderer::renderer();
 
-		window = new WINDOW_WIN32::win32_window_handler
-			(TEXT("2am Engine 2.0"), 
-				(float)GetSystemMetrics(SM_CXSCREEN), 
-				(float)GetSystemMetrics(SM_CYSCREEN)
+		window = new WINDOW_WIN32::win32_window_handler(
+			"2am Engine 2.0", 
+				GetSystemMetrics(SM_CXSCREEN), 
+				GetSystemMetrics(SM_CYSCREEN)
 				);
 	}
 	void enableConsole();
@@ -30,6 +30,7 @@ public:
 
 	opengl_renderer::renderer *glrenderer;
 	WINDOW_WIN32::win32_window_handler *window;
+	bool shuttingDown = false;
 };
 CORE *reactor = new CORE();
 

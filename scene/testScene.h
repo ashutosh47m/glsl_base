@@ -19,10 +19,10 @@ Nov 2017, Ashutosh Morwal
 
 #include "../resources/texture_handler.h"
 #include "../tools/camera.h"
+#include "../tools/keys.h"
 
 namespace usr_scene
 {
-
 	class TestScene : public AbstractScene
 	{
 		E_first_triangle		e_triangle;			// e stands for entity
@@ -35,6 +35,7 @@ namespace usr_scene
 		E_colored_line			e_X_axes, e_Y_axes, e_Z_axes;
 		
 		YP_Camera				t_camera;			// t stands for tools, i.e. YP_Camera comes under tools category
+		float camera_x = 0, camera_y = 0, camera_z = -3;
 
 		bool					wasd[4] = { false };
 
@@ -43,7 +44,7 @@ namespace usr_scene
 			loadShaders();
 			// set the camera here.
 			// since the camera is a part of the scene we will be initializing it here.
-			data.glm_view = glm::lookAt(glm::vec3(0, 0, -3), glm::vec3(0, 0, 0), glm::vec3(0.0f, 1.0f, 0.0f));
+			data.glm_view = glm::lookAt(glm::vec3(camera_x, camera_y, camera_z), glm::vec3(0, 0, 0), glm::vec3(0.0f, 1.0f, 0.0f));
 
 			// the global camera matrix, represents where the camera is in the scene 
 			data.glm_model = glm::mat4(1.0f);
@@ -99,12 +100,10 @@ namespace usr_scene
 	//						*   glm::rotate   ( glm::mat4(1.0f), -t_camera.getYaw(), glm::vec3(0, 1, 0))
 	//						*	glm::translate( glm::mat4(1.0f), glm::vec3(-data.f_position.x, -data.f_position.y, -data.f_position.z));
 		}
+		int offset_zero = 0;
 		void draw()
 		{
-			glDisable(GL_DEPTH_TEST);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
-
+			data.glm_view = glm::lookAt(glm::vec3(camera_x, camera_y, camera_z), glm::vec3(0, 0, 0), glm::vec3(0.0f, 1.0f, 0.0f));
 			// binding triangles vertex array here because we are using a single buffers for both the triangls
 			glBindVertexArray(e_triangle.getVAOHandle());
 			e_triangle.draw(data, getShaderLibrary()->colored_geometry);
@@ -117,10 +116,10 @@ namespace usr_scene
 			e_quad.draw(data, getShaderLibrary()->colored_geometry);
 
 			glBindVertexArray(e_Woodenquad.getVAOHandle());
-			e_Woodenquad.draw(data, glm::vec3(-1, 1, 0), getShaderLibrary()->textured_geometry);
-			e_Woodenquad.draw(data, glm::vec3(-3, 1, 0), getShaderLibrary()->textured_geometry);
-			e_Marblequad.draw(data, glm::vec3(-1, 2, 0), getShaderLibrary()->textured_geometry);
-			e_grassStonequad.draw(data, glm::vec3(1, 2, 0), getShaderLibrary()->textured_geometry);
+			e_Woodenquad.draw(data, glm::vec3(-1 + offset_zero, 1, 0), getShaderLibrary()->textured_geometry);
+			e_Woodenquad.draw(data, glm::vec3(-3 + offset_zero, 1, 0), getShaderLibrary()->textured_geometry);
+			e_Marblequad.draw(data, glm::vec3(-1 + offset_zero, 2, 0), getShaderLibrary()->textured_geometry);
+			e_grassStonequad.draw(data, glm::vec3(1 + offset_zero, 2, 0), getShaderLibrary()->textured_geometry);
 
 			glBindVertexArray(e_X_axes.getVAOHandle());
 			e_X_axes.draw(data, getShaderLibrary()->colored_geometry);
@@ -133,6 +132,26 @@ namespace usr_scene
 		}
 
 	public:
+		
+		void keyProcess(int key, int scancode, int action, int mods)
+		{
+			switch (key)
+			{
+			case _2am_KEY_UP:
+				camera_y++;
+				break;
+			case _2am_KEY_DOWN:
+				camera_y--;
+				break;
+			case _2am_KEY_RIGHT:
+				camera_x++;
+				break;
+			case _2am_KEY_LEFT:
+				camera_x--;
+				break;
+			}
+		}
+
 		TestScene()
 		{
 

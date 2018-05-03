@@ -134,6 +134,7 @@ ShaderProgram::~ShaderProgram() //shutdown shaders here
 
 ShaderProgram::ShaderProgram()
 {
+	programHandle = NULL;
 	printf("shaderprogram constructor\n");
 }
 

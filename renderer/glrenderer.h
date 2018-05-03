@@ -20,7 +20,7 @@ namespace opengl_renderer
 		renderer() {}
 		~renderer() {}
 
-		usr_scene::TestScene getScene() { return test_scene; }
+		usr_scene::TestScene* getScene() { return &test_scene; }
 
 		void initGL();
 		void resizeGL(float w, float h);

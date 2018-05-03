@@ -9,11 +9,11 @@
 
 //extern WINDOW_WIN32::input_manager ip_x;
 using namespace WINDOW_WIN32;
-LRESULT CALLBACK events(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+//LRESULT CALLBACK events(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 //extern input_manager ip_x;
-void keyProcess(WPARAM wParam, LPARAM lParam);
+//void keyProcess(WPARAM wParam, LPARAM lParam);
 
-void win32_window_handler::updateLoadStats(int just_another_number)
+/*void win32_window_handler::updateLoadStats(int just_another_number)
 {
 	//scene.load_counter=just_another_number;
 	UpdateWindow(splash_hwnd);
@@ -46,21 +46,21 @@ bool win32_window_handler::createDC(BYTE bits)
 	};
 	
 
-	/*	if (!(hdc = GetDC(hwnd)))             
-		{
-			closeWindow();                         
-			MessageBox(NULL,L"Can't Create A GL Device Context.",L"ERROR",MB_OK|MB_ICONEXCLAMATION);
-			return FALSE;                           
-		}
-	*/
+		//if (!(hdc = GetDC(hwnd)))             
+		//{
+		//	closeWindow();                         
+		//	MessageBox(NULL,L"Can't Create A GL Device Context.",L"ERROR",MB_OK|MB_ICONEXCLAMATION);
+		//	return FALSE;                           
+		//}
 	
 	hdc = GetDC(hwnd);
-	/*if(!hdc == BeginPaint(hwnd, &ps))
-	{
-		closeWindow();                         
-		MessageBox(NULL,L"Can't Create A GL Device Context.",L"ERROR",MB_OK|MB_ICONEXCLAMATION);
-		return FALSE;                           		
-	}*/
+
+	//if(!hdc == BeginPaint(hwnd, &ps))
+	//{
+	//	closeWindow();                         
+	//	MessageBox(NULL,L"Can't Create A GL Device Context.",L"ERROR",MB_OK|MB_ICONEXCLAMATION);
+	//	return FALSE;                           		
+	//}
 
 
 	GLuint pixelformat;
@@ -259,7 +259,7 @@ void win32_window_handler::createSplashWindow()
 //		InvalidateRect(splash_hwnd, 0, TRUE);
 		UpdateWindow(splash_hwnd);
 }
-
+*/
 win32_window_handler::~win32_window_handler()
 {
 	//renderer->shutdownGL();
@@ -267,7 +267,7 @@ win32_window_handler::~win32_window_handler()
 }
 
 
-void win32_window_handler::closeWindow()
+/*void win32_window_handler::closeWindow()
 {
 	if(fullscreen)
 	{
@@ -291,24 +291,25 @@ void win32_window_handler::closeWindow()
 	UnregisterClassW(L"OpenGL_win32", hInstance);
 	DestroyWindow(hwnd); //sends message WM_DESTROY in which we call PostQuitMessage(0);
 }
+*/
 
-LPTSTR win32_window_handler::getName(void) { return m_windowName; }
+const char * win32_window_handler::getName(void) { return m_windowName; }
 
-void win32_window_handler::setName(LPTSTR title) { m_windowName = title; }
+void win32_window_handler::setName(const char *  title) { m_windowName = title; }
 
 // ToDo: this function will be a part of renderer.
 // void win32_window_handler::resizeGL(float w, float h) { resize(w,h); }
 
-float win32_window_handler::getWidth() { return m_width; }
+int win32_window_handler::getWidth() { return m_width; }
 	
-void win32_window_handler::setWidth(float w) { m_width = w; }
+void win32_window_handler::setWidth(int  w) { m_width = w; }
 
-float win32_window_handler::getHeight() { return m_height; }
+int win32_window_handler::getHeight() { return m_height; }
 	
-void win32_window_handler::setHeight(float h) { m_height = h; }
+void win32_window_handler::setHeight(int h) { m_height = h; }
 
 
-int win32_window_handler::dialog(LPCWSTR title, LPCWSTR msg, int flag)
+/*int win32_window_handler::dialog(LPCWSTR title, LPCWSTR msg, int flag)
 {
 	int response = 0;
 	switch(flag)
@@ -336,12 +337,10 @@ LRESULT CALLBACK events(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		case WM_CREATE:	
 			break;
 		case WM_KEYDOWN:
-			keyProcess(wParam, lParam);
 			break;
 		case WM_KEYUP:
 			switch (wParam)
 			{
-				/*
 			case 'W':	
 				printf("keyup w\n");
 				w = false; 
@@ -358,7 +357,6 @@ LRESULT CALLBACK events(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				printf("keyup d\n");
 				d = false;
 				break;
-				*/
 			}
 			break;
 	}
@@ -380,8 +378,6 @@ void keyProcess(WPARAM wParam, LPARAM lParam)
 	case 39: //right
 			 //rotate right
 		break;
-
-		/*
 		case 'W':	
 			printf("keydwn w\n");
 			w = true;
@@ -398,8 +394,7 @@ void keyProcess(WPARAM wParam, LPARAM lParam)
 			printf("keydwn d\n");
 			d = true;
 			break;
-		*/
 		case 27: PostQuitMessage(0); break;
 	}
 }
-
+*/
