@@ -47,8 +47,6 @@ public:
 		glBindVertexArray(line_data.getVAOHandle());
 		glUseProgram(shader->getShaderProgramHandle());
 		modelMat = data.glm_model;
-		modelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
-		modelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(6));
 		shader->setUniform("u_m4MVP", data.glm_projection * data.glm_view * modelMat);
 		glDrawArrays(GL_LINES, 0, 2);
 	}

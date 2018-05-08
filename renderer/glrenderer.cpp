@@ -48,7 +48,7 @@ void renderer::resizeGL(int w, int h)
 	// the first param of perspective projection function is the FoV.
 	// ideally its represented in degrees, which can vary from 45-120, but in this case we represent it 
 	// using radians, so converting 60 degrees <--> radians comes out to be 1.0472f
-	default_scn.data.glm_projection = glm::perspective(1.5708f,  ((float)w/ (float)h), 0.1f, 400.0f);
+	default_scn.data.glm_projection = glm::perspective(1.5708f,  ((float)w/ (float)h), 0.0f, 1000.0f);
 	//default_scn.data.glm_projection = glm::ortho(0, w, h, 0, 0, 1000);
 	
 	//use following aspect ratio for 1280/720 resolution

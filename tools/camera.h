@@ -48,13 +48,12 @@ public:
 
 			m_x_cc = (float) mouse.x;
 			m_y_cc = (float) mouse.y;
-			printf("%f %f \n", m_x_cc, m_y_cc);
 			//if (!yawyy) //lock mouse in scene-mode
 			{
 				yaw += mousevel*((window_width / 2) - m_x_cc);
 				pitch += mousevel*((window_height / 2) - m_y_cc);
 			}
-			lockcamera();
+			//lockcamera();
 
 			SetCursorPos((int)window_width / 2, (int)window_height / 2);
 
