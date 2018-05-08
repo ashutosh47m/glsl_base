@@ -34,11 +34,11 @@ namespace usr_scene
 		E_textured_quad				mE_grassStonequad;
 		E_colored_line				mE_X_axes, mE_Y_axes, mE_Z_axes;
 		std::vector<E_colored_line> mE_XZ;
-
-		YP_Camera				t_camera;			// t stands for tools, i.e. YP_Camera comes under tools category
+		int							m_width, m_height;
+		YP_Camera					*mT_camera;			// t stands for tools, i.e. YP_Camera comes under tools category
 		float camera_x = 0, camera_y = 0, camera_z = -2;
 
-		bool					wasd[4] = { false };
+		bool						wasd[4] = { false };
 	
 		void initAxes();
 		void initialize();
@@ -54,6 +54,12 @@ public:
 		}
 		~TestScene()
 		{
+		}
+
+		void setResolution(int w, int h)
+		{
+			m_width = w;
+			m_height = h;
 		}
 	};
 };

@@ -35,34 +35,18 @@ void TestScene::initialize()
 	mE_Woodenquad.initEntity(++globalTextureCount, "..\\resources\\textures\\wooden.jpg");
 	mE_Marblequad.initEntity(++globalTextureCount, "..\\resources\\textures\\marble.jpg");
 	mE_grassStonequad.initEntity(++globalTextureCount, "..\\resources\\textures\\grassstone.jpg");
+
+	//load camera
+	mT_camera = new YP_Camera(m_width, m_height);
 }
 
 void TestScene::update()
 {
-	/*
-	wasd[0] = WINDOW_WIN32::w;
-	wasd[1] = WINDOW_WIN32::a;
-	wasd[2] = WINDOW_WIN32::s;
-	wasd[3] = WINDOW_WIN32::d;
-	if (WINDOW_WIN32::w || WINDOW_WIN32::a || WINDOW_WIN32::s || WINDOW_WIN32::d)
-	{
-	printf("halchal\n");
-	}
-	*/
-	/*t_camera.cam_control(
-	.3f, // move velocity
-	.3f, // mouse velocity
-	true,
-	wasd, // a list of bools containing which of the WASD is pressed.
-	data.f_position
-	);
+	mT_camera->cam_control(.001f, .001f, true, wasd, data.f_position);
+	data.glm_model = glm::rotate(glm::mat4(1.0f), -mT_camera->getPitch(), glm::vec3(1, 0, 0))
+		*   glm::rotate(glm::mat4(1.0f), -mT_camera->getYaw(), glm::vec3(0, 1, 0))
+		*	glm::translate(glm::mat4(1.0f), glm::vec3(-data.f_position.x, -data.f_position.y, -data.f_position.z));
 
-	printf("%f %f  \n", -t_camera.getYaw(), -t_camera.getPitch());
-	// update everything here.
-	data.glm_model =  	glm::rotate   ( glm::mat4(1.0f), -t_camera.getPitch(), glm::vec3(1, 0, 0))
-	*   glm::rotate   ( glm::mat4(1.0f), -t_camera.getYaw(), glm::vec3(0, 1, 0))
-	*	glm::translate( glm::mat4(1.0f), glm::vec3(-data.f_position.x, -data.f_position.y, -data.f_position.z));
-	*/
 }
 
 void TestScene::draw()
@@ -71,8 +55,6 @@ void TestScene::draw()
 	// some entities are repeated, for them the call to glBindVertexArray is redundant.
 	// for such entities, you will have to call glBindVertexArray explicitely.
 	// please have a look at draw method inside entity for more information.
-
-	data.glm_view = glm::lookAt(glm::vec3(camera_x, camera_y, camera_z), glm::vec3(0, 0, 0), glm::vec3(0.0f, 1.0f, 0.0f));
 
 	mE_triangle.draw(data, getShaderLibrary()->colored_geometry);
 	mE_red_triangle.draw(data, getShaderLibrary()->red_triangle_shader);
@@ -101,32 +83,22 @@ void TestScene::keyProcess(int key, int scancode, int action, int mods)
 		switch (key)
 		{
 		case _2am_KEY_W:
-			camera_z++;
 			wasd[0] = true;
-			break;
-		case _2am_KEY_S:
-			camera_z--;
-			wasd[2] = true;
 			break;
 		case _2am_KEY_A:
 			wasd[1] = true;
+			break;
+		case _2am_KEY_S:
+			wasd[2] = true;
 			break;
 		case _2am_KEY_D:
 			wasd[3] = true;
 			break;
 
-		case _2am_KEY_UP:
-			camera_y++;
-			break;
-		case _2am_KEY_DOWN:
-			camera_y--;
-			break;
-		case _2am_KEY_RIGHT:
-			camera_x++;
-			break;
-		case _2am_KEY_LEFT:
-			camera_x--;
-			break;
+		case _2am_KEY_UP: break;
+		case _2am_KEY_DOWN: break;
+		case _2am_KEY_RIGHT: break;
+		case _2am_KEY_LEFT:	break;
 		}
 	}
 	else if (action == _2am_KEY_RELEASE)
@@ -134,7 +106,7 @@ void TestScene::keyProcess(int key, int scancode, int action, int mods)
 		switch (key)
 		{
 		case _2am_KEY_W:
-			//wasd[0] = false;
+			wasd[0] = false;
 			break;
 		case _2am_KEY_A:
 			wasd[1] = false;

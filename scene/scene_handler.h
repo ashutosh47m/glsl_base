@@ -27,6 +27,8 @@ public:
 
 		// the global camera matrix, represents where the camera is in the scene 
 		glm_model = glm::mat4(1.0f);
+
+		f_position = glm::vec3(0.0f, 0.0f, 5.0f);
 	}
 	glm::mat4 glm_model; 
 	glm::mat4 glm_view ;

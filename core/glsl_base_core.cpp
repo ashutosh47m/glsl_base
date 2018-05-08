@@ -62,12 +62,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lmCmdLine
 							reactor->window->getWidth(), 
 							reactor->window->getHeight(),
 							reactor->window->getName(), NULL, NULL);
+	
+	glfwSetWindowPos(window2, 500, 100);
+
 	if (!window2)
 	{
 		glfwTerminate();
 		return -1;
 	}
-
 	// Make the window's context current 
 	glfwMakeContextCurrent(window2);
 
@@ -81,6 +83,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lmCmdLine
 		printf("ERROR: %s\n", glewGetErrorString(GlewInitResult));
 	}
 
+	reactor->glrenderer->getScene()->setResolution(reactor->window->getWidth(), reactor->window->getHeight());
 	reactor->glrenderer->initGL();
 	reactor->glrenderer->resizeGL(reactor->window->getWidth(), reactor->window->getHeight());
 	

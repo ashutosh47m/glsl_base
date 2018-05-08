@@ -8,19 +8,24 @@ Nov 2017, Ashutosh Morwal
 #ifndef _CAMERA
 #define _CAMERA
 
-#define M_PI 3.1415926535f
 
+#ifndef M_PI
+#define M_PI 3.1415926535f
+#endif
+
+#include<windows.h>
 class YP_Camera
 {
 	float yaw, pitch;
 	float m_x_cc;
 	float m_y_cc;
-	float window_width;
-	float window_height;
+	int   window_width;
+	int   window_height;
+	bool  mousein = false;
 public:
 	YP_Camera() {}
 	~YP_Camera() {}
-	YP_Camera(float w, float h) :
+	YP_Camera(int w, int h) :
 		yaw(0),
 		pitch(0),
 		m_x_cc(0),
@@ -32,12 +37,15 @@ public:
 	inline float getYaw() { return yaw; }
 	inline float getPitch() { return pitch; }
 	
+	//need position of cursor from windowhandler
 	void cam_control(float movevel, float mousevel, bool mi, bool *wasd, glm::vec3& f_position)
 	{
-	/*	if (mi)
+	 	if (mi)
 		{
 			POINT mouse;
 			GetCursorPos(&mouse);
+			//hide the cursor when in release
+
 			m_x_cc = (float) mouse.x;
 			m_y_cc = (float) mouse.y;
 			printf("%f %f \n", m_x_cc, m_y_cc);
@@ -49,8 +57,9 @@ public:
 			lockcamera();
 
 			SetCursorPos((int)window_width / 2, (int)window_height / 2);
-					m_x_cc=(float)window_width/2;
-					m_x_cc =(float)window_height/2;
+
+			m_x_cc=(float)window_width/2;
+			m_y_cc=(float)window_height/2;
 
 			if (wasd[0])
 			{
@@ -69,7 +78,6 @@ public:
 			else if (wasd[3])
 				move_camXZ(movevel, 270.0f, f_position);
 		}
-		*/
 	}
 
 	void move_camXZ(float dist, float dir, glm::vec3 &f_position)
@@ -98,8 +106,6 @@ public:
 		else if (yaw>360)
 			yaw -= 360.0f;
 	}
-
-
 };
 
 #endif
