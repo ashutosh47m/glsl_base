@@ -59,6 +59,7 @@ public:
 
 	void draw(glsl_data& data, glm::vec3 position, ShaderProgram *& shader)
 	{
+		glBindVertexArray(triangle_data.getVAOHandle());
 		glUseProgram(shader->getShaderProgramHandle());
 		glBindTexture(GL_TEXTURE_2D, t.getTextureID());
 		modelMat = data.glm_model;
@@ -84,7 +85,11 @@ public:
 		//	delete textured_geometry;
 	}
 	GLuint getVAOHandle() { return triangle_data.getVAOHandle(); }
-
+	
+	void enable()
+	{
+		glBindVertexArray(triangle_data.getVAOHandle());
+	}
 };
 
 #endif

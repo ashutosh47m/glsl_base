@@ -68,7 +68,8 @@ public:
 																unsigned byte. If your image contains alpha channel you can replace IL_RGB with IL_RGBA */
 			if (!success)
 			{
-				MessageBox(NULL, L"image conversion failed", NULL, NULL);
+				printf("image conversion failed\n");
+				//MessageBox(NULL, L"image conversion failed", NULL, NULL);
 			}
 			glGenTextures(1, &ui_texID);
 			glActiveTexture(GL_TEXTURE0 + uniform_ID);
@@ -92,7 +93,8 @@ public:
 		}
 		else
 		{
-			MessageBox(NULL, L"Texture not loaded", NULL, NULL);
+			printf("texture not loaded\n");
+			//MessageBox(NULL, L"Texture not loaded", NULL, NULL);
 			return false;
 		}
 

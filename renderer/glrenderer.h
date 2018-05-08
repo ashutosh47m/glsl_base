@@ -23,7 +23,7 @@ namespace opengl_renderer
 		usr_scene::TestScene* getScene() { return &test_scene; }
 
 		void initGL();
-		void resizeGL(float w, float h);
+		void resizeGL(int w, int h);
 		void updateGL(); //update the state of the objects.. and timer
 		void displayGL();
 		void shutdownGL();

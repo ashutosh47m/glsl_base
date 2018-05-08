@@ -21,7 +21,6 @@ void CORE::enableConsole()
 
 CORE::~CORE()
 {
-	printf("des core\n");
 	delete glrenderer;
 }
 
@@ -34,6 +33,13 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		reactor->shuttingDown = true;
 		delete reactor;
 	}
+}
+
+//resize viewport if window size changed
+void window_size_callback(GLFWwindow* window, int width, int height)
+{
+	if(width > 0 && height > 0)
+	reactor->glrenderer->resizeGL(width, height);
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lmCmdLine, int nCmdShow)
@@ -76,9 +82,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lmCmdLine
 	}
 
 	reactor->glrenderer->initGL();
-	reactor->glrenderer->resizeGL((float)reactor->window->getWidth(), (float)reactor->window->getHeight());
+	reactor->glrenderer->resizeGL(reactor->window->getWidth(), reactor->window->getHeight());
 	
 	glfwSetKeyCallback(window2, key_callback);
+	glfwSetWindowSizeCallback(window2, window_size_callback);
 
 	// Loop until the user closes the window 
 	while (!glfwWindowShouldClose(window2))
@@ -105,3 +112,4 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lmCmdLine
 	}
 	return 0;
 }
+

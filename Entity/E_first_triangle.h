@@ -35,6 +35,7 @@ public:
 
 	void draw(glsl_data& data, ShaderProgram *& shader) 
 	{
+		glBindVertexArray(triangle_data.getVAOHandle());
 		glUseProgram(shader->getShaderProgramHandle());
 		tri_model_mat = data.glm_model;
 		tri_model_mat *= glm::translate(glm::mat4(1.0f), glm::vec3(1, 1, 0));
@@ -56,6 +57,10 @@ public:
 	}
 	GLuint getVAOHandle() { return triangle_data.getVAOHandle(); }
 
+	void enable()
+	{
+		glBindVertexArray(triangle_data.getVAOHandle());
+	}
 };
 
 

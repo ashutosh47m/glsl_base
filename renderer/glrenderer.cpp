@@ -38,18 +38,19 @@ void renderer::shutdownGL()
 {
 }
 
-void renderer::resizeGL(float w, float h)
+void renderer::resizeGL(int w, int h)
 {
-	printf("%f %f \n", w,h);
+	printf("%d %d \n", w,h);
 	if(h == 0)
 		h = 1;
-	glViewport (0, 0, (GLsizei) w, (GLsizei) h);
+	glViewport (0, 0, w, h);
 
 	// the first param of perspective projection function is the FoV.
 	// ideally its represented in degrees, which can vary from 45-120, but in this case we represent it 
 	// using radians, so converting 60 degrees <--> radians comes out to be 1.0472f
-	default_scn.data.glm_projection = glm::perspective(1.5708f, (float) (w/h), 0.1f, 400.0f);
-
+	default_scn.data.glm_projection = glm::perspective(1.5708f,  ((float)w/ (float)h), 0.1f, 400.0f);
+	//default_scn.data.glm_projection = glm::ortho(0, w, h, 0, 0, 1000);
+	
 	//use following aspect ratio for 1280/720 resolution
 	//default_scene.data.glm_projection = glm::perspective(49.0f, 2.6f, 0.1f, 8000.0f);
 }

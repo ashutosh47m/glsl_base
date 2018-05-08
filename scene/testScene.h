@@ -25,53 +25,54 @@ namespace usr_scene
 {
 	class TestScene : public AbstractScene
 	{
-		E_first_triangle		e_triangle;			// e stands for entity
-		E_textured_triangle		e_texturedTriangle;
-		E_first_red_triangle	e_red_triangle;
-		E_colored_quad			e_quad;
-		E_textured_quad			e_Woodenquad;
-		E_textured_quad			e_Marblequad;
-		E_textured_quad			e_grassStonequad;
-		E_colored_line			e_X_axes, e_Y_axes, e_Z_axes;
-		
+		E_first_triangle			mE_triangle;			// e stands for entity
+		E_textured_triangle			mE_texturedTriangle;
+		E_first_red_triangle		mE_red_triangle;
+		E_colored_quad				mE_quad;
+		E_textured_quad				mE_Woodenquad;
+		E_textured_quad				mE_Marblequad;
+		E_textured_quad				mE_grassStonequad;
+		E_colored_line				mE_X_axes, mE_Y_axes, mE_Z_axes;
+		std::vector<E_colored_line> mE_XZ;
+
 		YP_Camera				t_camera;			// t stands for tools, i.e. YP_Camera comes under tools category
-		float camera_x = 0, camera_y = 0, camera_z = -3;
+		float camera_x = 0, camera_y = 0, camera_z = -2;
 
 		bool					wasd[4] = { false };
+
+		void initAxes()
+		{
+			std::vector<float> pos_line = { -100,0,0,
+				100,0,0 };
+
+			std::vector<float> col_line = { 1, 1, 1,
+				1, 1, 1 };
+			mE_X_axes.initEntity(pos_line, col_line);
+			pos_line = { 0,-100,0,
+				0,100,0 };
+			mE_Y_axes.initEntity(pos_line, col_line);
+			pos_line = { 0,0,100,
+				0,0,-100 };
+			mE_Z_axes.initEntity(pos_line, col_line);
+		}
 
 		void initialize()
 		{
 			loadShaders();
-			// set the camera here.
-			// since the camera is a part of the scene we will be initializing it here.
-			data.glm_view = glm::lookAt(glm::vec3(camera_x, camera_y, camera_z), glm::vec3(0, 0, 0), glm::vec3(0.0f, 1.0f, 0.0f));
 
-			// the global camera matrix, represents where the camera is in the scene 
-			data.glm_model = glm::mat4(1.0f);
-
-			// triangled
-			e_triangle.initEntity();	//inits the shaders and other resources
-			e_red_triangle.initEntity();
-			e_texturedTriangle.initEntity(++globalTextureCount, "..\\resources\\textures\\wooden.jpg");
-
-			std::vector<float> pos_line = { -100,0,0,
-										100,0,0  };
+			// triangles
+			mE_triangle.initEntity();	//inits the shaders and other resources
+			mE_red_triangle.initEntity();
+			mE_texturedTriangle.initEntity(++globalTextureCount, "..\\resources\\textures\\wooden.jpg");
 			
-			std::vector<float> col_line  = { 1, 1, 1,
-										1, 1, 1 };
-			e_X_axes.initEntity(pos_line, col_line);
-			pos_line = { 0,-100,0,
-						0,100,0 };
-			e_Y_axes.initEntity(pos_line, col_line);
-			pos_line = { 0,0,100,
-						0,0,-100 };
-			e_Z_axes.initEntity(pos_line, col_line);
+			// inititlize the axes
+			initAxes();
 
 			//quad
-			e_quad.initEntity();
-			e_Woodenquad.initEntity(++globalTextureCount, "..\\resources\\textures\\wooden.jpg");
-			e_Marblequad.initEntity(++globalTextureCount, "..\\resources\\textures\\marble.jpg");
-			e_grassStonequad.initEntity(++globalTextureCount, "..\\resources\\textures\\grassstone.jpg");
+			mE_quad.initEntity();
+			mE_Woodenquad.initEntity(++globalTextureCount, "..\\resources\\textures\\wooden.jpg");
+			mE_Marblequad.initEntity(++globalTextureCount, "..\\resources\\textures\\marble.jpg");
+			mE_grassStonequad.initEntity(++globalTextureCount, "..\\resources\\textures\\grassstone.jpg");
 		}
 
 		void update()
@@ -86,47 +87,45 @@ namespace usr_scene
 						printf("halchal\n");
 					}
 			*/
-			//t_camera.cam_control(
-			//				.3f, // move velocity
-			//				.3f, // mouse velocity
-			//				true,
-			//				wasd, // a list of bools containing which of the WASD is pressed.
-			//				data.f_position
-			//	);
+			/*t_camera.cam_control(
+							.3f, // move velocity
+							.3f, // mouse velocity
+							true,
+							wasd, // a list of bools containing which of the WASD is pressed.
+							data.f_position
+				);
 
-	//		printf("%f %f  \n", -t_camera.getYaw(), -t_camera.getPitch());
+			printf("%f %f  \n", -t_camera.getYaw(), -t_camera.getPitch());
 			// update everything here.
-	//		data.glm_model =  	glm::rotate   ( glm::mat4(1.0f), -t_camera.getPitch(), glm::vec3(1, 0, 0))
-	//						*   glm::rotate   ( glm::mat4(1.0f), -t_camera.getYaw(), glm::vec3(0, 1, 0))
-	//						*	glm::translate( glm::mat4(1.0f), glm::vec3(-data.f_position.x, -data.f_position.y, -data.f_position.z));
+			data.glm_model =  	glm::rotate   ( glm::mat4(1.0f), -t_camera.getPitch(), glm::vec3(1, 0, 0))
+							*   glm::rotate   ( glm::mat4(1.0f), -t_camera.getYaw(), glm::vec3(0, 1, 0))
+							*	glm::translate( glm::mat4(1.0f), glm::vec3(-data.f_position.x, -data.f_position.y, -data.f_position.z));
+			*/
 		}
 		int offset_zero = 0;
 		void draw()
 		{
-			data.glm_view = glm::lookAt(glm::vec3(camera_x, camera_y, camera_z), glm::vec3(0, 0, 0), glm::vec3(0.0f, 1.0f, 0.0f));
-			// binding triangles vertex array here because we are using a single buffers for both the triangls
-			glBindVertexArray(e_triangle.getVAOHandle());
-			e_triangle.draw(data, getShaderLibrary()->colored_geometry);
-			e_red_triangle.draw(data, getShaderLibrary()->red_triangle_shader);
+			//enable function will call glBindVertexArray function for particular entity.
+			// some entities are repeated, for them the call to glBindVertexArray is redundant.
+			// for such entities, you will have to call glBindVertexArray explicitely.
+			// please have a look at draw method inside entity for more information.
+			
+			mE_triangle.draw(data, getShaderLibrary()->colored_geometry);
+			mE_red_triangle.draw	(data, getShaderLibrary()->red_triangle_shader);
 		
-			glBindVertexArray(e_texturedTriangle.getVAOHandle());
-			e_texturedTriangle.draw(data, glm::vec3(2, 1, 0), getShaderLibrary()->textured_geometry);
+			mE_texturedTriangle.draw(data, glm::vec3(2, 1, 0), getShaderLibrary()->textured_geometry);
 
-			glBindVertexArray(e_quad.getVAOHandle());
-			e_quad.draw(data, getShaderLibrary()->colored_geometry);
+			mE_quad.draw			(data, getShaderLibrary()->colored_geometry);
 
-			glBindVertexArray(e_Woodenquad.getVAOHandle());
-			e_Woodenquad.draw(data, glm::vec3(-1 + offset_zero, 1, 0), getShaderLibrary()->textured_geometry);
-			e_Woodenquad.draw(data, glm::vec3(-3 + offset_zero, 1, 0), getShaderLibrary()->textured_geometry);
-			e_Marblequad.draw(data, glm::vec3(-1 + offset_zero, 2, 0), getShaderLibrary()->textured_geometry);
-			e_grassStonequad.draw(data, glm::vec3(1 + offset_zero, 2, 0), getShaderLibrary()->textured_geometry);
+			mE_Woodenquad.enable();
+			mE_Woodenquad.draw		(data, glm::vec3(-1, 1, 0), getShaderLibrary()->textured_geometry);
+			mE_Woodenquad.draw		(data, glm::vec3(-3, 1, 0), getShaderLibrary()->textured_geometry);
+			mE_Marblequad.draw		(data, glm::vec3(-1, 2, 0), getShaderLibrary()->textured_geometry);
+			mE_grassStonequad.draw	(data, glm::vec3(1, 2, 0), getShaderLibrary()->textured_geometry);
 
-			glBindVertexArray(e_X_axes.getVAOHandle());
-			e_X_axes.draw(data, getShaderLibrary()->colored_geometry);
-			glBindVertexArray(e_Y_axes.getVAOHandle());
-			e_Y_axes.draw(data, getShaderLibrary()->colored_geometry);
-			glBindVertexArray(e_Z_axes.getVAOHandle());
-			e_Z_axes.draw(data, getShaderLibrary()->colored_geometry);
+			mE_X_axes.draw			(data, getShaderLibrary()->colored_geometry);
+			mE_Y_axes.draw			(data, getShaderLibrary()->colored_geometry);
+			mE_Z_axes.draw			(data, getShaderLibrary()->colored_geometry);
 
 			glBindVertexArray(0);
 		}
@@ -135,20 +134,57 @@ namespace usr_scene
 		
 		void keyProcess(int key, int scancode, int action, int mods)
 		{
-			switch (key)
+			if (action == _2am_KEY_PRESS)
 			{
-			case _2am_KEY_UP:
-				camera_y++;
-				break;
-			case _2am_KEY_DOWN:
-				camera_y--;
-				break;
-			case _2am_KEY_RIGHT:
-				camera_x++;
-				break;
-			case _2am_KEY_LEFT:
-				camera_x--;
-				break;
+				switch (key)
+				{
+				case _2am_KEY_W:
+					printf("true\n");
+					wasd[0] = true;
+					break;
+				case _2am_KEY_A:
+					wasd[1] = true;
+					break;
+				case _2am_KEY_S:
+					wasd[2] = true;
+					break;
+				case _2am_KEY_D:
+					wasd[3] = true;
+					break;
+
+				case _2am_KEY_UP:
+					camera_z++;
+					break;
+				case _2am_KEY_DOWN:
+					camera_z--;
+					break;
+				case _2am_KEY_RIGHT:
+					camera_x++;
+					break;
+				case _2am_KEY_LEFT:
+					camera_x--;
+					break;
+				}
+			}
+
+			else if (action == _2am_KEY_RELEASE)
+			{
+				switch (key)
+				{
+				case _2am_KEY_W:
+					wasd[0] = false;
+					printf("false\n");
+					break;
+				case _2am_KEY_A:
+					wasd[1] = false;
+					break;
+				case _2am_KEY_S:
+					wasd[2] = false;
+					break;
+				case _2am_KEY_D:
+					wasd[3] = false;
+					break;
+				}
 			}
 		}
 

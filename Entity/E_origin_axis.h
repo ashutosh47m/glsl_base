@@ -44,6 +44,7 @@ public:
 
 	void draw(glsl_data& data, ShaderProgram *& shader)
 	{
+		glBindVertexArray(line_data.getVAOHandle());
 		glUseProgram(shader->getShaderProgramHandle());
 		modelMat = data.glm_model;
 		modelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
@@ -57,7 +58,11 @@ public:
 		line_data.deleteResource();
 	}
 	GLuint getVAOHandle() { return line_data.getVAOHandle(); }
-
+	
+	void enable()
+	{
+		glBindVertexArray(line_data.getVAOHandle());
+	}
 };
 
 #endif

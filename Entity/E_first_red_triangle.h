@@ -45,6 +45,10 @@ public:
 	//	if (triangle_shader != NULL)
 	//		delete triangle_shader;
 	}
+	void enable()
+	{
+		//glBindVertexArray(.getVAOHandle());
+	}
 };
 
 

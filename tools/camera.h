@@ -34,7 +34,7 @@ public:
 	
 	void cam_control(float movevel, float mousevel, bool mi, bool *wasd, glm::vec3& f_position)
 	{
-		if (mi)
+	/*	if (mi)
 		{
 			POINT mouse;
 			GetCursorPos(&mouse);
@@ -68,12 +68,8 @@ public:
 				move_camXZ(movevel, 90.0f, f_position);
 			else if (wasd[3])
 				move_camXZ(movevel, 270.0f, f_position);
-			/*		else if(q_k)
-			window.move_camY(movevel,0, f_position);
-			else if(z_k)
-			window.move_camY(movevel,180, f_position);
-			*/
 		}
+		*/
 	}
 
 	void move_camXZ(float dist, float dir, glm::vec3 &f_position)

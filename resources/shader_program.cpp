@@ -14,7 +14,8 @@ std::string Shader::loadFromFile(std::string s)
 	if (!inFile)
 	{
 		swprintf(ws, 1000, L"Error opening file: %hs\n", s.c_str());
-		MessageBox(NULL, ws, NULL, NULL);
+		printf("%s\n", s.c_str());
+		//MessageBox(NULL, ws, NULL, NULL);
 		printf("Error opening file: %s\n", s.c_str());
 	}
 	std::stringstream fileBuf;
@@ -63,7 +64,8 @@ bool Shader::compileShader(GLuint shaderhandle)
 			GLsizei written;
 			glGetShaderInfoLog(shaderhandle, logLen, &written, log);
 			swprintf(ws, 1000, L"Shader compilation failed\n\n%hs", log);
-			MessageBox(NULL, ws, NULL, NULL);
+			printf("%s\n", log);
+			//MessageBox(NULL, ws, NULL, NULL);
 			printf("log: \n%s", log);
 			free(log);
 		}
@@ -106,7 +108,8 @@ void ShaderProgram::createProgram(std::string sourcefile)
 {
 	programHandle = glCreateProgram();
 	if (programHandle == 0)
-		MessageBox(NULL, L"Error creating program\n", NULL, NULL);
+		printf("error creating program\n");
+		//MessageBox(NULL, L"Error creating program\n", NULL, NULL);
 
 	// initialize vertex shader 
 	shaderVS.initializeShader(sourcefile.c_str(), E_Shaders::VERTEX_SHADER);
@@ -161,7 +164,7 @@ bool ShaderProgram::link(GLuint handle)
 			GLsizei written;
 			glGetProgramInfoLog(handle, logLen, &written, log);
 			printf("%s\n", log);
-			MessageBox(NULL, ws, NULL, NULL);
+			//MessageBox(NULL, ws, NULL, NULL);
 			//fprintf(stderr, "Program log: \n%s", log);
 			free(log);
 		}

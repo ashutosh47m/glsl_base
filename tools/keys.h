@@ -132,4 +132,14 @@ May 2018, Ashutosh Morwal
 #define _2am_KEY_RIGHT_SUPER        347
 #define _2am_KEY_MENU               348
 
+#define _2am_WASD_W					1
+#define _2am_WASD_A					2
+#define _2am_WASD_S					3
+#define _2am_WASD_D					4
+#define _2am_WASD_INVALID			5
+
 #define _2am_KEY_LAST               _2am_KEY_MENU
+
+#define _2am_KEY_PRESS				1
+#define _2am_KEY_REPEAT				2
+#define _2am_KEY_RELEASE			0

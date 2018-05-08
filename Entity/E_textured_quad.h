@@ -84,7 +84,11 @@ public:
 		//	delete quad_shader;
 	}
 	GLuint getVAOHandle() { return quad_data.getVAOHandle(); }
-
+	
+	void enable()
+	{
+		glBindVertexArray(quad_data.getVAOHandle());
+	}
 };
 
 #endif

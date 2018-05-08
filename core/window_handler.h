@@ -10,7 +10,7 @@
 
 
 //  move windows headers to win32_window_handler
-//#include <windows.h>
+#include <windows.h>
 //#include <windowsx.h>
 #include <gl/glew.h>
 #include <gl/GL.h>

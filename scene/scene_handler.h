@@ -19,6 +19,15 @@ class glsl_data
 {
 	// bad style of naming a class, needs to be changed...
 public:
+	glsl_data()
+	{
+		// set the camera here.
+		// since the camera is a part of the scene we will be initializing it here.
+		glm_view = glm::lookAt(glm::vec3(0, 0, -2), glm::vec3(0, 0, 0), glm::vec3(0.0f, 1.0f, 0.0f));
+
+		// the global camera matrix, represents where the camera is in the scene 
+		glm_model = glm::mat4(1.0f);
+	}
 	glm::mat4 glm_model; 
 	glm::mat4 glm_view ;
 	glm::mat4 glm_projection;

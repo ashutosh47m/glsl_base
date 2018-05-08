@@ -5,7 +5,6 @@ Nov 2017, Ashutosh Morwal
 @blog http://www.explicitgfx.wordpress.com/
 */
 
-#include <windows.h>
 #include <fstream>
 #include <sstream>
 #include <string>
