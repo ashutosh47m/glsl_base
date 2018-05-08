@@ -42,10 +42,10 @@ void TestScene::initialize()
 
 void TestScene::update()
 {
-	mT_camera->cam_control(.001f, .001f, true, wasd, data.f_position);
-	data.glm_model = glm::rotate(glm::mat4(1.0f), -mT_camera->getPitch(), glm::vec3(1, 0, 0))
-		*   glm::rotate(glm::mat4(1.0f), -mT_camera->getYaw(), glm::vec3(0, 1, 0))
-		*	glm::translate(glm::mat4(1.0f), glm::vec3(-data.f_position.x, -data.f_position.y, -data.f_position.z));
+	mT_camera->cam_control(.001f, .001f, true, wasd, data.f_position, data.glm_view);
+	//data.glm_model = glm::rotate(glm::mat4(1.0f), -mT_camera->getPitch(), glm::vec3(1, 0, 0))
+	//	*   glm::rotate(glm::mat4(1.0f), -mT_camera->getYaw(), glm::vec3(0, 1, 0))
+	//	*	glm::translate(glm::mat4(1.0f), glm::vec3(-data.f_position.x, -data.f_position.y, -data.f_position.z));
 
 }
 
