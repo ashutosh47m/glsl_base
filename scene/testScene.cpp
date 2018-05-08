@@ -72,6 +72,8 @@ void TestScene::draw()
 	// for such entities, you will have to call glBindVertexArray explicitely.
 	// please have a look at draw method inside entity for more information.
 
+	data.glm_view = glm::lookAt(glm::vec3(camera_x, camera_y, camera_z), glm::vec3(0, 0, 0), glm::vec3(0.0f, 1.0f, 0.0f));
+
 	mE_triangle.draw(data, getShaderLibrary()->colored_geometry);
 	mE_red_triangle.draw(data, getShaderLibrary()->red_triangle_shader);
 
@@ -92,8 +94,6 @@ void TestScene::draw()
 	glBindVertexArray(0);
 }
 
-
-
 void TestScene::keyProcess(int key, int scancode, int action, int mods)
 {
 	if (action == _2am_KEY_PRESS)
@@ -101,24 +101,25 @@ void TestScene::keyProcess(int key, int scancode, int action, int mods)
 		switch (key)
 		{
 		case _2am_KEY_W:
-			printf("true\n");
+			camera_z++;
 			wasd[0] = true;
+			break;
+		case _2am_KEY_S:
+			camera_z--;
+			wasd[2] = true;
 			break;
 		case _2am_KEY_A:
 			wasd[1] = true;
-			break;
-		case _2am_KEY_S:
-			wasd[2] = true;
 			break;
 		case _2am_KEY_D:
 			wasd[3] = true;
 			break;
 
 		case _2am_KEY_UP:
-			camera_z++;
+			camera_y++;
 			break;
 		case _2am_KEY_DOWN:
-			camera_z--;
+			camera_y--;
 			break;
 		case _2am_KEY_RIGHT:
 			camera_x++;
@@ -128,14 +129,12 @@ void TestScene::keyProcess(int key, int scancode, int action, int mods)
 			break;
 		}
 	}
-
 	else if (action == _2am_KEY_RELEASE)
 	{
 		switch (key)
 		{
 		case _2am_KEY_W:
-			wasd[0] = false;
-			printf("false\n");
+			//wasd[0] = false;
 			break;
 		case _2am_KEY_A:
 			wasd[1] = false;
@@ -145,6 +144,18 @@ void TestScene::keyProcess(int key, int scancode, int action, int mods)
 			break;
 		case _2am_KEY_D:
 			wasd[3] = false;
+			break;
+		}
+	}
+	else if (action == _2am_KEY_REPEAT)
+	{
+		switch (key)
+		{
+		case _2am_KEY_W:
+			camera_z++;
+			break;
+		case _2am_KEY_S:
+			camera_z--;
 			break;
 		}
 	}
