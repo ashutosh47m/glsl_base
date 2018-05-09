@@ -37,6 +37,10 @@ void TestScene::initialize()
 
 void TestScene::update()
 {
+	glEnable(GL_DEPTH_TEST);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClearColor(.4f, 1.4f, 1.4f, 1);
+
 	mT_camera->cam_control(wasd, data.f_position, data.glm_view);
 }
 

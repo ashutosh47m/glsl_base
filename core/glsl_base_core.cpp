@@ -94,11 +94,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lmCmdLine
 	// Loop until the user closes the window 
 	while (!glfwWindowShouldClose(window2))
 	{
-		// Render here 
-		glDisable(GL_DEPTH_TEST);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glClearColor(1.4f, .4f, .4f, 1);
-
 		if (! reactor->shuttingDown)
 		{
 			reactor->glrenderer->updateGL();
@@ -108,10 +103,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lmCmdLine
 			break;
 
 		glfwSwapBuffers(window2);
-//		int state = glfwGetKey(window2, GLFW_KEY_ESCAPE);
-//		if (state == GLFW_PRESS)
-//			break;	
-
 		glfwPollEvents();
 	}
 	return 0;
