@@ -107,4 +107,54 @@ public:
 	}
 };
 
+class texture3D
+{
+	const int XDIM = 256;
+	const int YDIM = 256;
+	const int ZDIM = 256;
+
+	texture3D(GLuint textureID, std::string volume_file)
+	{
+		std::ifstream infile(volume_file.c_str(), std::ios_base::binary);
+
+		if (infile.good())
+		{
+			//read the volume data file
+			GLubyte* pData = new GLubyte[XDIM*YDIM*ZDIM];
+			infile.read(reinterpret_cast<char*>(pData), XDIM*YDIM*ZDIM*sizeof(GLubyte));
+			infile.close();
+
+			//generate OpenGL texture
+			glGenTextures(1, &textureID);
+			glBindTexture(GL_TEXTURE_3D, textureID);
+
+			// set the texture parameters
+			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP);
+			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+			//set the mipmap levels (base and max)
+			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_BASE_LEVEL, 0);
+			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAX_LEVEL, 4);
+
+			//allocate data with internal format and foramt as (GL_RED)		
+			glTexImage3D(GL_TEXTURE_3D, 0, GL_RED, XDIM, YDIM, ZDIM, 0, GL_RED, GL_UNSIGNED_BYTE, pData);
+			// should use this often #define GL_CHECK_ERRORS assert(glGetError()== GL_NO_ERROR);
+
+				//generate mipmaps
+				glGenerateMipmap(GL_TEXTURE_3D);
+
+			//delete the volume data allocated on heap
+			delete[] pData;
+//			return true;
+		}
+//		else 
+//		{
+//			return false;
+//		}
+	}
+};
+
 #endif

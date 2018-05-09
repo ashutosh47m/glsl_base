@@ -14,7 +14,6 @@ Nov 2017, Ashutosh Morwal
 
 class E_first_red_triangle : public Entity
 {
-	//ShaderProgram *triangle_shader;
 	glm::mat4				tri_model_mat;
 public:
 	E_first_red_triangle()
@@ -22,7 +21,6 @@ public:
 
 	void initEntity() 
 	{
-		//triangle_shader = new ShaderProgram("../shaders/first_red_triangle");
 	}
 
 	void draw(glsl_data& data, ShaderProgram *& shader)
@@ -35,19 +33,11 @@ public:
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 	}
 
-	//ShaderProgram* getShader()
-	//{
-		//return triangle_shader;
-	//}
-
 	~E_first_red_triangle()
 	{
-	//	if (triangle_shader != NULL)
-	//		delete triangle_shader;
 	}
 	void enable()
 	{
-		//glBindVertexArray(.getVAOHandle());
 	}
 };
 

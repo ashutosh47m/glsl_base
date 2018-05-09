@@ -16,7 +16,6 @@ Nov 2017, Ashutosh Morwal
 
 class E_textured_triangle : public Entity
 {
-	ShaderProgram			*textured_geometry;
 	ShaderBuffer_POS_COL_UV triangle_data;
 	glm::mat4				modelMat;
 	texture					t;
@@ -27,8 +26,6 @@ public:
 
 	void initEntity(GLuint globalTextureCount, std::string textureName) 
 	{
-		//textured_geometry = new ShaderProgram("../shaders/textured_geometry");
-
 		t = texture(globalTextureCount, "u_var_tex", textureName);
 
 		std::vector<float> v1 = 
@@ -70,19 +67,10 @@ public:
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 	}
 
-	//ShaderProgram* getShader()
-	//{
-	//	return textured_geometry;
-	//}
-
 	~E_textured_triangle()
 	{
-		//if(triangle_data !=NULL)
-		//	delete triangle_data;
 		triangle_data.deleteResource();
 		t.deleteResource();
-		//if (textured_geometry != NULL)
-		//	delete textured_geometry;
 	}
 	GLuint getVAOHandle() { return triangle_data.getVAOHandle(); }
 	

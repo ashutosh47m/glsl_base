@@ -14,7 +14,6 @@ Nov 2017, Ashutosh Morwal
 
 class E_first_triangle : public Entity
 {
-	ShaderProgram *triangle_shader;
 	ShaderBuffer_POS triangle_data;
 	glm::mat4 tri_model_mat;
 public:
@@ -24,8 +23,7 @@ public:
 
 	void initEntity() 
 	{
-		// when this code is put inside the constructor, the access violation happens 
-		//triangle_shader = new ShaderProgram("../shaders/first_triangle");
+		// when this code is put inside the constructor, the access violation happens  WHY?
 		triangle_data = {
 						 .25, -.25, .50, 
 						-.25, -.25, .50, 
@@ -44,16 +42,9 @@ public:
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 	}
 
-	//ShaderProgram* getShader()
-	//{ return triangle_shader; }
-
 	~E_first_triangle() 
 	{ 
-		//if(triangle_data !=NULL)
-		//	delete triangle_data;
 		triangle_data.deleteResource();
-		//if (triangle_shader != NULL)
-		//	delete triangle_shader;
 	}
 	GLuint getVAOHandle() { return triangle_data.getVAOHandle(); }
 

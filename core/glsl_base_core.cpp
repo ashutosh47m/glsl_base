@@ -61,7 +61,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lmCmdLine
 	window2 = glfwCreateWindow(
 							reactor->window->getWidth(), 
 							reactor->window->getHeight(),
-							reactor->window->getName(), NULL, NULL);
+							reactor->window->getName(), 
+							NULL, //glfwGetPrimaryMonitor(), 
+							NULL);
 	
 	glfwSetWindowPos(window2, 500, 100);
 

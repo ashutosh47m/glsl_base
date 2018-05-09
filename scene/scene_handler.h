@@ -57,7 +57,7 @@ public:
 
 	inline ShaderLibrary* getShaderLibrary() { return shaderlib; }
 
-	GLuint globalTextureCount;
+	GLuint			 globalTextureCount;
 	virtual void	initialize()=0;
 	virtual void	draw() = 0;
 	virtual void	update() = 0;

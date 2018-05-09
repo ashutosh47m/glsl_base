@@ -13,7 +13,6 @@ Nov 2017, Ashutosh Morwal
 
 class E_colored_quad : public Entity
 {
-	//ShaderProgram *quad_shader;
 	ShaderBuffer_POS_COL quad_data;
 	glm::mat4 modelMat;
 
@@ -22,8 +21,6 @@ public:
 
 	void initEntity() 
 	{
-		//quad_shader = new ShaderProgram("../shaders/colored_geometry");
-
 		std::vector<float> v1 = 
 		{ 
 			.25, -.25, .50,
@@ -53,18 +50,9 @@ public:
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	}
 
-	//ShaderProgram* getShader()
-	//{
-		//return quad_shader;
-	//}
-
 	~E_colored_quad()
 	{
-		//if(triangle_data !=NULL)
-		//	delete triangle_data;
 		quad_data.deleteResource();
-		//if (quad_shader != NULL)
-		//	delete quad_shader;
 	}
 	GLuint getVAOHandle() { return quad_data.getVAOHandle(); }
 	

@@ -14,7 +14,6 @@ Nov 2017, Ashutosh Morwal
 
 class E_textured_quad : public Entity
 {
-	ShaderProgram *quad_shader;
 	ShaderBuffer_POS_COL_UV quad_data;
 	glm::mat4 modelMat;
 	texture					t;
@@ -25,8 +24,6 @@ public:
 
 	void initEntity(GLuint globalTextureCount, std::string textureName) 
 	{
-		//quad_shader = new ShaderProgram("../shaders/textured_geometry");
-
 		t = texture(globalTextureCount, "u_var_tex", textureName);
 
 		std::vector<float> v1 = 
@@ -69,19 +66,10 @@ public:
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	}
 
-	//ShaderProgram* getShader()
-	//{
-	//	return quad_shader;
-	//}
-
 	~E_textured_quad()
 	{
-		//if(triangle_data !=NULL)
-		//	delete triangle_data;
 		quad_data.deleteResource();
 		t.deleteResource();
-		//if (quad_shader != NULL)
-		//	delete quad_shader;
 	}
 	GLuint getVAOHandle() { return quad_data.getVAOHandle(); }
 	
