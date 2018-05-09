@@ -33,7 +33,7 @@ namespace usr_scene
 		E_textured_quad				mE_Marblequad;
 		E_textured_quad				mE_grassStonequad;
 		E_colored_line				mE_X_axes, mE_Y_axes, mE_Z_axes;
-		std::vector<E_colored_line> mE_XZ;
+
 		int							m_width, m_height;
 		YP_Camera					*mT_camera;			// t stands for tools, i.e. YP_Camera comes under tools category
 		float camera_x = 0, camera_y = 0, camera_z = -2;

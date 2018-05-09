@@ -4,17 +4,12 @@ using namespace usr_scene;
 
 void TestScene::initAxes()
 {
-	std::vector<float> pos_line = { -100,0,0,
-		100,0,0 };
-
-	std::vector<float> col_line = { 1, 1, 1,
-		1, 1, 1 };
+	std::vector<float> pos_line = { -100,0,0, 100,0,0 };
+	std::vector<float> col_line = { 0,0,0,0,0,0};
 	mE_X_axes.initEntity(pos_line, col_line);
-	pos_line = { 0,-100,0,
-		0,100,0 };
+	pos_line = { 0,-100,0, 0,100,0 };
 	mE_Y_axes.initEntity(pos_line, col_line);
-	pos_line = { 0,0,100,
-		0,0,-100 };
+	pos_line = { 0,0,100, 0,0,-100 };
 	mE_Z_axes.initEntity(pos_line, col_line);
 }
 
@@ -42,11 +37,7 @@ void TestScene::initialize()
 
 void TestScene::update()
 {
-	mT_camera->cam_control(.001f, .001f, true, wasd, data.f_position, data.glm_view);
-	//data.glm_model = glm::rotate(glm::mat4(1.0f), -mT_camera->getPitch(), glm::vec3(1, 0, 0))
-	//	*   glm::rotate(glm::mat4(1.0f), -mT_camera->getYaw(), glm::vec3(0, 1, 0))
-	//	*	glm::translate(glm::mat4(1.0f), glm::vec3(-data.f_position.x, -data.f_position.y, -data.f_position.z));
-
+	mT_camera->cam_control(wasd, data.f_position, data.glm_view);
 }
 
 void TestScene::draw()

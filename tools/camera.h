@@ -17,7 +17,7 @@ Nov 2017, Ashutosh Morwal
 class YP_Camera
 {
 	// position
-	glm::vec3 position = glm::vec3(0, 0, 5);
+	glm::vec3 position = glm::vec3(0, 0, 1);
 	// horizontal angle : toward -Z
 	float horizontalAngle = 3.14f;
 	// vertical angle : 0, look at the horizon
@@ -25,33 +25,20 @@ class YP_Camera
 	// Initial Field of View
 	float initialFoV = 45.0f;
 
-	float speed = 0.003f; // 0.003f units / second
+	float speed = 0.0003f; // 0.003f units / second
 	float mouseSpeed = 0.005f;
 
-	float yaw, pitch;
-	float m_x_cc;
-	float m_y_cc;
 	int   window_width;
 	int   window_height;
-	bool  mousein = false;
+	float m_x_cc, m_y_cc;
 
 public:
 	YP_Camera() {}
 	~YP_Camera() {}
-	YP_Camera(int w, int h) :
-		yaw(0),
-		pitch(0),
-		m_x_cc(0),
-		m_y_cc(0),
-		window_width(w), 
-		window_height(h)
-	{}
+	YP_Camera(int w, int h) : window_width(w), window_height(h) {}
 
-	inline float getYaw() { return yaw; }
-	inline float getPitch() { return pitch; }
-	
 	//need position of cursor from windowhandler
-	void cam_control(float movevel, float mousevel, bool mi, bool *wasd, glm::vec3& f_position, glm::mat4& view)
+	void cam_control(bool *wasd, glm::vec3& f_position, glm::mat4& view)
 	{
 		// glfwGetTime is called only once, the first time this function is called
 		static double lastTime = glfwGetTime();
@@ -60,45 +47,6 @@ public:
 		double currentTime = glfwGetTime();
 
 		float deltaTime = float(currentTime - lastTime);
-		/*
-	 	if (mi)
-		{
-			POINT mouse;
-			GetCursorPos(&mouse);
-			//hide the cursor when in release
-
-			m_x_cc = (float) mouse.x;
-			m_y_cc = (float) mouse.y;
-			//if (!yawyy) //lock mouse in scene-mode
-			{
-				yaw += mousevel*((window_width / 2) - m_x_cc);
-				pitch += mousevel*((window_height / 2) - m_y_cc);
-			}
-			//lockcamera();
-
-			SetCursorPos((int)window_width / 2, (int)window_height / 2);
-
-			m_x_cc = (float)window_width/2;
-			m_y_cc = (float)window_height/2;
-
-			if (wasd[0])
-			{
-				if (pitch != 90.0f && pitch != -90.0f)
-					move_camXZ(movevel, 0, f_position);
-				move_camY(movevel, 0, f_position);
-			}
-			else if (wasd[2])
-			{
-				if (pitch != 90.0f && pitch != -90.0f)
-					move_camXZ(movevel, 180.0f, f_position);
-				move_camY(movevel, 180.0f, f_position);
-			}
-			else if (wasd[1])
-				move_camXZ(movevel, 90.0f, f_position);
-			else if (wasd[3])
-				move_camXZ(movevel, 270.0f, f_position);
-		}
-		*/
 
 		POINT mouse;
 		GetCursorPos(&mouse);
@@ -146,33 +94,7 @@ public:
 			up                  // Head is up (set to 0,-1,0 to look upside-down)
 			);
 
-	}
-
-	void move_camXZ(float dist, float dir, glm::vec3 &f_position)
-	{
-		float rad = (yaw + dir) * M_PI / 180.0f;
-		f_position.x -= sin(rad)*dist;
-		f_position.z -= cos(rad)*dist;
-	}
-
-	void move_camY(float dist, float dir, glm::vec3 &f_position)
-	{
-		float rad = (pitch + dir) * M_PI / 180.0f;
-		f_position.y += sin(rad)*dist;
-	}
-
-	void lockcamera()
-	{
-		//do not move it out of bounds.
-		if (pitch>90)
-			pitch = 90.0f;
-		else if (pitch<-45)
-			pitch = -45.0f;
-
-		if (yaw<0)
-			yaw += 360.0f;
-		else if (yaw>360)
-			yaw -= 360.0f;
+		f_position = position;
 	}
 };
 

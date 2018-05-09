@@ -89,6 +89,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lmCmdLine
 	
 	glfwSetKeyCallback(window2, key_callback);
 	glfwSetWindowSizeCallback(window2, window_size_callback);
+	glfwSetInputMode(window2, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
 	// Loop until the user closes the window 
 	while (!glfwWindowShouldClose(window2))
