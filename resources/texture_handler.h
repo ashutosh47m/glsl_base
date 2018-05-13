@@ -109,9 +109,9 @@ public:
 
 class texture3D
 {
-	int	XDIM;
-	int	YDIM;
-	int	ZDIM;
+	int			XDIM;
+	int			YDIM;
+	int			ZDIM;
 
 	GLuint		uniform_ID;
 	GLuint		ui_texID;
@@ -123,7 +123,10 @@ public:
 	~texture3D() {}
 
 	bool isVolumeFileValid() { return isValid; }
-	texture3D(GLuint textureID, std::string volume_file, std::string u_var) : uniform_ID(textureID), uniform_var(u_var),
+
+	texture3D(GLuint textureID, std::string volume_file, std::string u_var) :
+		uniform_ID(textureID), 
+		uniform_var(u_var),
 		XDIM(256), YDIM(256), ZDIM(256)
 	{
 		std::ifstream infile(volume_file.c_str(), std::ios_base::binary);
