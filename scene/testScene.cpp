@@ -32,7 +32,10 @@ void TestScene::initialize()
 	mE_grassStonequad.initEntity	(++globalTextureCount, "..\\resources\\textures\\grassstone.jpg");
 	
 	//volume
-	mEvol.initEntity(++globalTextureCount, "..\\resources\\volumes\\engine256.raw");
+	//mE_vol.initEntity(++globalTextureCount, "..\\resources\\volumes\\engine256.raw");
+
+	//cube
+	mE_cube.initEntity();
 	//load camera
 	mT_camera = new YP_Camera(m_width, m_height);
 }
@@ -54,6 +57,7 @@ void TestScene::draw()
 
 	mE_triangle.draw(data, getShaderLibrary()->colored_geometry);
 	mE_red_triangle.draw(data, getShaderLibrary()->red_triangle_shader);
+	mE_cube.draw(data, getShaderLibrary()->colored_geometry);
 
 	mE_texturedTriangle.draw(data, glm::vec3(2, 1, 0), getShaderLibrary()->textured_geometry);
 
@@ -69,8 +73,8 @@ void TestScene::draw()
 	mE_Y_axes.draw(data, getShaderLibrary()->colored_geometry);
 	mE_Z_axes.draw(data, getShaderLibrary()->colored_geometry);
 
-	mEvol.SliceVolume(mViewDirection);
-	mEvol.draw(data, getShaderLibrary()->volume_shader);
+	//mE_vol.SliceVolume(mViewDirection);
+	//mE_vol.draw(data, getShaderLibrary()->volume_shader);
 	glBindVertexArray(0);
 }
 

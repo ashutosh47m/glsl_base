@@ -267,4 +267,75 @@ public:
 };
 
 
+class ShaderBuffer_POS_IND
+{
+	GLuint bufferHandle;
+	GLuint vaoHandle;
+	GLuint indexHandle;
+
+	std::vector <GLfloat>	position_data;
+	std::vector <GLushort>	index_data;
+public:
+	ShaderBuffer_POS_IND()
+	{
+		initResource();
+	}
+
+	ShaderBuffer_POS_IND
+		(
+		const std::vector<float>    &v1,
+		const std::vector<GLushort> &v2
+		)
+		
+	{
+		initResource();
+
+		for (auto itm : v1)
+		{
+			position_data.push_back(itm);
+		}
+		for (auto itm : v2)
+		{
+			index_data.push_back(itm);
+		}
+
+		glGenBuffers(1, &bufferHandle);
+		glGenBuffers(1, &indexHandle);
+
+		glGenVertexArrays(1, &vaoHandle);
+		glBindVertexArray(vaoHandle);
+			//position buffer
+			glBindBuffer(GL_ARRAY_BUFFER, bufferHandle);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*position_data.size(), position_data.data(), GL_STATIC_DRAW);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, ((GLubyte *)NULL + (0)));
+			glEnableVertexAttribArray(0);
+			
+			//indices
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexHandle);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLfloat)*index_data.size(), index_data.data(), GL_STATIC_DRAW);
+		glBindVertexArray(0);
+	}
+
+	~ShaderBuffer_POS_IND()
+	{
+	}
+
+	void initResource()
+	{
+		//printf("buffer initResource\n");
+	}
+
+	void deleteResource()
+	{
+		glDeleteBuffers(1, &bufferHandle);
+		glDeleteVertexArrays(1, &vaoHandle);
+		//printf("buffer deleteResource\n");
+	}
+
+	GLuint getVAOHandle()
+	{
+		return vaoHandle;
+	}
+};
+
 #endif
