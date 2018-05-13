@@ -6,7 +6,6 @@
 */
 
 #include "glsl_base_core.h"
-#include <stdio.h>
 
 void CORE::enableConsole()
 {

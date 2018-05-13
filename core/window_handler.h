@@ -15,7 +15,6 @@
 #include <gl/glew.h>
 #include <gl/GL.h>
 #include <GLFW/glfw3.h>
-#include <stdio.h>
 
 //you need these for OpenGL linking..
 #pragma comment(lib, "OpenGL32.lib")

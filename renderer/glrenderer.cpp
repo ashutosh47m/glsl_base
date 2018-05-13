@@ -6,7 +6,6 @@
 	@blog http://www.explicitgfx.wordpress.com/
 */
 #include "glrenderer.h"
-#include <cstdio>
 
 using namespace opengl_renderer;
 
