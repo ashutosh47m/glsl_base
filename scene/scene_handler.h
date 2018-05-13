@@ -66,12 +66,4 @@ public:
 	// glsl_data contains such items.
 	glsl_data data;
 };
-//
-//class keyHandler
-//{
-//	void keyprocess(WPARAM wParam, LPARAM lParam)
-//	{
-//	
-//	}
-//};
 #endif

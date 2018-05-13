@@ -16,6 +16,7 @@ Nov 2017, Ashutosh Morwal
 #include "../Entity/E_colored_quad.h"
 #include "../Entity/E_textured_quad.h"
 #include "../Entity/E_textured_triangle.h"
+#include "../Entity/E_volume.h"
 
 #include "../resources/texture_handler.h"
 #include "../tools/camera.h"
@@ -33,10 +34,12 @@ namespace usr_scene
 		E_textured_quad				mE_Marblequad;
 		E_textured_quad				mE_grassStonequad;
 		E_colored_line				mE_X_axes, mE_Y_axes, mE_Z_axes;
+		E_3d_texture_volume			mEvol;
 
 		int							m_width, m_height;
 		YP_Camera					*mT_camera;			// t stands for tools, i.e. YP_Camera comes under tools category
-		float camera_x = 0, camera_y = 0, camera_z = -2;
+		float 						camera_x = 0, camera_y = 0, camera_z = -2;
+		glm::vec3					mViewDirection;
 
 		bool						wasd[4] = { false };
 	

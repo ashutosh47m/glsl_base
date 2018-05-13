@@ -109,11 +109,22 @@ public:
 
 class texture3D
 {
-	const int XDIM = 256;
-	const int YDIM = 256;
-	const int ZDIM = 256;
+	int	XDIM;
+	int	YDIM;
+	int	ZDIM;
 
-	texture3D(GLuint textureID, std::string volume_file)
+	GLuint		uniform_ID;
+	GLuint		ui_texID;
+	std::string	uniform_var;
+	bool		isValid = false;
+	
+public: 
+	texture3D()  {}
+	~texture3D() {}
+
+	bool isVolumeFileValid() { return isValid; }
+	texture3D(GLuint textureID, std::string volume_file, std::string u_var) : uniform_ID(textureID), uniform_var(u_var),
+		XDIM(256), YDIM(256), ZDIM(256)
 	{
 		std::ifstream infile(volume_file.c_str(), std::ios_base::binary);
 
@@ -125,8 +136,8 @@ class texture3D
 			infile.close();
 
 			//generate OpenGL texture
-			glGenTextures(1, &textureID);
-			glBindTexture(GL_TEXTURE_3D, textureID);
+			glGenTextures(1, &uniform_ID);
+			glBindTexture(GL_TEXTURE_3D, uniform_ID);
 
 			// set the texture parameters
 			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -148,12 +159,13 @@ class texture3D
 
 			//delete the volume data allocated on heap
 			delete[] pData;
-//			return true;
+			isValid = true;
 		}
-//		else 
-//		{
-//			return false;
-//		}
+		else 
+		{
+			printf("the volume file supplied is not supported\n");
+			isValid = false;
+		}
 	}
 };
 

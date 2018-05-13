@@ -20,17 +20,19 @@ void TestScene::initialize()
 	// triangles
 	mE_triangle.initEntity();	//inits the shaders and other resources
 	mE_red_triangle.initEntity();
-	mE_texturedTriangle.initEntity(++globalTextureCount, "..\\resources\\textures\\wooden.jpg");
+	mE_texturedTriangle.initEntity	(++globalTextureCount, "..\\resources\\textures\\wooden.jpg");
 
 	// inititlize the axes
 	initAxes();
 
 	//quad
 	mE_quad.initEntity();
-	mE_Woodenquad.initEntity(++globalTextureCount, "..\\resources\\textures\\wooden.jpg");
-	mE_Marblequad.initEntity(++globalTextureCount, "..\\resources\\textures\\marble.jpg");
-	mE_grassStonequad.initEntity(++globalTextureCount, "..\\resources\\textures\\grassstone.jpg");
-
+	mE_Woodenquad.initEntity		(++globalTextureCount, "..\\resources\\textures\\wooden.jpg");
+	mE_Marblequad.initEntity		(++globalTextureCount, "..\\resources\\textures\\marble.jpg");
+	mE_grassStonequad.initEntity	(++globalTextureCount, "..\\resources\\textures\\grassstone.jpg");
+	
+	//volume
+	mEvol.initEntity(++globalTextureCount, "..\\resources\\volumes\\engine256.raw");
 	//load camera
 	mT_camera = new YP_Camera(m_width, m_height);
 }
@@ -39,9 +41,9 @@ void TestScene::update()
 {
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glClearColor(.4f, 1.4f, 1.4f, 1);
+	glClearColor(.55f, .515f, .515f, 1);
 
-	mT_camera->cam_control(wasd, data.f_position, data.glm_view);
+	mT_camera->cam_control(wasd, data.f_position, data.glm_view, mViewDirection);
 }
 
 void TestScene::draw()
@@ -68,6 +70,9 @@ void TestScene::draw()
 	mE_Y_axes.draw(data, getShaderLibrary()->colored_geometry);
 	mE_Z_axes.draw(data, getShaderLibrary()->colored_geometry);
 
+	mEvol.SliceVolume(mViewDirection);
+
+	mEvol.draw(data, getShaderLibrary()->volume_shader);
 	glBindVertexArray(0);
 }
 

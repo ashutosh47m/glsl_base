@@ -16,6 +16,54 @@ Nov 2017, Ashutosh Morwal
 
 #ifndef _SHADER_BUF
 #define _SHADER_BUF
+#define EPSILON 0.0001f
+
+class ShaderBuffer_3d_texture_volume
+{
+	GLuint bufferHandle;
+	GLuint vaoHandle;
+
+public:
+	ShaderBuffer_3d_texture_volume() {}
+	ShaderBuffer_3d_texture_volume(GLsizei sizeofslices)
+	{
+		initResource();
+
+		glGenVertexArrays(1, &vaoHandle);
+		glGenBuffers(1, &bufferHandle);
+
+		glBindVertexArray(vaoHandle);
+		glBindBuffer(GL_ARRAY_BUFFER, bufferHandle);
+
+		//pass the sliced vertices vector to buffer object memory
+		glBufferData(GL_ARRAY_BUFFER, sizeofslices, 0, GL_DYNAMIC_DRAW);
+
+		//enable vertex attribute array for position
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindVertexArray(0);
+	}
+
+	void initResource()
+	{
+		//printf("buffer initResource\n");
+	}
+
+	GLuint getBufferHandle() { return bufferHandle; }
+
+	void deleteResource()
+	{
+		glDeleteBuffers(1, &bufferHandle);
+		glDeleteVertexArrays(1, &vaoHandle);
+		//printf("buffer deleteResource\n");
+	}
+
+	GLuint getVAOHandle()
+	{
+		return vaoHandle;
+	}
+};
 
 class ShaderBuffer_POS 
 {
@@ -55,14 +103,14 @@ public:
 
 	void initResource()
 	{
-		printf("buffer initResource\n");
+		//printf("buffer initResource\n");
 	}
 
 	void deleteResource()
 	{
 		glDeleteBuffers(1, &bufferHandle);
 		glDeleteVertexArrays(1, &vaoHandle);
-		printf("buffer deleteResource\n");
+		//printf("buffer deleteResource\n");
 	}
 
 	GLuint getVAOHandle()
@@ -121,14 +169,14 @@ public:
 
 	void initResource()
 	{
-		printf("buffer initResource\n");
+		//printf("buffer initResource\n");
 	}
 
 	void deleteResource()
 	{
 		glDeleteBuffers(1, bufferHandle);
 		glDeleteVertexArrays(1, &vaoHandle);
-		printf("buffer deleteResource\n");
+		//printf("buffer deleteResource\n");
 	}
 
 	GLuint getVAOHandle()
@@ -202,14 +250,14 @@ public:
 
 	void initResource()
 	{
-		printf("buffer initResource\n");
+		//printf("buffer initResource\n");
 	}
 
 	void deleteResource()
 	{
 		glDeleteBuffers(3, bufferHandle);
 		glDeleteVertexArrays(1, &vaoHandle);
-		printf("buffer deleteResource\n");
+		//printf("buffer deleteResource\n");
 	}
 
 	GLuint getVAOHandle()

@@ -15,7 +15,7 @@ Nov 2017, Ashutosh Morwal
 class E_textured_quad : public Entity
 {
 	ShaderBuffer_POS_COL_UV quad_data;
-	glm::mat4 modelMat;
+	glm::mat4				modelMat;
 	texture					t;
 
 public:

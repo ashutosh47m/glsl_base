@@ -25,7 +25,7 @@ class YP_Camera
 	// Initial Field of View
 	float initialFoV = 45.0f;
 
-	float speed = 0.0003f; // 0.003f units / second
+	const float speed = 0.00003f; // 0.003f units / second
 	float mouseSpeed = 0.005f;
 
 	int   window_width;
@@ -38,7 +38,7 @@ public:
 	YP_Camera(int w, int h) : window_width(w), window_height(h) {}
 
 	//need position of cursor from windowhandler
-	void cam_control(bool *wasd, glm::vec3& f_position, glm::mat4& view)
+	void cam_control(bool *wasd, glm::vec3& f_position, glm::mat4& view, glm::vec3& lookatdir)
 	{
 		// glfwGetTime is called only once, the first time this function is called
 		static double lastTime = glfwGetTime();
@@ -89,11 +89,11 @@ public:
 		//printf("%f %f %f \n", position.x, position.y, position.z );
 
 		view = glm::lookAt(
-			position,           // Camera is here
-			position + direction, // and looks here : at the same position, plus "direction"
-			up                  // Head is up (set to 0,-1,0 to look upside-down)
+			position,				// Camera is here
+			position + direction,	// and looks here : at the same position, plus "direction"
+			up						// Head is up (set to 0,-1,0 to look upside-down)
 			);
-
+		lookatdir = position + direction;
 		f_position = position;
 	}
 };

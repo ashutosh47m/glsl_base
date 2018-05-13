@@ -87,6 +87,7 @@ public:
 	ShaderProgram *triangle_shader;		//first_triangle
 	ShaderProgram *textured_geometry;	//textured_geometry
 	ShaderProgram *colored_geometry;	//colored_geometry
+	ShaderProgram *volume_shader;		//volume
 
 	ShaderLibrary()
 	{ }
@@ -94,9 +95,10 @@ public:
 	void loadShaders()
 	{
 		red_triangle_shader = new ShaderProgram("../src/renderer/shaders/first_red_triangle");
-		triangle_shader = new ShaderProgram("../src/renderer/shaders/first_triangle");
-		textured_geometry = new ShaderProgram("../src/renderer/shaders/textured_geometry");
-		colored_geometry = new ShaderProgram("../src/renderer/shaders/colored_geometry");
+		triangle_shader		= new ShaderProgram("../src/renderer/shaders/first_triangle");
+		textured_geometry	= new ShaderProgram("../src/renderer/shaders/textured_geometry");
+		colored_geometry	= new ShaderProgram("../src/renderer/shaders/colored_geometry");
+		volume_shader		= new ShaderProgram("../src/renderer/shaders/volume");
 	}
 
 	~ShaderLibrary()
@@ -109,6 +111,8 @@ public:
 			delete textured_geometry;
 		if (colored_geometry != NULL)
 			delete colored_geometry;
+		if (volume_shader != NULL)
+			delete volume_shader;
 	}
 };
 
