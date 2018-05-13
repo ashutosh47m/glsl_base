@@ -42,7 +42,6 @@ void TestScene::update()
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(.55f, .515f, .515f, 1);
-
 	mT_camera->cam_control(wasd, data.f_position, data.glm_view, mViewDirection);
 }
 
@@ -71,7 +70,6 @@ void TestScene::draw()
 	mE_Z_axes.draw(data, getShaderLibrary()->colored_geometry);
 
 	mEvol.SliceVolume(mViewDirection);
-
 	mEvol.draw(data, getShaderLibrary()->volume_shader);
 	glBindVertexArray(0);
 }
@@ -121,14 +119,5 @@ void TestScene::keyProcess(int key, int scancode, int action, int mods)
 	}
 	else if (action == _2am_KEY_REPEAT)
 	{
-		switch (key)
-		{
-		case _2am_KEY_W:
-			camera_z++;
-			break;
-		case _2am_KEY_S:
-			camera_z--;
-			break;
-		}
 	}
 }

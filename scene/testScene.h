@@ -38,7 +38,6 @@ namespace usr_scene
 
 		int							m_width, m_height;
 		YP_Camera					*mT_camera;			// t stands for tools, i.e. YP_Camera comes under tools category
-		float 						camera_x = 0, camera_y = 0, camera_z = -2;
 		glm::vec3					mViewDirection;
 
 		bool						wasd[4] = { false };

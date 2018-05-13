@@ -38,7 +38,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void window_size_callback(GLFWwindow* window, int width, int height)
 {
 	if(width > 0 && height > 0)
-	reactor->glrenderer->resizeGL(width, height);
+		reactor->glrenderer->resizeGL(width, height);
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lmCmdLine, int nCmdShow)

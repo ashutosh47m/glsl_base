@@ -285,18 +285,15 @@ public:
 
 	void draw(glsl_data& data, ShaderProgram *& shader)
 	{
-		glBindVertexArray(volume_data.getVAOHandle());
 		glUseProgram(shader->getShaderProgramHandle());
+		glBindVertexArray(volume_data.getVAOHandle());
 		modelMat = data.glm_model;
 
-		//enable alpha blending (use over operator)
 		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		shader->setUniform("u_m4MVP", data.glm_projection * data.glm_view * modelMat);
-		glDrawArrays(GL_TRIANGLES, 0, sizeof(vTextureSlices) / sizeof(vTextureSlices[0]));
-		//disable blending
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			shader->setUniform("u_m4MVP", data.glm_projection * data.glm_view * modelMat);
+	 		glDrawArrays(GL_TRIANGLES, 0, sizeof(vTextureSlices) / sizeof(vTextureSlices[0]));
 		glDisable(GL_BLEND);
-
 	}
 };
 #endif
