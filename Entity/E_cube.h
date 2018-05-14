@@ -14,13 +14,13 @@ Nov 2017, Ashutosh Morwal
 class E_cube : public Entity
 {
 	//ShaderBuffer_POS_IND cube_data;
-	GLuint vaoHandle;
-	glm::mat4 modelMat;
-
+	GLuint			m_VaoHandle;
+	glm::mat4		m_ModelMat;
+	ShaderBuffer   *m_CubeData = NULL;
 public: 
 	E_cube(){}
 
-	void initEntity()
+	void initEntity(bool colored)
 	{
 		std::vector<float> v1 =
 		{
@@ -52,52 +52,68 @@ public:
 
 		std::vector<float> v3 =
 		{
-			0.5f,  0.5f,   0.5f,
-			0.5f,  0.5f,   0.5f,
-			0.5f,  0.5f,   0.5f,
-			0.5f,  0.5f,   0.5f,
-			0.5f,  0.5f,   0.5f,
-			0.5f,  0.5f,   0.5f,
-			0.5f,  0.5f,   0.5f,
-			0.5f,  0.5f,   0.5f
+			1.0f,  0.0f,   0.0f,
+			0.0f,  1.0f,   0.0f,
+			0.0f,  0.0f,   1.0f,
+			1.0f,  0.0f,   0.0f,
+			0.0f,  1.0f,   0.0f,
+			0.0f,  0.0f,   1.0f,
+			1.0f,  0.0f,   0.0f,
+			0.0f,  1.0f,   0.0f,
 		};
 
-		ShaderBuffer *cube_data = new ShaderBuffer_POS_IND(v1, v2);
-		vaoHandle = cube_data->getVAOHandle();
+
+		if (colored)
+		{
+			m_CubeData = new ShaderBuffer_POS_IND_COL(v1, v2, v3);
+			m_VaoHandle = m_CubeData->getVAOHandle();
+		}
+		else
+		{
+			m_CubeData = new ShaderBuffer_POS_IND(v1, v2);
+			m_VaoHandle = m_CubeData->getVAOHandle();
+		}
 	}
 
 	void initEntity(std::vector<float> position,
 		std::vector<GLushort> index)
 	{
-		ShaderBuffer *cube_data = new ShaderBuffer_POS_IND(position, index);
-		vaoHandle = cube_data->getVAOHandle();
+		m_CubeData = new ShaderBuffer_POS_IND(position, index);
+		m_VaoHandle = m_CubeData->getVAOHandle();
 	}
 
 	// this will draw at origin
 	void draw(glsl_data& data, ShaderProgram *& shader)
 	{
-		glBindVertexArray(vaoHandle);
+		glBindVertexArray(m_VaoHandle);
 		glUseProgram(shader->getShaderProgramHandle());
-		modelMat = data.glm_model;
-		shader->setUniform("u_m4MVP", data.glm_projection * data.glm_view * modelMat);
+		m_ModelMat = data.glm_model;
+		shader->setUniform("u_m4MVP", data.glm_projection * data.glm_view * m_ModelMat);
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
 	}
 	
 	// this will draw at specified position
 	void draw(glsl_data& data, ShaderProgram *& shader, glm::vec3 position)
 	{
-		glBindVertexArray(vaoHandle);
+		// you can also call m_CubeData->getVAOHandle here, but its best to avoid the extra function call in renderloop
+		glBindVertexArray(m_VaoHandle);
 		glUseProgram(shader->getShaderProgramHandle());
-		modelMat = data.glm_model;
-		modelMat *= glm::translate(glm::mat4(1.0f), position);
-		shader->setUniform("u_m4MVP", data.glm_projection * data.glm_view * modelMat);
+		m_ModelMat = data.glm_model;
+		m_ModelMat *= glm::translate(glm::mat4(1.0f), position);
+		shader->setUniform("u_m4MVP", data.glm_projection * data.glm_view * m_ModelMat);
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
 	}
 	
 	void enable()
 	{
-		glBindVertexArray(vaoHandle);
+		glBindVertexArray(m_VaoHandle);
 	}
+	~E_cube()
+	{
+		m_CubeData->deleteResource();
+		delete m_CubeData;
+	}
+
 };
 
 #endif

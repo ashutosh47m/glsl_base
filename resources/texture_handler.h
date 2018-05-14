@@ -176,6 +176,11 @@ public:
 	const char *getUniformVar() { return uniform_var.c_str(); }
 	GLuint getUniformID() { return uniform_ID; }
 	GLuint getTextureID() { return ui_texID; }
+
+	void deleteResource()
+	{
+		glDeleteTextures(1, &ui_texID);
+	}
 };
 
 #endif

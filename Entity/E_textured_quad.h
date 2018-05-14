@@ -14,9 +14,10 @@ Nov 2017, Ashutosh Morwal
 
 class E_textured_quad : public Entity
 {
-	ShaderBuffer_POS_COL_UV quad_data;
-	glm::mat4				modelMat;
-	texture					t;
+	ShaderBuffer			*m_QuadData=NULL;
+	glm::mat4			 	 m_ModelMat;
+	texture				 	 m_T;
+	GLuint					 m_VaoHandle;
 
 public:
 	E_textured_quad() {}
@@ -24,7 +25,7 @@ public:
 
 	void initEntity(GLuint globalTextureCount, std::string textureName) 
 	{
-		t = texture(globalTextureCount, "u_var_tex", textureName);
+		m_T = texture(globalTextureCount, "u_var_tex", textureName);
 
 		std::vector<float> v1 = 
 		{ 
@@ -49,7 +50,8 @@ public:
 			1,	1,
 		};
 
-		quad_data = ShaderBuffer_POS_COL_UV(v1, v2, v3);
+		m_QuadData = new ShaderBuffer_POS_COL_UV(v1, v2, v3);
+		m_VaoHandle = m_QuadData->getVAOHandle();
 	}
 
 	void draw(glsl_data& data) {}
@@ -57,26 +59,27 @@ public:
 	void draw(glsl_data& data, ShaderProgram*& shader, glm::vec3 position)
 	{
 		glUseProgram(shader->getShaderProgramHandle());
-		glBindTexture(GL_TEXTURE_2D, t.getTextureID());
-		modelMat = data.glm_model;
-		modelMat *= glm::translate(glm::mat4(1.0f), position);
-		modelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(2));
-		glActiveTexture(GL_TEXTURE0+t.getUniformID());
-		shader->setUniform("u_var_tex", t.getUniformID());
-		shader->setUniform("u_m4MVP", data.glm_projection * data.glm_view * modelMat);
+		glBindTexture(GL_TEXTURE_2D, m_T.getTextureID());
+		m_ModelMat = data.glm_model;
+		m_ModelMat *= glm::translate(glm::mat4(1.0f), position);
+		m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(2));
+		glActiveTexture(GL_TEXTURE0+ m_T.getUniformID());
+		shader->setUniform("u_var_tex", m_T.getUniformID());
+		shader->setUniform("u_m4MVP", data.glm_projection * data.glm_view * m_ModelMat);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	}
 
 	~E_textured_quad()
 	{
-		quad_data.deleteResource();
-		t.deleteResource();
+		m_QuadData->deleteResource();
+		m_T.deleteResource();
+		delete m_QuadData;
 	}
-	GLuint getVAOHandle() { return quad_data.getVAOHandle(); }
+	GLuint getVAOHandle() { return m_VaoHandle; }
 	
 	void enable()
 	{
-		glBindVertexArray(quad_data.getVAOHandle());
+		glBindVertexArray(m_VaoHandle);
 	}
 };
 

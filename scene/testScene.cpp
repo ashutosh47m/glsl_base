@@ -36,9 +36,10 @@ void TestScene::initialize()
 	//volume
 	mE_vol.initEntity				(++globalTextureCount, "..\\resources\\volumes\\engine256.raw", 256, 256, 256);
 	//mE_vrc.initEntity				(++globalTextureCount, "..\\resources\\volumes\\engine256.raw", 256,256,256);
-	mE_vrc.initEntity(++globalTextureCount, "..\\resources\\volumes\\head256x256x109\\head256x256x109.raw", 256,256,109);
-	//cube
-	mE_cube.initEntity();
+	mE_vrc.initEntity				(++globalTextureCount, "..\\resources\\volumes\\head256x256x109\\head256x256x109.raw", 256,256,109);
+	
+	//cube			//colored
+	mE_cube.initEntity(true);
 	
 	//load camera
 	mT_camera = new YP_Camera(m_width, m_height);

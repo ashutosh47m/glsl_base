@@ -15,12 +15,13 @@ May 2018, Ashutosh Morwal
 
 class E_3d_texture_volume: public Entity
 {
-	glm::mat4							modelMat;
-	texture3D							t3d;
-	ShaderBuffer_3d_texture_volume		volume_data;
-	//int MAX_SLICES = 512;
+	glm::mat4						 m_ModelMat;
+	texture3D						 m_T3d;
+	ShaderBuffer					*m_VolumeData=NULL;
+	GLuint							 m_VaoHandle;
+	int 							 mMAXSLICES = 512;
 	//sliced vertices
-	glm::vec3 vTextureSlices[1024 * 12];
+	glm::vec3						 m_VTextureSlices[1024 * 12];
 
 	//unit cube vertices
 	glm::vec3 vertexList[8] = 
@@ -58,10 +59,10 @@ public:
 
 	void initEntity(GLuint globalTextureCount, std::string volume_name, int xdm, int ydm, int zdm)
 	{
-		volume_data = ShaderBuffer_3d_texture_volume(sizeof(vTextureSlices));
-
-		t3d = texture3D(globalTextureCount, volume_name, "u_volume", xdm, ydm, zdm);
-		if (!t3d.isVolumeFileValid())
+		m_VolumeData = new ShaderBuffer_3d_texture_volume(sizeof(m_VTextureSlices));
+		m_VaoHandle = m_VolumeData->getVAOHandle();
+		m_T3d = texture3D(globalTextureCount, volume_name, "u_volume", xdm, ydm, zdm);
+		if (!m_T3d.isVolumeFileValid())
 			return;
 	}
 
@@ -268,14 +269,14 @@ public:
 			//we calculated the proper polygon indices by using indices of a triangular fan
 			int indices[] = { 0,1,2, 0,2,3, 0,3,4, 0,4,5 };
 
-			//Using the indices, pass the intersection vertices to the vTextureSlices vector
+			//Using the indices, pass the intersection vertices to the m_VTextureSlices vector
 			for (int i = 0;i<12;i++)
-				vTextureSlices[count++] = intersection[indices[i]];
+				m_VTextureSlices[count++] = intersection[indices[i]];
 		}
 
 		//update buffer object with the new vertices
-		glBindBuffer(GL_ARRAY_BUFFER, volume_data.getBufferHandle());
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vTextureSlices), &(vTextureSlices[0].x));
+		glBindBuffer(GL_ARRAY_BUFFER, m_VolumeData->getBufferHandle());
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(m_VTextureSlices), &(m_VTextureSlices[0].x));
 	}
 	void enable()
 	{
@@ -285,18 +286,25 @@ public:
 	void draw(glsl_data& data, ShaderProgram *& shader)
 	{
 		glUseProgram(shader->getShaderProgramHandle());
-		glBindVertexArray(volume_data.getVAOHandle());
-		modelMat = data.glm_model;
-		modelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(2,0,0));
+		glBindVertexArray(m_VaoHandle);
+		m_ModelMat = data.glm_model;
+		m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(2,0,0));
 
 		glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			shader->setUniform("u_m4MVP", data.glm_projection * data.glm_view * modelMat);
-			glBindTexture(GL_TEXTURE_3D, t3d.getTextureID());
-			glActiveTexture(GL_TEXTURE0 + t3d.getUniformID());
-			shader->setUniform(t3d.getUniformVar(), t3d.getUniformID());
-			glDrawArrays(GL_TRIANGLES, 0, sizeof(vTextureSlices) / sizeof(vTextureSlices[0]));
+			shader->setUniform("u_m4MVP", data.glm_projection * data.glm_view * m_ModelMat);
+			glBindTexture(GL_TEXTURE_3D, m_T3d.getTextureID());
+			glActiveTexture(GL_TEXTURE0 + m_T3d.getUniformID());
+			shader->setUniform(m_T3d.getUniformVar(), m_T3d.getUniformID());
+			glDrawArrays(GL_TRIANGLES, 0, sizeof(m_VTextureSlices) / sizeof(m_VTextureSlices[0]));
 		glDisable(GL_BLEND);
+	}
+
+	~E_3d_texture_volume()
+	{
+		m_VolumeData->deleteResource();
+		m_T3d.deleteResource();
+		delete m_VolumeData;
 	}
 };
 #endif

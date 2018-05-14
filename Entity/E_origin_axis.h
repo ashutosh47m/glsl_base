@@ -14,8 +14,9 @@ Nov 2017, Ashutosh Morwal
 
 class E_colored_line : public Entity
 {
-	ShaderBuffer_POS_COL line_data;
-	glm::mat4 modelMat;
+	ShaderBuffer   *m_LineData;
+	GLuint			m_VaoHandle;
+	glm::mat4		m_ModelMat;
 
 public:
 	E_colored_line() {}
@@ -33,33 +34,36 @@ public:
 			1, 1, 1	
 		};
 
-		line_data = ShaderBuffer_POS_COL(v1, v2);
+		m_LineData = new ShaderBuffer_POS_COL(v1, v2);
+		m_VaoHandle = m_LineData->getVAOHandle();
 	}
 
 	void initEntity(std::vector<float> position,
 		std::vector<float> color)
 	{
-		line_data = ShaderBuffer_POS_COL(position, color);
+		m_LineData = new ShaderBuffer_POS_COL(position, color);
+		m_VaoHandle = m_LineData->getVAOHandle();
 	}
 
 	void draw(glsl_data& data, ShaderProgram *& shader)
 	{
-		glBindVertexArray(line_data.getVAOHandle());
+		glBindVertexArray(m_VaoHandle);
 		glUseProgram(shader->getShaderProgramHandle());
-		modelMat = data.glm_model;
-		shader->setUniform("u_m4MVP", data.glm_projection * data.glm_view * modelMat);
+		m_ModelMat = data.glm_model;
+		shader->setUniform("u_m4MVP", data.glm_projection * data.glm_view * m_ModelMat);
 		glDrawArrays(GL_LINES, 0, 2);
 	}
 
 	~E_colored_line()
 	{
-		line_data.deleteResource();
+		m_LineData->deleteResource();
+		delete m_LineData;
 	}
-	GLuint getVAOHandle() { return line_data.getVAOHandle(); }
+	GLuint getVAOHandle() { return m_VaoHandle; }
 	
 	void enable()
 	{
-		glBindVertexArray(line_data.getVAOHandle());
+		glBindVertexArray(m_VaoHandle);
 	}
 };
 
