@@ -18,7 +18,16 @@ Nov 2017, Ashutosh Morwal
 #define _SHADER_BUF
 #define EPSILON 0.0001f
 
-class ShaderBuffer_3d_texture_volume
+class ShaderBuffer
+{
+	virtual void initResource() = 0;
+	virtual void deleteResource() = 0;
+
+public:
+	virtual GLuint getVAOHandle() = 0;
+};
+
+class ShaderBuffer_3d_texture_volume : public ShaderBuffer
 {
 	GLuint bufferHandle;
 	GLuint vaoHandle;
@@ -65,7 +74,7 @@ public:
 	}
 };
 
-class ShaderBuffer_POS 
+class ShaderBuffer_POS : public ShaderBuffer
 {
 	GLuint bufferHandle;
 	GLuint vaoHandle;
@@ -96,7 +105,27 @@ public:
 			glEnableVertexAttribArray(0);
 		glBindVertexArray(0);
 	}
+	ShaderBuffer_POS(const std::vector<float> &v)
+	{
+		initResource();
+		for (auto itm : v)
+		{
+			data.push_back(itm);
+		}
 
+		glGenBuffers(1, &bufferHandle);
+		glGenVertexArrays(1, &vaoHandle);
+		glBindVertexArray(vaoHandle);
+		glBindBuffer(GL_ARRAY_BUFFER, bufferHandle);
+		glBufferData(GL_ARRAY_BUFFER,
+			sizeof(GLfloat)*data.size(), // size in bytes 
+			data.data(),				 // actual data
+			GL_STATIC_DRAW);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, ((GLubyte *)NULL + (0)));
+		glEnableVertexAttribArray(0);
+		glBindVertexArray(0);
+	}
+	
 	~ShaderBuffer_POS()
 	{
 	}
@@ -119,7 +148,7 @@ public:
 	}
 };
 
-class ShaderBuffer_POS_COL
+class ShaderBuffer_POS_COL : public ShaderBuffer
 {
 	GLuint bufferHandle[2];
 	GLuint vaoHandle;
@@ -185,7 +214,7 @@ public:
 	}
 };
 
-class ShaderBuffer_POS_COL_UV
+class ShaderBuffer_POS_COL_UV : public ShaderBuffer
 {
 	GLuint bufferHandle[3];
 	GLuint vaoHandle;
@@ -266,8 +295,7 @@ public:
 	}
 };
 
-
-class ShaderBuffer_POS_IND
+class ShaderBuffer_POS_IND : public ShaderBuffer
 {
 	GLuint bufferHandle;
 	GLuint vaoHandle;
