@@ -54,14 +54,13 @@ class E_3d_texture_volume: public Entity
 public:
 
 	E_3d_texture_volume()		  {}
-	void initEntity() {}
 	void draw(glsl_data& data) {}
 
-	void initEntity(GLuint globalTextureCount, std::string volume_name)
+	void initEntity(GLuint globalTextureCount, std::string volume_name, int xdm, int ydm, int zdm)
 	{
 		volume_data = ShaderBuffer_3d_texture_volume(sizeof(vTextureSlices));
 
-		t3d = texture3D(globalTextureCount, volume_name, "volume");
+		t3d = texture3D(globalTextureCount, volume_name, "u_volume", xdm, ydm, zdm);
 		if (!t3d.isVolumeFileValid())
 			return;
 	}
@@ -288,11 +287,15 @@ public:
 		glUseProgram(shader->getShaderProgramHandle());
 		glBindVertexArray(volume_data.getVAOHandle());
 		modelMat = data.glm_model;
+		modelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(2,0,0));
 
 		glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			shader->setUniform("u_m4MVP", data.glm_projection * data.glm_view * modelMat);
-	 		glDrawArrays(GL_TRIANGLES, 0, sizeof(vTextureSlices) / sizeof(vTextureSlices[0]));
+			glBindTexture(GL_TEXTURE_3D, t3d.getTextureID());
+			glActiveTexture(GL_TEXTURE0 + t3d.getUniformID());
+			shader->setUniform(t3d.getUniformVar(), t3d.getUniformID());
+			glDrawArrays(GL_TRIANGLES, 0, sizeof(vTextureSlices) / sizeof(vTextureSlices[0]));
 		glDisable(GL_BLEND);
 	}
 };

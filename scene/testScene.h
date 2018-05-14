@@ -18,6 +18,7 @@ Nov 2017, Ashutosh Morwal
 #include "../Entity/E_textured_triangle.h"
 #include "../Entity/E_volume.h"
 #include "../Entity/E_cube.h"
+#include "../Entity/E_volume_ray_caster.h"
 
 #include "../resources/texture_handler.h"
 #include "../tools/camera.h"
@@ -37,6 +38,7 @@ namespace usr_scene
 		E_colored_line				mE_X_axes, mE_Y_axes, mE_Z_axes;
 		E_3d_texture_volume			mE_vol;
 		E_cube						mE_cube;
+		E_volume_ray_caster			mE_vrc; // volume ray caster
 
 		int							m_width, m_height;
 		YP_Camera					*mT_camera;			// t stands for tools, i.e. YP_Camera comes under tools category

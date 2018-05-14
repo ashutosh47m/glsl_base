@@ -5,7 +5,8 @@ using namespace usr_scene;
 void TestScene::initAxes()
 {
 	std::vector<float> pos_line = { -100,0,0, 100,0,0 };
-	std::vector<float> col_line = { 0,0,0,0,0,0};
+	std::vector<float> col_line = { 1,1,1,1,1,1};
+	
 	mE_X_axes.initEntity(pos_line, col_line);
 	pos_line = { 0,-100,0, 0,100,0 };
 	mE_Y_axes.initEntity(pos_line, col_line);
@@ -20,22 +21,25 @@ void TestScene::initialize()
 	// triangles
 	mE_triangle.initEntity();	//inits the shaders and other resources
 	mE_red_triangle.initEntity();
-	mE_texturedTriangle.initEntity	(++globalTextureCount, "..\\resources\\textures\\wooden.jpg");
+	mE_texturedTriangle.initEntity	(++globalTextureCount, "..\\resources\\textures\\grassstone.jpg");
 
 	// inititlize the axes
 	initAxes();
 
 	//quad
 	mE_quad.initEntity();
+	
 	mE_Woodenquad.initEntity		(++globalTextureCount, "..\\resources\\textures\\wooden.jpg");
 	mE_Marblequad.initEntity		(++globalTextureCount, "..\\resources\\textures\\marble.jpg");
 	mE_grassStonequad.initEntity	(++globalTextureCount, "..\\resources\\textures\\grassstone.jpg");
 	
 	//volume
-	//mE_vol.initEntity(++globalTextureCount, "..\\resources\\volumes\\engine256.raw");
-
+	mE_vol.initEntity				(++globalTextureCount, "..\\resources\\volumes\\engine256.raw", 256, 256, 256);
+	//mE_vrc.initEntity				(++globalTextureCount, "..\\resources\\volumes\\engine256.raw", 256,256,256);
+	mE_vrc.initEntity(++globalTextureCount, "..\\resources\\volumes\\head256x256x109\\head256x256x109.raw", 256,256,109);
 	//cube
 	mE_cube.initEntity();
+	
 	//load camera
 	mT_camera = new YP_Camera(m_width, m_height);
 }
@@ -44,8 +48,8 @@ void TestScene::update()
 {
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glClearColor(.55f, .515f, .515f, 1);
-	mT_camera->cam_control(wasd, data.f_position, data.glm_view, mViewDirection);
+	glClearColor(.5f, .515f, .515f, 1);
+	mT_camera->cam_control(wasd, data.glm_eye, data.glm_view, mViewDirection);
 }
 
 void TestScene::draw()
@@ -55,26 +59,29 @@ void TestScene::draw()
 	// for such entities, you will have to call glBindVertexArray explicitely.
 	// please have a look at draw method inside entity for more information.
 
+	mE_vrc.draw(data, getShaderLibrary()->volume_ray_caster, data.glm_eye);
+
+	mE_vol.SliceVolume(mViewDirection);
+	mE_vol.draw(data, getShaderLibrary()->volume_shader);
+	
 	mE_triangle.draw(data, getShaderLibrary()->colored_geometry);
 	mE_red_triangle.draw(data, getShaderLibrary()->red_triangle_shader);
-	mE_cube.draw(data, getShaderLibrary()->colored_geometry);
-
-	mE_texturedTriangle.draw(data, glm::vec3(2, 1, 0), getShaderLibrary()->textured_geometry);
+	mE_texturedTriangle.draw(data, getShaderLibrary()->textured_geometry, glm::vec3(2, 1, 0));
 
 	mE_quad.draw(data, getShaderLibrary()->colored_geometry);
 
 	mE_Woodenquad.enable();
-	mE_Woodenquad.draw(data, glm::vec3(-1, 1, 0), getShaderLibrary()->textured_geometry);
-	mE_Woodenquad.draw(data, glm::vec3(-3, 1, 0), getShaderLibrary()->textured_geometry);
-	mE_Marblequad.draw(data, glm::vec3(-1, 2, 0), getShaderLibrary()->textured_geometry);
-	mE_grassStonequad.draw(data, glm::vec3(1, 2, 0), getShaderLibrary()->textured_geometry);
+	mE_Woodenquad.draw	  (data, getShaderLibrary()->textured_geometry, glm::vec3(-1, 1, 0));
+	mE_Woodenquad.draw	  (data, getShaderLibrary()->textured_geometry, glm::vec3(-3, 1, 0));
+	mE_Marblequad.draw	  (data, getShaderLibrary()->textured_geometry, glm::vec3(-1, 2, 0));
+	mE_grassStonequad.draw(data, getShaderLibrary()->textured_geometry, glm::vec3(1, 2, 0));
+
 
 	mE_X_axes.draw(data, getShaderLibrary()->colored_geometry);
 	mE_Y_axes.draw(data, getShaderLibrary()->colored_geometry);
 	mE_Z_axes.draw(data, getShaderLibrary()->colored_geometry);
 
-	//mE_vol.SliceVolume(mViewDirection);
-	//mE_vol.draw(data, getShaderLibrary()->volume_shader);
+	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(-2, 1, 0));
 	glBindVertexArray(0);
 }
 

@@ -124,10 +124,11 @@ public:
 
 	bool isVolumeFileValid() { return isValid; }
 
-	texture3D(GLuint textureID, std::string volume_file, std::string u_var) :
+	texture3D(GLuint textureID, std::string volume_file, std::string u_var,
+		int xdim, int ydim, int zdim) :
 		uniform_ID(textureID), 
 		uniform_var(u_var),
-		XDIM(256), YDIM(256), ZDIM(256)
+		XDIM(xdim), YDIM(ydim), ZDIM(zdim)
 	{
 		std::ifstream infile(volume_file.c_str(), std::ios_base::binary);
 
@@ -139,8 +140,9 @@ public:
 			infile.close();
 
 			//generate OpenGL texture
-			glGenTextures(1, &uniform_ID);
-			glBindTexture(GL_TEXTURE_3D, uniform_ID);
+			glGenTextures(1, &ui_texID);
+			glActiveTexture(GL_TEXTURE0 + uniform_ID);
+			glBindTexture(GL_TEXTURE_3D, ui_texID);
 
 			// set the texture parameters
 			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -170,6 +172,10 @@ public:
 			isValid = false;
 		}
 	}
+
+	const char *getUniformVar() { return uniform_var.c_str(); }
+	GLuint getUniformID() { return uniform_ID; }
+	GLuint getTextureID() { return ui_texID; }
 };
 
 #endif

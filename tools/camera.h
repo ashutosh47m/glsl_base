@@ -19,6 +19,12 @@ Nov 2017, Ashutosh Morwal
 
 class YP_Camera
 {
+	glm::vec3 up;
+	glm::vec3 previousPosition;
+	glm::vec3 right;
+	glm::vec3 direction;
+	POINT mouse;
+
 	// position
 	glm::vec3	position = glm::vec3(0, 0, 1);
 	// horizontal angle : toward -Z, pitch

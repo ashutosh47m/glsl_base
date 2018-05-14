@@ -14,7 +14,7 @@ Nov 2017, Ashutosh Morwal
 class E_cube : public Entity
 {
 	ShaderBuffer_POS_IND cube_data;
-	glm::mat4 ModelMat;
+	glm::mat4 modelMat;
 
 public: 
 	E_cube(){}
@@ -58,15 +58,27 @@ public:
 		cube_data = ShaderBuffer_POS_IND(position, index);
 	}
 
+	// this will draw at origin
 	void draw(glsl_data& data, ShaderProgram *& shader)
 	{
 		glBindVertexArray(cube_data.getVAOHandle());
 		glUseProgram(shader->getShaderProgramHandle());
-		ModelMat = data.glm_model;
-		shader->setUniform("u_m4MVP", data.glm_projection * data.glm_view * ModelMat);
+		modelMat = data.glm_model;
+		shader->setUniform("u_m4MVP", data.glm_projection * data.glm_view * modelMat);
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
 	}
-
+	
+	// this will draw at specified position
+	void draw(glsl_data& data, ShaderProgram *& shader, glm::vec3 position)
+	{
+		glBindVertexArray(cube_data.getVAOHandle());
+		glUseProgram(shader->getShaderProgramHandle());
+		modelMat = data.glm_model;
+		modelMat *= glm::translate(glm::mat4(1.0f), position);
+		shader->setUniform("u_m4MVP", data.glm_projection * data.glm_view * modelMat);
+		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
+	}
+	
 	void enable()
 	{
 		glBindVertexArray(cube_data.getVAOHandle());

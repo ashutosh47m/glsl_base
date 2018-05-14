@@ -14,7 +14,6 @@ void YP_Camera::cam_control(bool *wasd, glm::vec3& f_position, glm::mat4& view, 
 	currentTime = glfwGetTime();
 	deltaTime   = float(currentTime - lastTime);
 
-	POINT mouse;
 	GetCursorPos(&mouse);
 	SetCursorPos((int)window_width / 2, (int)window_height / 2);
 
@@ -26,7 +25,7 @@ void YP_Camera::cam_control(bool *wasd, glm::vec3& f_position, glm::mat4& view, 
 
 
 	// Direction : Spherical coordinates to Cartesian coordinates conversion
-	glm::vec3 direction
+	direction = glm::vec3
 		(
 		cos(verticalAngle) * sin(horizontalAngle),
 		sin(verticalAngle),
@@ -34,7 +33,7 @@ void YP_Camera::cam_control(bool *wasd, glm::vec3& f_position, glm::mat4& view, 
 		);
 
 	// Right vector
-	glm::vec3 right = glm::vec3
+	right = glm::vec3
 		(
 		sin(horizontalAngle - M_PI / 2.0f),
 		0,
@@ -42,8 +41,8 @@ void YP_Camera::cam_control(bool *wasd, glm::vec3& f_position, glm::mat4& view, 
 		);
 
 	// Up vector : perpendicular to both direction and right
-	glm::vec3 up = glm::cross(right, direction);
-	glm::vec3 previousPosition = position;
+	up = glm::cross(right, direction);
+	previousPosition = position;
 
 	if (wasd[0])	//W
 		position += direction * deltaTime * speed;
@@ -53,8 +52,7 @@ void YP_Camera::cam_control(bool *wasd, glm::vec3& f_position, glm::mat4& view, 
 		position += right	  * deltaTime * speed;
 	if (wasd[1])	//A	
 		position -= right	  * deltaTime * speed;
-	float distancee = glm::distance(previousPosition, position);
-	printf("delta %f \n", distancee);
+	//float distancee = glm::distance(previousPosition, position);
 
 	view = glm::lookAt
 		(
