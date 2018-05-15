@@ -33,8 +33,6 @@ void TestScene::initialize()
 	mE_Marblequad.initEntity		(++globalTextureCount, "..\\resources\\textures\\marble.jpg");
 	mE_grassStonequad.initEntity	(++globalTextureCount, "..\\resources\\textures\\grassstone.jpg");
 	
-	//volume
-	mE_vol.initEntity				(++globalTextureCount, "..\\resources\\volumes\\engine256.raw", 256, 256, 256);
 	//mE_vrc.initEntity				(++globalTextureCount, "..\\resources\\volumes\\engine256.raw", 256,256,256);
 	mE_vrc.initEntity				(++globalTextureCount, "..\\resources\\volumes\\head256x256x109\\head256x256x109.raw", 256,256,109);
 	
@@ -48,6 +46,10 @@ void TestScene::initialize()
 void TestScene::update()
 {
 	glEnable(GL_DEPTH_TEST);
+
+	// by default back faces of objects are hidden
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(.5f, .515f, .515f, 1);
 	mT_camera->cam_control(wasd, data.glm_eye, data.glm_view, mViewDirection);
@@ -62,30 +64,30 @@ void TestScene::draw()
 
 	mE_vrc.draw(data, getShaderLibrary()->volume_ray_caster, data.glm_eye);
 
-	mE_vol.SliceVolume(mViewDirection);
-	mE_vol.draw(data, getShaderLibrary()->volume_shader);
-	
-	mE_triangle.draw(data, getShaderLibrary()->colored_geometry);
-	mE_red_triangle.draw(data, getShaderLibrary()->red_triangle_shader);
-	mE_texturedTriangle.draw(data, getShaderLibrary()->textured_geometry, glm::vec3(2, 1, 0));
+	glDisable(GL_CULL_FACE);
+		//objects for which culling of faces need to be disabled 
+	 mE_triangle.draw(data, getShaderLibrary()->colored_geometry);
+ 	 mE_red_triangle.draw(data, getShaderLibrary()->red_triangle_shader);
+	 mE_texturedTriangle.draw(data, getShaderLibrary()->textured_geometry, glm::vec3(2, 1, 0));
 
-	mE_quad.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(4, 0, 0));
+	 mE_quad.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(4, 0, 0));
 
-	mE_Woodenquad.enable();
-	mE_Woodenquad.draw	  (data, getShaderLibrary()->textured_geometry, glm::vec3(-1, 1, 0));
-	mE_Woodenquad.draw	  (data, getShaderLibrary()->textured_geometry, glm::vec3(-3, 1, 0));
-	mE_Marblequad.draw	  (data, getShaderLibrary()->textured_geometry, glm::vec3(-1, 2, 0));
-	mE_grassStonequad.draw(data, getShaderLibrary()->textured_geometry, glm::vec3(1, 2, 0));
+	 mE_Woodenquad.enable();
+	 mE_Woodenquad.draw	  (data, getShaderLibrary()->textured_geometry, glm::vec3(-1, 1, 0));
+	 mE_Woodenquad.draw	  (data, getShaderLibrary()->textured_geometry, glm::vec3(-3, 1, 0));
+	 mE_Marblequad.draw	  (data, getShaderLibrary()->textured_geometry, glm::vec3(-1, 2, 0));
+	 mE_grassStonequad.draw(data, getShaderLibrary()->textured_geometry, glm::vec3(1, 2, 0));
 
 
-	mE_X_axes.draw(data, getShaderLibrary()->colored_geometry);
-	mE_Y_axes.draw(data, getShaderLibrary()->colored_geometry);
-	mE_Z_axes.draw(data, getShaderLibrary()->colored_geometry);
+	 mE_X_axes.draw(data, getShaderLibrary()->colored_geometry);
+	 mE_Y_axes.draw(data, getShaderLibrary()->colored_geometry);
+	 mE_Z_axes.draw(data, getShaderLibrary()->colored_geometry);
+	glEnable(GL_CULL_FACE);
 
 	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3( 0, 2,  2));
 	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3( 0, 1, -2));
 	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(-2, 0,  0));
-	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3( 0, -1,  0));
+	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3( 2, -1,  0));
 	glBindVertexArray(0);
 }
 

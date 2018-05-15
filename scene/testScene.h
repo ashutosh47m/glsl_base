@@ -36,7 +36,7 @@ namespace usr_scene
 		E_textured_quad				mE_Marblequad;
 		E_textured_quad				mE_grassStonequad;
 		E_colored_line				mE_X_axes, mE_Y_axes, mE_Z_axes;
-		E_3d_texture_volume			mE_vol;
+		//E_3d_texture_volume		mE_vol;
 		E_cube						mE_cube;
 		E_volume_ray_caster			mE_vrc; // volume ray caster
 

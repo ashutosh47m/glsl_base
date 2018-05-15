@@ -51,8 +51,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lmCmdLine
 		printf("glfw not initialized\n");
 	}
 
-	reactor->window->setWidth(1280);
-	reactor->window->setHeight(720);
+	int systemWidth  = GetSystemMetrics(SM_CXSCREEN);
+	int systemHeight = GetSystemMetrics(SM_CYSCREEN);
+
+	reactor->window->setWidth(GetSystemMetrics(1280));
+	reactor->window->setHeight(GetSystemMetrics(720));
 	reactor->window->setName("2am engine : glsl_base");
 	reactor->window->fullscreen = false;
 
@@ -64,7 +67,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lmCmdLine
 							NULL, //glfwGetPrimaryMonitor(), 
 							NULL);
 	
-	glfwSetWindowPos(window2, 500, 100);
+	if(systemWidth == reactor->window->getWidth())
+		glfwSetWindowPos(window2, 0, 0);
+	else
+		glfwSetWindowPos(window2, 500, 100);
 
 	if (!window2)
 	{
