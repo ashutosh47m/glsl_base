@@ -41,15 +41,14 @@ public:
 		m_VaoHandle = m_QuadData->getVAOHandle();
 	}
 
-	void draw(glsl_data& data, ShaderProgram *& shader) 
+	void draw(glsl_data& data, ShaderProgram *& shader, glm::vec3 position)
 	{
 		glBindVertexArray(m_VaoHandle);
-		glUseProgram(shader->getShaderProgramHandle());
-		m_ModelMat = data.glm_model;
-		m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(1, 0, 0));
-		m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(2));
-		shader->setUniform("u_m4MVP", data.glm_projection * data.glm_view * m_ModelMat);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+			glUseProgram(shader->getShaderProgramHandle());
+			m_ModelMat = data.glm_model;
+			m_ModelMat *= glm::translate(glm::mat4(1.0f), position);
+			shader->setUniform("u_m4MVP", data.glm_projection * data.glm_view * m_ModelMat);
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	}
 
 	~E_colored_quad()
