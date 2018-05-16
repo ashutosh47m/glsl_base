@@ -77,7 +77,7 @@ public:
 			shader->setUniform("u_camPos", cam_position);
 			glBindTexture(GL_TEXTURE_3D, m_T3d.getTextureID());
 			glActiveTexture(GL_TEXTURE0 + m_T3d.getUniformID());
-			shader->setUniform(m_T3d.getUniformVar(), m_T3d.getUniformID());
+			//shader->setUniform(m_T3d.getUniformVar(), m_T3d.getUniformID());
 			glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
 		glDisable(GL_BLEND);
 	}

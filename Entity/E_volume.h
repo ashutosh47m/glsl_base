@@ -295,7 +295,7 @@ public:
 			shader->setUniform("u_m4MVP", data.glm_projection * data.glm_view * m_ModelMat);
 			glBindTexture(GL_TEXTURE_3D, m_T3d.getTextureID());
 			glActiveTexture(GL_TEXTURE0 + m_T3d.getUniformID());
-			shader->setUniform(m_T3d.getUniformVar(), m_T3d.getUniformID());
+			//shader->setUniform(m_T3d.getUniformVar(), m_T3d.getUniformID());
 			glDrawArrays(GL_TRIANGLES, 0, sizeof(m_VTextureSlices) / sizeof(m_VTextureSlices[0]));
 		glDisable(GL_BLEND);
 	}

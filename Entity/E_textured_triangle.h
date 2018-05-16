@@ -65,7 +65,7 @@ public:
 		m_ModelMat *= glm::translate(glm::mat4(1.0f), position);
 		m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(2));
 		glActiveTexture(GL_TEXTURE0 + m_T.getUniformID());
-		shader->setUniform("u_var_tex", m_T.getUniformID());
+		//shader->setUniform("u_var_tex", m_T.getUniformID());
 		shader->setUniform("u_m4MVP", data.glm_projection * data.glm_view * m_ModelMat);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 	}
