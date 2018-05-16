@@ -54,8 +54,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lmCmdLine
 	int systemWidth  = GetSystemMetrics(SM_CXSCREEN);
 	int systemHeight = GetSystemMetrics(SM_CYSCREEN);
 
-	reactor->window->setWidth(GetSystemMetrics(1280));
-	reactor->window->setHeight(GetSystemMetrics(720));
+	reactor->window->setWidth(1280);
+	reactor->window->setHeight(720);
 	reactor->window->setName("2am engine : glsl_base");
 	reactor->window->fullscreen = false;
 

@@ -39,6 +39,9 @@ void TestScene::initialize()
 	//cube			//colored
 	mE_cube.initEntity(true);
 	
+	//render target
+	mE_mainRT.initEntity(++globalTextureCount, "..\\resources\\textures\\marble.jpg");
+
 	//load camera
 	mT_camera = new YP_Camera(m_width, m_height);
 }
@@ -82,7 +85,10 @@ void TestScene::draw()
 	 mE_X_axes.draw(data, getShaderLibrary()->colored_geometry);
 	 mE_Y_axes.draw(data, getShaderLibrary()->colored_geometry);
 	 mE_Z_axes.draw(data, getShaderLibrary()->colored_geometry);
-	glEnable(GL_CULL_FACE);
+
+	 mE_mainRT.draw(data, getShaderLibrary()->textured_geometry);
+    glEnable(GL_CULL_FACE);
+
 
 	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3( 0, 2,  2));
 	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3( 0, 1, -2));
