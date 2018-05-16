@@ -83,34 +83,38 @@ class ShaderLibrary
 
 public:
 
-	ShaderProgram *red_triangle_shader;	//first_red_triangle
-	ShaderProgram *triangle_shader;		//first_triangle
-	ShaderProgram *textured_geometry;	//textured_geometry
-	ShaderProgram *colored_geometry;	//colored_geometry
-	ShaderProgram *volume_shader;		//volume: 3d texture
-	ShaderProgram *volume_ray_caster;	//volume: ray caster
+	ShaderProgram *rendertarget;				// a simple quad used for rendertargets
+	ShaderProgram *red_triangle_shader;			//first_red_triangle
+	ShaderProgram *triangle_shader;				//first_triangle
+	ShaderProgram *textured_colored_geometry;	//textured_geometry
+	ShaderProgram *colored_geometry;			//colored_geometry
+	ShaderProgram *volume_shader;				//volume: 3d texture
+	ShaderProgram *volume_ray_caster;			//volume: ray caster
 
 	ShaderLibrary()
 	{ }
 
 	void loadShaders()
 	{
-		red_triangle_shader = new ShaderProgram("../src/renderer/shaders/first_red_triangle");
-		triangle_shader		= new ShaderProgram("../src/renderer/shaders/first_triangle");
-		textured_geometry	= new ShaderProgram("../src/renderer/shaders/textured_geometry");
-		colored_geometry	= new ShaderProgram("../src/renderer/shaders/colored_geometry");
-		volume_shader		= new ShaderProgram("../src/renderer/shaders/volume");
-		volume_ray_caster	= new ShaderProgram("../src/renderer/shaders/ray_caster");
+		rendertarget				= new ShaderProgram("../src/renderer/shaders/rendertarget");
+		red_triangle_shader			= new ShaderProgram("../src/renderer/shaders/first_red_triangle");
+		triangle_shader				= new ShaderProgram("../src/renderer/shaders/first_triangle");
+		textured_colored_geometry	= new ShaderProgram("../src/renderer/shaders/textured_colored_geometry");
+		colored_geometry			= new ShaderProgram("../src/renderer/shaders/colored_geometry");
+		volume_shader				= new ShaderProgram("../src/renderer/shaders/volume");
+		volume_ray_caster			= new ShaderProgram("../src/renderer/shaders/ray_caster");
 	}
 
 	~ShaderLibrary()
 	{
+		if (rendertarget != NULL)
+			delete rendertarget;
 		if (red_triangle_shader != NULL)
 			delete red_triangle_shader;
 		if (triangle_shader != NULL)
 			delete triangle_shader;
-		if (textured_geometry != NULL)
-			delete textured_geometry;
+		if (textured_colored_geometry != NULL)
+			delete textured_colored_geometry;
 		if (colored_geometry != NULL)
 			delete colored_geometry;
 		if (volume_shader != NULL)

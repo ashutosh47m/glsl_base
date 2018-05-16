@@ -71,22 +71,22 @@ void TestScene::draw()
 		//objects for which culling of faces need to be disabled 
 	 mE_triangle.draw(data, getShaderLibrary()->colored_geometry);
  	 mE_red_triangle.draw(data, getShaderLibrary()->red_triangle_shader);
-	 mE_texturedTriangle.draw(data, getShaderLibrary()->textured_geometry, glm::vec3(2, 1, 0));
+	 mE_texturedTriangle.draw(data, getShaderLibrary()->textured_colored_geometry, glm::vec3(2, 1, 0));
 
 	 mE_quad.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(4, 0, 0));
 
 	 mE_Woodenquad.enable();
-	 mE_Woodenquad.draw	  (data, getShaderLibrary()->textured_geometry, glm::vec3(-1, 1, 0));
-	 mE_Woodenquad.draw	  (data, getShaderLibrary()->textured_geometry, glm::vec3(-3, 1, 0));
-	 mE_Marblequad.draw	  (data, getShaderLibrary()->textured_geometry, glm::vec3(-1, 2, 0));
-	 mE_grassStonequad.draw(data, getShaderLibrary()->textured_geometry, glm::vec3(1, 2, 0));
+	 mE_Woodenquad.draw	  (data, getShaderLibrary()->textured_colored_geometry, glm::vec3(-1, 1, 0));
+	 mE_Woodenquad.draw	  (data, getShaderLibrary()->textured_colored_geometry, glm::vec3(-3, 1, 0));
+	 mE_Marblequad.draw	  (data, getShaderLibrary()->textured_colored_geometry, glm::vec3(-1, 2, 0));
+	 mE_grassStonequad.draw(data, getShaderLibrary()->textured_colored_geometry, glm::vec3(1, 2, 0));
 
 
 	 mE_X_axes.draw(data, getShaderLibrary()->colored_geometry);
 	 mE_Y_axes.draw(data, getShaderLibrary()->colored_geometry);
 	 mE_Z_axes.draw(data, getShaderLibrary()->colored_geometry);
 
-	 mE_mainRT.draw(data, getShaderLibrary()->textured_geometry);
+	 mE_mainRT.draw(data, getShaderLibrary()->rendertarget);
     glEnable(GL_CULL_FACE);
 
 

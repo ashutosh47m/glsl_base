@@ -255,8 +255,8 @@ public:
 
 		glBindBuffer(GL_ARRAY_BUFFER, bufferHandle[1]);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat)*uv_data.size(), uv_data.data(), GL_STATIC_DRAW);
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, ((GLubyte *)NULL + (0)));
-		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, ((GLubyte *)NULL + (0)));
+		glEnableVertexAttribArray(1);
 
 		glBindVertexArray(0);
 	}
