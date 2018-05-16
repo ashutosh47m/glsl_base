@@ -40,7 +40,7 @@ void TestScene::initialize()
 	mE_cube.initEntity(true);
 	
 	//render target
-	mE_mainRT.initEntity(++globalTextureCount, "..\\resources\\textures\\marble.jpg");
+	mE_mainRT.initEntity(++globalTextureCount, m_width, m_height);
 
 	//load camera
 	mT_camera = new YP_Camera(m_width, m_height);
@@ -50,50 +50,52 @@ void TestScene::update()
 {
 	glEnable(GL_DEPTH_TEST);
 
-	// by default back faces of objects are hidden
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//by default back faces of objects are NOT hidden
+	//glEnable(GL_CULL_FACE);
+	//glCullFace(GL_BACK);
+
 	glClearColor(.5f, .515f, .515f, 1);
 	mT_camera->cam_control(wasd, data.glm_eye, data.glm_view, mViewDirection);
 }
 
-void TestScene::draw()
+void TestScene::renderWorld()
 {
-	//enable function will call glBindVertexArray function for particular entity.
-	// some entities are repeated, for them the call to glBindVertexArray is redundant.
-	// for such entities, you will have to call glBindVertexArray explicitely.
-	// please have a look at draw method inside entity for more information.
+	// we need this clear color to change the color inside the main RT
+	glClearColor(.0f, .0f, .0f, 1);
 
 	mE_vrc.draw(data, getShaderLibrary()->volume_ray_caster, data.glm_eye);
 
-	glDisable(GL_CULL_FACE);
-		//objects for which culling of faces need to be disabled 
-	 mE_triangle.draw(data, getShaderLibrary()->colored_geometry);
- 	 mE_red_triangle.draw(data, getShaderLibrary()->red_triangle_shader);
-	 mE_texturedTriangle.draw(data, getShaderLibrary()->textured_colored_geometry, glm::vec3(2, 1, 0));
+	//glDisable(GL_CULL_FACE);
+		mE_triangle.draw(data, getShaderLibrary()->colored_geometry);
+		mE_red_triangle.draw(data, getShaderLibrary()->red_triangle_shader);
+		mE_texturedTriangle.draw(data, getShaderLibrary()->textured_colored_geometry, glm::vec3(2, 1, 0));
 
-	 mE_quad.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(4, 0, 0));
+		mE_quad.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(4, 0, 0));
 
-	 mE_Woodenquad.enable();
-	 mE_Woodenquad.draw	  (data, getShaderLibrary()->textured_colored_geometry, glm::vec3(-1, 1, 0));
-	 mE_Woodenquad.draw	  (data, getShaderLibrary()->textured_colored_geometry, glm::vec3(-3, 1, 0));
-	 mE_Marblequad.draw	  (data, getShaderLibrary()->textured_colored_geometry, glm::vec3(-1, 2, 0));
-	 mE_grassStonequad.draw(data, getShaderLibrary()->textured_colored_geometry, glm::vec3(1, 2, 0));
+		mE_Woodenquad.enable();
+		mE_Woodenquad.draw(data, getShaderLibrary()->textured_colored_geometry, glm::vec3(-1, 1, 0));
+		mE_Woodenquad.draw(data, getShaderLibrary()->textured_colored_geometry, glm::vec3(-3, 1, 0));
+		mE_Marblequad.draw(data, getShaderLibrary()->textured_colored_geometry, glm::vec3(-1, 2, 0));
+		mE_grassStonequad.draw(data, getShaderLibrary()->textured_colored_geometry, glm::vec3(1, 2, 0));
+	//glEnable(GL_CULL_FACE);
 
+	mE_X_axes.draw(data, getShaderLibrary()->colored_geometry);
+	mE_Y_axes.draw(data, getShaderLibrary()->colored_geometry);
+	mE_Z_axes.draw(data, getShaderLibrary()->colored_geometry);
 
-	 mE_X_axes.draw(data, getShaderLibrary()->colored_geometry);
-	 mE_Y_axes.draw(data, getShaderLibrary()->colored_geometry);
-	 mE_Z_axes.draw(data, getShaderLibrary()->colored_geometry);
+	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(0, 2, 2));
+	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(0, 1, -2));
+	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(-2, 0, 0));
+	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(2, -1, 0));
+}
 
-	 mE_mainRT.draw(data, getShaderLibrary()->rendertarget);
-    glEnable(GL_CULL_FACE);
-
-
-	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3( 0, 2,  2));
-	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3( 0, 1, -2));
-	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(-2, 0,  0));
-	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3( 2, -1,  0));
+void TestScene::draw()
+{
+	mE_mainRT.bindFBOForDraw();
+		renderWorld();
+	mE_mainRT.unBindFBO();
+	
+	mE_mainRT.draw(data, getShaderLibrary()->rendertarget);
 	glBindVertexArray(0);
 }
 
@@ -114,6 +116,14 @@ void TestScene::keyProcess(int key, int scancode, int action, int mods)
 			break;
 		case _2am_KEY_D:
 			wasd[3] = true;
+			break;
+
+		case _2am_KEY_R:
+			mE_mainRT.decrZPosition();
+			break;
+
+		case _2am_KEY_T:
+			mE_mainRT.incrZPosition();
 			break;
 
 		case _2am_KEY_UP: break;

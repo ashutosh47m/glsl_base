@@ -54,6 +54,7 @@ namespace usr_scene
 		void initialize();
 		void update();
 		void draw();
+		void renderWorld();
 
 public: 
 		void keyProcess(int key, int scancode, int action, int mods);
