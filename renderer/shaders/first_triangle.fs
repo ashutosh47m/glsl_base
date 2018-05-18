@@ -1,8 +1,8 @@
 #version 450 core
 
-out vec4 color; 
-
+in vec3 fs_position;
 void main()
 {
-	color = vec4(1,1,1,1);
+	gl_FragData[0] = vec4(1,1,0,1);
+	gl_FragData[1] = vec4(fs_position, 1.0); 
 }

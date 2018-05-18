@@ -3,7 +3,7 @@
 
 smooth in vec3 vUV;				//3D texture coordinates form vertex shader 
 								//interpolated by rasterizer
-
+in vec3 fs_position;
 //uniforms
 uniform sampler3D	u_volume;		//volume dataset
 uniform vec3		u_camPos;		//camera position
@@ -78,7 +78,7 @@ void main()
 			break;
 
 		gl_FragData[0] = fColor;
-		gl_FragData[1] = fColor;
+		gl_FragData[1] = vec4(fs_position, 1);
 		gl_FragData[2] = fColor;
 		gl_FragData[3] = fColor;	
 		} 
