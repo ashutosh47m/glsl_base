@@ -1,6 +1,5 @@
 #version 450 core
 
-layout(location = 0) out vec4 vFragColor;	//fragment shader output
 
 smooth in vec3 vUV;				//3D texture coordinates form vertex shader 
 								//interpolated by rasterizer
@@ -17,6 +16,7 @@ const vec3 texMax		= vec3(1);	//maximum texture access coordinate
 
 void main()
 { 
+	vec4 fColor;
 	//get the 3D texture coordinates for lookup into the volume dataset
 	vec3 dataPos = vUV;
 
@@ -67,14 +67,19 @@ void main()
 		//Next, this alpha is multiplied with the current sample colour and accumulated
 		//to the composited colour. The alpha value from the previous steps is then 
 		//accumulated to the composited colour alpha.
-		float prev_alpha = sampleX - (sampleX * vFragColor.a);
-		vFragColor.rgb = prev_alpha * vec3(sampleX) + vFragColor.rgb; 
-		vFragColor.a += prev_alpha; 
+		float prev_alpha = sampleX - (sampleX * fColor.a);
+		fColor.rgb = prev_alpha * vec3(sampleX) + fColor.rgb; 
+		fColor.a += prev_alpha; 
 			
 		//early ray termination
 		//if the currently composited colour alpha is already fully saturated
 		//we terminated the loop
-		if( vFragColor.a>0.99)
+		if( fColor.a>0.99)
 			break;
-	} 
+
+		gl_FragData[0] = fColor;
+		gl_FragData[1] = fColor;
+		gl_FragData[2] = fColor;
+		gl_FragData[3] = fColor;	
+		} 
 }

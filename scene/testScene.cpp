@@ -17,6 +17,10 @@ void TestScene::initAxes()
 void TestScene::initialize()
 {
 	loadShaders();
+	globalTextureCount = 0;
+	//render target
+	// the globalTextureCount will be incremented inside mainRTs initEntity based on the count of textures for RT
+	mE_mainRT.initEntity(globalTextureCount, m_width, m_height);
 
 	// triangles
 	mE_triangle.initEntity();	//inits the shaders and other resources
@@ -39,9 +43,6 @@ void TestScene::initialize()
 	//cube			//colored
 	mE_cube.initEntity(true);
 	
-	//render target
-	mE_mainRT.initEntity(++globalTextureCount, m_width, m_height);
-
 	//load camera
 	mT_camera = new YP_Camera(m_width, m_height);
 }

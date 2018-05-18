@@ -9,6 +9,7 @@
 #define GL_RENDERER_H
 
 #include "..\scene\testScene.h"
+#include "..\scene\MRT_fboScene.h"
 namespace opengl_renderer
 {
 	class renderer
@@ -16,11 +17,15 @@ namespace opengl_renderer
 		usr_scene::TestScene test_scene;
 		AbstractScene &default_scn = test_scene;
 
+		//mrt_scene::MRTScene	mrt_scn;
+		//AbstractScene &default_scn = mrt_scn;
+
 	public:
 		renderer() {}
 		~renderer() {}
 
 		usr_scene::TestScene* getScene() { return &test_scene; }
+		//mrt_scene::MRTScene* getScene() { return &mrt_scn; }
 
 		void initGL();
 		void resizeGL(int w, int h);
