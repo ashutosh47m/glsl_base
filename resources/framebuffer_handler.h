@@ -105,18 +105,17 @@ public:
 };
 
 
-class E_render_target
+class E_MRT
 {
 	ShaderBuffer			*m_RTData = NULL;
 	GLuint					 m_VaoHandle;
 	GLfloat					 m_ZPosition; 			// the position of the render target, u can move it closer to eye, or away from it
-	//FrameBuffer			*m_FrameBuffer = NULL;	// the FBO object
 	MRTFrameBuffer			*m_MRTFrameBuffer = NULL;
 	std::vector<GLenum>	 	 mDraw_buffers;
 	
 public:
 
-	E_render_target() {}
+	E_MRT() {}
 
 	void incrZPosition()
 	{
@@ -131,7 +130,6 @@ public:
 
 	void initEntity(GLuint &globalTextureCount, int w, int h)
 	{
-		//m_FrameBuffer = new FrameBuffer(w, h, globalTextureCount);
 		m_MRTFrameBuffer = new MRTFrameBuffer(w, h, globalTextureCount);
 
 		m_ZPosition = 2.0f;
@@ -161,7 +159,6 @@ public:
 
 	void bindFBOForDraw()
 	{
-		//glBindFramebuffer(GL_FRAMEBUFFER, m_FrameBuffer->m_ID);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_MRTFrameBuffer->m_ID);
 
 		glDrawBuffers(m_MRTFrameBuffer->m_MRTCount, &mDraw_buffers[0]);
@@ -186,11 +183,10 @@ public:
 			m_MRTFrameBuffer->draw(data, shader, m_ZPosition);
 	}
 
-	~E_render_target()
+	~E_MRT()
 	{
 		m_RTData->deleteResource();
 		delete m_RTData;
-		//delete m_FrameBuffer;
 		delete m_MRTFrameBuffer;
 	}
 	GLuint getVAOHandle() { return m_VaoHandle; }
