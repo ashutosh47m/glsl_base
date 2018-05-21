@@ -91,6 +91,7 @@ public:
 	ShaderProgram *volume_shader;				//volume: 3d texture
 	ShaderProgram *volume_ray_caster;			//volume: ray caster
 	ShaderProgram *lightscatter;				//god rays
+	ShaderProgram *grayscale;					
 
 	ShaderLibrary()
 	{ }
@@ -105,12 +106,15 @@ public:
 		volume_shader				= new ShaderProgram("../src/renderer/shaders/volume");
 		volume_ray_caster			= new ShaderProgram("../src/renderer/shaders/ray_caster");
 		lightscatter				= new ShaderProgram("../src/renderer/shaders/lightscatter");
+		grayscale					= new ShaderProgram("../src/renderer/shaders/grayscale");
 	}
 
 	~ShaderLibrary()
 	{
 		if (rendertarget != NULL)
 			delete rendertarget;
+		if (grayscale!= NULL)
+			delete grayscale;
 		if (red_triangle_shader != NULL)
 			delete red_triangle_shader;
 		if (triangle_shader != NULL)

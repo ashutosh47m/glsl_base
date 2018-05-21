@@ -12,6 +12,7 @@ May 2018, Ashutosh Morwal
 #include "../resources/buffer_handler.h"
 #include "../resources/shader_program.h"
 
+// used by post-process and debugRTDraw to draw on
 class rt_quad
 {
 	GLuint			m_VaoHandle;
@@ -51,6 +52,7 @@ public:
 	}
 };
 
+// multiple framebuffers
 class MRTFrameBuffer
 {
 public:
@@ -62,6 +64,7 @@ public:
 	GLuint					 m_ColorTexture[m_MRTCount];
 	GLuint					 m_MRTTextureID;
 	float					 m_debugRenderTargetPosition = 3.3f;
+	std::vector<GLenum>	 	 m_drawBuffers;
 
 	MRTFrameBuffer() {}
 
@@ -85,9 +88,11 @@ public:
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-			glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0+i, m_ColorTexture[i], 0);
+			glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, m_ColorTexture[i], 0);
+
+			m_drawBuffers.push_back(GL_COLOR_ATTACHMENT0 + i);
 		}
-		
+
 		glBindTexture(GL_TEXTURE_2D, m_DepthTexture);
 		glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT, m_Width, m_Height);
 
@@ -102,6 +107,15 @@ public:
 		glDeleteTextures(1, &m_DepthTexture);
 		glDeleteFramebuffers(1, &m_ID);
 	} 
+
+	void activateMRTTextures()
+	{
+		for (GLuint i = 0; i < m_MRTCount; i++)
+		{
+			glActiveTexture(GL_TEXTURE0 + i);
+			glBindTexture(GL_TEXTURE_2D, m_ColorTexture[i]);
+		}
+	}
 
 	void drawDebugRenderTargets(glsl_data& data, ShaderProgram *& shader)
 	{
@@ -118,55 +132,27 @@ public:
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		}
 	}
-
-	void draw(glsl_data& data, ShaderProgram *& shader, float zposition)
-	{
-		for (GLuint i = 0;i < m_MRTCount;i++)
-		{
-			glActiveTexture(GL_TEXTURE0+i);
-			glBindTexture(GL_TEXTURE_2D, m_ColorTexture[i]);
-		}
-
-		shader->setUniform("u_RT1_tex", m_MRTTextureID);
-
-#ifdef _DEBUG 
-		if(m_MRTCount>1)
-			drawDebugRenderTargets(data, shader);
-#endif
-	}
 };
 
+// after the multi-render pass post-process is used for rendering the desired framebuffer object onto the screen
+// this is what user will see.
 class PostProcess
 {
 	GLuint		m_VaoHandle;	// vao handle used for RT quad
 	glm::mat4	m_ModelMat;
 	float		m_zPosition;
-	GLuint		m_MRTTextureID;
+
 public:
 	PostProcess() {}
 	PostProcess(GLuint vaohandle) : m_VaoHandle(vaohandle)
 	{}
 
-	void initData(GLuint vaoHandle, GLuint mrtStart, float zPosition)
+	void initData(GLuint vaoHandle, float zPosition)
 	{
 		m_VaoHandle = vaoHandle;
-		m_MRTTextureID = mrtStart;
 		m_zPosition = zPosition;
 	}
 
-	void draw(glsl_data& data, ShaderProgram *& shader)
-	{
-		glBindVertexArray(m_VaoHandle);
-
-		shader->setUniform("u_RT1_tex", m_MRTTextureID + 1);
-
-		m_ModelMat = data.glm_model;
-		m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(16.0f, 9.0f, 1.0f));
-		m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, m_zPosition));
-		shader->setUniform("u_m4MVP", data.glm_projection * data.getDefaultEye() * m_ModelMat);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	}
-	
 	void draw(glsl_data& data, ShaderProgram *& shader, GLuint textureID)
 	{
 		glBindVertexArray(m_VaoHandle);
@@ -181,84 +167,7 @@ public:
 	}
 };
 
-class E_MRT
-{
-	rt_quad					 m_RTQuad;
-	GLuint					 m_VaoHandle;
-	GLfloat					 m_ZPosition; 			// the position of the render target, u can move it closer to eye, or away from it
-	MRTFrameBuffer			*m_MRTFrameBuffer = NULL;
-	std::vector<GLenum>	 	 mDraw_buffers;
-	PostProcess				 postprocess;
-
-public:
-
-	E_MRT() {}
-
-	void incrZPosition()
-	{
-		m_ZPosition += .01f;
-		printf("m_ZPosition %f\n", m_ZPosition);
-	}
-	void decrZPosition()
-	{
-		m_ZPosition -= .01f;
-		printf("m_ZPosition %f\n", m_ZPosition);
-	}
-
-	void initEntity(GLuint &globalTextureCount, int w, int h)
-	{
-		m_MRTFrameBuffer = new MRTFrameBuffer(w, h, globalTextureCount);
-
-		m_ZPosition = 2.0f;
-
-		for (int i = 0;i < m_MRTFrameBuffer->m_MRTCount; i++)
-			mDraw_buffers.push_back(GL_COLOR_ATTACHMENT0 + i);
-
-		m_RTQuad.initEntity();
-		m_VaoHandle = m_RTQuad.getVaoHandle();
-		postprocess.initData(m_VaoHandle, m_MRTFrameBuffer->m_MRTTextureID, m_ZPosition);
-	}
-
-	void bindFBOForDraw()
-	{
-		glBindFramebuffer(GL_FRAMEBUFFER, m_MRTFrameBuffer->m_ID);
-
-		glDrawBuffers(m_MRTFrameBuffer->m_MRTCount, &mDraw_buffers[0]);
-
-		// if size of viewport for FBO is different than mainRT size then change the viewport
-		//glViewport(0, 0, m_FBOWidth, m_FBOHeight);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	}
-	void unBindFBO()
-	{
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		// reset the viewport
-		//glViewport(0, 0, m_FBOWidth, m_FBOHeight);
-	}
-
-	void draw(glsl_data& data, ShaderProgram *& shader)
-	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glBindVertexArray(m_VaoHandle);
-			glUseProgram(shader->getShaderProgramHandle());
-			m_MRTFrameBuffer->draw(data, shader, m_ZPosition);
-		
-		postprocess.draw(data, shader);
-	}
-
-	~E_MRT()
-	{
-		delete m_MRTFrameBuffer;
-	}
-	GLuint getVAOHandle() { return m_VaoHandle; }
-
-	void enable()
-	{
-		glBindVertexArray(m_VaoHandle);
-	}
-};
-
+// single frame buffer
 class FrameBuffer
 {
 public:
@@ -266,15 +175,16 @@ public:
 	GLuint					 m_ColorTexture;
 	GLuint					 m_DepthTexture;
 	GLuint					 m_Width, m_Height;
-	GLuint					 m_UniformID;		// the global texture ID
+	GLuint					 m_MRTTextureID;
 
 	FrameBuffer() {}
 
-	FrameBuffer(GLuint w, GLuint h, GLuint uni) :
+	FrameBuffer(GLuint w, GLuint h, GLuint &globalTextureCount) :
 		m_Width(w),
-		m_Height(h),
-		m_UniformID(uni)
+		m_Height(h)
 	{
+		m_MRTTextureID = ++globalTextureCount;
+
 		glGenFramebuffers(1, &m_ID);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_ID);
 
@@ -305,5 +215,87 @@ public:
 		glDeleteFramebuffers(1, &m_ID);
 	}
 };
+
+// this class is going to create multiple framebuffers for one draw call.
+class E_MRT
+{
+	rt_quad					 m_RTQuad;
+	GLuint					 m_VaoHandle;
+	GLfloat					 m_ZPosition; 			// the position of the render target, u can move it closer to eye, or away from it
+	MRTFrameBuffer			*m_MRTFrameBuffer = NULL;
+	FrameBuffer				*m_fboGrayscale = NULL;
+	PostProcess				 postprocess;
+
+public:
+
+	E_MRT() {}
+
+	void incrZPosition()
+	{
+		m_ZPosition += .01f;
+		printf("m_ZPosition %f\n", m_ZPosition);
+	}
+	void decrZPosition()
+	{
+		m_ZPosition -= .01f;
+		printf("m_ZPosition %f\n", m_ZPosition);
+	}
+
+	void initEntity(GLuint &globalTextureCount, int w, int h)
+	{
+		m_MRTFrameBuffer = new MRTFrameBuffer(w, h, globalTextureCount);
+
+		m_fboGrayscale = new FrameBuffer(w, h, globalTextureCount);
+
+		m_ZPosition = 2.0f;
+
+		m_RTQuad.initEntity();
+		m_VaoHandle = m_RTQuad.getVaoHandle();
+		postprocess.initData(m_VaoHandle, m_ZPosition);
+	}
+
+	void bindFBOForDraw()
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, m_MRTFrameBuffer->m_ID);
+
+		glDrawBuffers(m_MRTFrameBuffer->m_MRTCount, &m_MRTFrameBuffer->m_drawBuffers[0]);
+
+		// if size of viewport for FBO is different than mainRT size then change the viewport
+		//glViewport(0, 0, m_FBOWidth, m_FBOHeight);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+	void unBindFBO()
+	{
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		// reset the viewport
+		//glViewport(0, 0, m_FBOWidth, m_FBOHeight);
+	}
+
+	void draw(glsl_data& data, ShaderProgram *& shader)
+	{
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glBindVertexArray(m_VaoHandle);
+		glUseProgram(shader->getShaderProgramHandle());
+		
+		m_MRTFrameBuffer->activateMRTTextures();
+#ifdef _DEBUG 
+//		m_MRTFrameBuffer->drawDebugRenderTargets(data, shader);
+#endif		
+		postprocess.draw(data, shader, m_MRTFrameBuffer->m_MRTTextureID + 0);
+	}
+
+	~E_MRT()
+	{
+		delete m_MRTFrameBuffer;
+	}
+	GLuint getVAOHandle() { return m_VaoHandle; }
+
+	void enable()
+	{
+		glBindVertexArray(m_VaoHandle);
+	}
+};
+
 
 #endif
