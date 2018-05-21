@@ -58,7 +58,7 @@ public:
 	GLuint					 m_ID;				// used for generating the FBO
 	GLuint					 m_DepthTexture;
 	GLuint					 m_Width, m_Height;
-	static const GLuint		 m_MRTCount = 2; 	// cannot be less than 1, as 1 render target is must for rendering
+	static const GLuint		 m_MRTCount = 4; 	// cannot be less than 1, as 1 render target is must for rendering
 	GLuint					 m_ColorTexture[m_MRTCount];
 	GLuint					 m_MRTTextureID;
 	float					 m_debugRenderTargetPosition = 3.3f;
@@ -129,18 +129,55 @@ public:
 
 		shader->setUniform("u_RT1_tex", m_MRTTextureID);
 
-		m_ModelMat = data.glm_model;
-		m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(16.0f, 9.0f, 1.0f));
-		m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, zposition));
-		shader->setUniform("u_m4MVP", data.glm_projection * data.getDefaultEye() * m_ModelMat);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		
 #ifdef _DEBUG 
 		if(m_MRTCount>1)
 			drawDebugRenderTargets(data, shader);
 #endif
+	}
+};
 
-		glBindTexture(GL_TEXTURE_2D, 0);
+class PostProcess
+{
+	GLuint		m_VaoHandle;	// vao handle used for RT quad
+	glm::mat4	m_ModelMat;
+	float		m_zPosition;
+	GLuint		m_MRTTextureID;
+public:
+	PostProcess() {}
+	PostProcess(GLuint vaohandle) : m_VaoHandle(vaohandle)
+	{}
+
+	void initData(GLuint vaoHandle, GLuint mrtStart, float zPosition)
+	{
+		m_VaoHandle = vaoHandle;
+		m_MRTTextureID = mrtStart;
+		m_zPosition = zPosition;
+	}
+
+	void draw(glsl_data& data, ShaderProgram *& shader)
+	{
+		glBindVertexArray(m_VaoHandle);
+
+		shader->setUniform("u_RT1_tex", m_MRTTextureID + 1);
+
+		m_ModelMat = data.glm_model;
+		m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(16.0f, 9.0f, 1.0f));
+		m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, m_zPosition));
+		shader->setUniform("u_m4MVP", data.glm_projection * data.getDefaultEye() * m_ModelMat);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	}
+	
+	void draw(glsl_data& data, ShaderProgram *& shader, GLuint textureID)
+	{
+		glBindVertexArray(m_VaoHandle);
+
+		shader->setUniform("u_RT1_tex", textureID);
+
+		m_ModelMat = data.glm_model;
+		m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(16.0f, 9.0f, 1.0f));
+		m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, m_zPosition));
+		shader->setUniform("u_m4MVP", data.glm_projection * data.getDefaultEye() * m_ModelMat);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	}
 };
 
@@ -151,7 +188,8 @@ class E_MRT
 	GLfloat					 m_ZPosition; 			// the position of the render target, u can move it closer to eye, or away from it
 	MRTFrameBuffer			*m_MRTFrameBuffer = NULL;
 	std::vector<GLenum>	 	 mDraw_buffers;
-	
+	PostProcess				 postprocess;
+
 public:
 
 	E_MRT() {}
@@ -178,6 +216,7 @@ public:
 
 		m_RTQuad.initEntity();
 		m_VaoHandle = m_RTQuad.getVaoHandle();
+		postprocess.initData(m_VaoHandle, m_MRTFrameBuffer->m_MRTTextureID, m_ZPosition);
 	}
 
 	void bindFBOForDraw()
@@ -192,6 +231,7 @@ public:
 	}
 	void unBindFBO()
 	{
+		glBindTexture(GL_TEXTURE_2D, 0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		// reset the viewport
 		//glViewport(0, 0, m_FBOWidth, m_FBOHeight);
@@ -203,6 +243,8 @@ public:
 		glBindVertexArray(m_VaoHandle);
 			glUseProgram(shader->getShaderProgramHandle());
 			m_MRTFrameBuffer->draw(data, shader, m_ZPosition);
+		
+		postprocess.draw(data, shader);
 	}
 
 	~E_MRT()
