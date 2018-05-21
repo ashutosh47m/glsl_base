@@ -17,7 +17,7 @@ void main()
 	//we can get the sample value from the texture using the red channel. Here, we set all 4
 	//components as the sample value in the texture which gives us a shader of grey.
 	gl_FragData[0] = texture(u_volume, vUV).rrrr;
-	gl_FragData[1] = vec4(1,0,0,1);
+	gl_FragData[1] = vec4(0,0,0,1);
 	gl_FragData[2] = vec4(1,1,0,1);
 	gl_FragData[3] = vec4(1,0,1,1);
 }

@@ -19,7 +19,7 @@ public:
 	GLuint					 m_ID;				// used for generating the FBO
 	GLuint					 m_DepthTexture;
 	GLuint					 m_Width, m_Height;
-	static const GLuint		 m_MRTCount = 4; 	// cannot be less than 1, as 1 render target is must for rendering
+	static const GLuint		 m_MRTCount = 2; 	// cannot be less than 1, as 1 render target is must for rendering
 	GLuint					 m_ColorTexture[m_MRTCount];
 	GLuint					 m_MRTTextureID;
 	float					 m_debugRenderTargetPosition = 3.3f;
@@ -173,7 +173,6 @@ public:
 		// reset the viewport
 		//glViewport(0, 0, m_FBOWidth, m_FBOHeight);
 	}
-
 
 	void draw(glsl_data& data, ShaderProgram *& shader)
 	{
