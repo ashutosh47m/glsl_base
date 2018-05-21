@@ -42,6 +42,7 @@ void TestScene::initialize()
 	
 	//cube			//colored
 	mE_cube.initEntity(true);
+	mE_ColoredSkybox.initEntity(true);
 	
 	//load camera
 	mT_camera = new YP_Camera(m_width, m_height);
@@ -83,6 +84,11 @@ void TestScene::renderWorld()
 	mE_X_axes.draw(data, getShaderLibrary()->colored_geometry);
 	mE_Y_axes.draw(data, getShaderLibrary()->colored_geometry);
 	mE_Z_axes.draw(data, getShaderLibrary()->colored_geometry);
+
+	m_ModelMat = data.glm_model;
+	m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(24, 24, 24));
+	m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
+	mE_ColoredSkybox.draw(data, getShaderLibrary()->colored_geometry, m_ModelMat);
 
 	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(0, 2, 2));
 	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(0, 1, -2));

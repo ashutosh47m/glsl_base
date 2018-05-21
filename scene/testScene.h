@@ -39,6 +39,7 @@ namespace usr_scene
 		E_colored_line				mE_X_axes, mE_Y_axes, mE_Z_axes;
 		//E_3d_texture_volume		mE_vol;
 		E_cube						mE_cube;
+		E_cube						mE_ColoredSkybox;
 		E_volume_ray_caster			mE_vrc; // volume ray caster
 
 		// render targets : I believe we need a separate class handling all the RTs.
@@ -47,7 +48,7 @@ namespace usr_scene
 		int							m_width, m_height;
 		YP_Camera					*mT_camera;			// t stands for tools, i.e. YP_Camera comes under tools category
 		glm::vec3					mViewDirection;
-
+		glm::mat4					m_ModelMat;
 		bool						wasd[4] = { false };
 	
 		void initAxes();

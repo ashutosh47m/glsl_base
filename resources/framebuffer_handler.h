@@ -12,6 +12,45 @@ May 2018, Ashutosh Morwal
 #include "../resources/buffer_handler.h"
 #include "../resources/shader_program.h"
 
+class rt_quad
+{
+	GLuint			m_VaoHandle;
+	ShaderBuffer   *m_RTData = NULL;
+public:
+	void initEntity()
+	{
+		std::vector <float> v1 =
+		{
+			.5, -.5, .5,
+			-.5, -.5, .5,
+			.5,  .5, .5,
+			-.5,  .5, .5,
+		};
+
+		std::vector<float> v2 =
+		{
+			0,	0,
+			1,	0,
+			0,	1,
+			1,	1,
+		};
+
+		m_RTData = new ShaderBuffer_POS_UV(v1, v2);
+		m_VaoHandle = m_RTData->getVAOHandle();
+	}
+
+	GLuint getVaoHandle()
+	{
+		return m_VaoHandle;
+	}
+
+	~rt_quad()
+	{
+		m_RTData->deleteResource();
+		delete m_RTData;
+	}
+};
+
 class MRTFrameBuffer
 {
 public:
@@ -67,7 +106,7 @@ public:
 	void drawDebugRenderTargets(glsl_data& data, ShaderProgram *& shader)
 	{
 		float j = 0;
-		for (GLuint i = 1; i < m_MRTCount; i++, j -= 1.1f)
+		for (GLuint i = 0; i < m_MRTCount; i++, j -= 1.1f)
 		{
 			shader->setUniform("u_RT1_tex", m_MRTTextureID + i);
 
@@ -89,6 +128,7 @@ public:
 		}
 
 		shader->setUniform("u_RT1_tex", m_MRTTextureID);
+
 		m_ModelMat = data.glm_model;
 		m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(16.0f, 9.0f, 1.0f));
 		m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, zposition));
@@ -104,10 +144,9 @@ public:
 	}
 };
 
-
 class E_MRT
 {
-	ShaderBuffer			*m_RTData = NULL;
+	rt_quad					 m_RTQuad;
 	GLuint					 m_VaoHandle;
 	GLfloat					 m_ZPosition; 			// the position of the render target, u can move it closer to eye, or away from it
 	MRTFrameBuffer			*m_MRTFrameBuffer = NULL;
@@ -137,24 +176,8 @@ public:
 		for (int i = 0;i < m_MRTFrameBuffer->m_MRTCount; i++)
 			mDraw_buffers.push_back(GL_COLOR_ATTACHMENT0 + i);
 
-		std::vector <float> v1 =
-		{
-			 .5, -.5, .5,
-			-.5, -.5, .5,
-			 .5,  .5, .5,
-			-.5,  .5, .5,
-		};
-
-		std::vector<float> v2 =
-		{
-			0,	0,
-			1,	0,
-			0,	1,
-			1,	1,
-		};
-
-		m_RTData = new ShaderBuffer_POS_UV(v1, v2);
-		m_VaoHandle = m_RTData->getVAOHandle();
+		m_RTQuad.initEntity();
+		m_VaoHandle = m_RTQuad.getVaoHandle();
 	}
 
 	void bindFBOForDraw()
@@ -184,8 +207,6 @@ public:
 
 	~E_MRT()
 	{
-		m_RTData->deleteResource();
-		delete m_RTData;
 		delete m_MRTFrameBuffer;
 	}
 	GLuint getVAOHandle() { return m_VaoHandle; }
@@ -194,13 +215,7 @@ public:
 	{
 		glBindVertexArray(m_VaoHandle);
 	}
-
 };
-
-
-
-
-
 
 class FrameBuffer
 {

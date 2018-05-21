@@ -90,6 +90,7 @@ public:
 	ShaderProgram *colored_geometry;			//colored_geometry
 	ShaderProgram *volume_shader;				//volume: 3d texture
 	ShaderProgram *volume_ray_caster;			//volume: ray caster
+	ShaderProgram *lightscatter;				//god rays
 
 	ShaderLibrary()
 	{ }
@@ -103,6 +104,7 @@ public:
 		colored_geometry			= new ShaderProgram("../src/renderer/shaders/colored_geometry");
 		volume_shader				= new ShaderProgram("../src/renderer/shaders/volume");
 		volume_ray_caster			= new ShaderProgram("../src/renderer/shaders/ray_caster");
+		lightscatter				= new ShaderProgram("../src/renderer/shaders/lightscatter");
 	}
 
 	~ShaderLibrary()
@@ -121,6 +123,8 @@ public:
 			delete volume_shader;
 		if (volume_ray_caster != NULL)
 			delete volume_ray_caster;
+		if (lightscatter!= NULL)
+			delete lightscatter;
 	}
 };
 

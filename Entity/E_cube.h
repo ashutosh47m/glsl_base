@@ -92,6 +92,15 @@ public:
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
 	}
 	
+	// draw at the given modelmat
+	void draw(glsl_data& data, ShaderProgram *& shader, glm::mat4 modelMat)
+	{
+		glBindVertexArray(m_VaoHandle);
+		glUseProgram(shader->getShaderProgramHandle());
+		shader->setUniform("u_m4MVP", data.glm_projection * data.glm_view * modelMat);
+		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
+	}
+
 	// this will draw at specified position
 	void draw(glsl_data& data, ShaderProgram *& shader, glm::vec3 position)
 	{
