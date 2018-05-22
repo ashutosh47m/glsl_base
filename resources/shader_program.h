@@ -85,7 +85,6 @@ class ShaderLibrary
 
 public:
 
-	ShaderProgram *rendertarget;				// a simple quad used for rendertargets
 	ShaderProgram *red_triangle_shader;			//first_red_triangle
 	ShaderProgram *triangle_shader;				//first_triangle
 	ShaderProgram *textured_colored_geometry;	//textured_geometry
@@ -94,35 +93,31 @@ public:
 	ShaderProgram *volume_ray_caster;			//volume: ray caster
 	
 	// post fx shaders
-	ShaderProgram *fx_lightscatter;				//god rays
+	ShaderProgram *fx_rendertarget;				// a simple quad used for rendertargets
+	ShaderProgram *fx_lightscatter;				// god rays
 	ShaderProgram *fx_grayscale;
 
 	ShaderLibrary()
 	{ }
 
-	void getPostFxShaders(std::vector<ShaderProgram*> &shaders)
-	{
-		shaders.push_back(fx_lightscatter);
-		shaders.push_back(fx_grayscale);
-	}
-
 	void loadShaders()
 	{
-		rendertarget				= new ShaderProgram("../src/renderer/shaders/rendertarget", "rendertarget");
 		red_triangle_shader			= new ShaderProgram("../src/renderer/shaders/first_red_triangle", "first_red_triangle");
 		triangle_shader				= new ShaderProgram("../src/renderer/shaders/first_triangle", "first_triangle");
 		textured_colored_geometry	= new ShaderProgram("../src/renderer/shaders/textured_colored_geometry", "textured_colored_geometry");
 		colored_geometry			= new ShaderProgram("../src/renderer/shaders/colored_geometry", "colored_geometry");
 		volume_shader				= new ShaderProgram("../src/renderer/shaders/volume", "volume");
 		volume_ray_caster			= new ShaderProgram("../src/renderer/shaders/ray_caster", "ray_caster");
+
+		fx_rendertarget				= new ShaderProgram("../src/renderer/shaders/rendertarget", "rendertarget");
 		fx_lightscatter				= new ShaderProgram("../src/renderer/shaders/lightscatter", "lightscatter");
 		fx_grayscale				= new ShaderProgram("../src/renderer/shaders/grayscale", "grayscale");
 	}
 
 	~ShaderLibrary()
 	{
-		if (rendertarget != NULL)
-			delete rendertarget;
+		if (fx_rendertarget != NULL)
+			delete fx_rendertarget;
 		if (fx_grayscale!= NULL)
 			delete fx_grayscale;
 		if (red_triangle_shader != NULL)

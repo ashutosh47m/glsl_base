@@ -314,19 +314,20 @@ public:
 		//glViewport(0, 0, m_FBOWidth, m_FBOHeight);
 	}
 
-	void draw(glsl_data& data, ShaderProgram *& shader, ShaderProgram *& lScattershader)
+	void draw(glsl_data& data, ShaderLibrary* shaderLib)
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glBindVertexArray(m_VaoHandle);
-		glUseProgram(shader->getShaderProgramHandle());
+		glUseProgram(shaderLib->fx_rendertarget->getShaderProgramHandle()); 
 		
 		m_MRTFrameBuffer->activateMRTTextures();
 #ifdef _DEBUG 
-		m_MRTFrameBuffer->drawDebugRenderTargets(data, shader);
+		m_MRTFrameBuffer->drawDebugRenderTargets(data, shaderLib->fx_rendertarget);
 #endif		
-		m_fboLightScatter->renderToTexture(data, lScattershader, m_MRTFrameBuffer->m_MRTTextureID+1);
+		// light scatter aka god rays
+		m_fboLightScatter->renderToTexture(data, shaderLib->fx_lightscatter, m_MRTFrameBuffer->m_MRTTextureID+0);
 
-		postprocess.draw(data, shader, m_fboLightScatter->m_MRTTextureID, m_fboLightScatter->m_ColorTexture);
+		postprocess.draw(data, shaderLib->fx_rendertarget, m_fboLightScatter->m_MRTTextureID, m_fboLightScatter->m_ColorTexture);
 	}
 
 	~E_fxMRT()
