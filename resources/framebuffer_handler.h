@@ -212,6 +212,33 @@ public:
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
+
+	void bindFBO()
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, m_ID);
+		static const GLenum draw_buffers[] = { GL_COLOR_ATTACHMENT0 };
+		glDrawBuffers(1, draw_buffers);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+	void renderToTexture(glsl_data& data, ShaderProgram *& shaderfx, GLuint textureID)
+	{
+		bindFBO();
+		glUseProgram(shaderfx->getShaderProgramHandle());
+		m_ModelMat = data.glm_model;
+		m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(16.0f, 9.0f, 1.0f));
+		m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, m_ZPosition));
+		shaderfx->setUniform("u_RT1_tex", textureID);
+		shaderfx->setUniform("u_m4MVP", data.glm_projection * data.getDefaultEye() * m_ModelMat);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+		unbindFBO();
+	}
+	void unbindFBO()
+	{
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+	
 	~FrameBuffer()
 	{
 		glDeleteTextures(1, &m_ColorTexture);
@@ -247,11 +274,10 @@ public:
 
 	void initEntity(GLuint &globalTextureCount, int w, int h)
 	{
-		m_MRTFrameBuffer = new MRTFrameBuffer(w, h, globalTextureCount);
-
-		m_fboGrayscale = new FrameBuffer(w, h, globalTextureCount, m_ZPosition);
-
 		m_ZPosition = 2.0f;
+
+		m_MRTFrameBuffer = new MRTFrameBuffer(w, h, globalTextureCount);
+		m_fboGrayscale = new FrameBuffer(w, h, globalTextureCount, m_ZPosition);
 
 		m_RTQuad.initEntity();
 		m_VaoHandle = m_RTQuad.getVaoHandle();
@@ -286,22 +312,7 @@ public:
 #ifdef _DEBUG 
 		m_MRTFrameBuffer->drawDebugRenderTargets(data, shader);
 #endif		
-		//bind ->
-		glBindFramebuffer(GL_FRAMEBUFFER, m_fboGrayscale->m_ID);
-		static const GLenum draw_buffers[] = { GL_COLOR_ATTACHMENT0 };
-		glDrawBuffers(1, draw_buffers);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			// draw
-			glUseProgram(grayshader->getShaderProgramHandle());
-			m_ModelMat = data.glm_model;
-			m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(16.0f, 9.0f, 1.0f));
-			m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, m_ZPosition));
-			grayshader->setUniform("u_RT1_tex", m_MRTFrameBuffer->m_MRTTextureID + 3);
-			grayshader->setUniform("u_m4MVP", data.glm_projection * data.getDefaultEye() * m_ModelMat);
-			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		//unbind -
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		m_fboGrayscale->renderToTexture(data, grayshader, m_MRTFrameBuffer->m_MRTTextureID+0);
 
 		postprocess.draw(data, shader, m_fboGrayscale->m_MRTTextureID, m_fboGrayscale->m_ColorTexture);
 	}
