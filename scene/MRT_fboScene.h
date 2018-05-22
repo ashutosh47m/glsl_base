@@ -19,7 +19,7 @@ namespace mrt_scene
 {
 	class MRTScene : public AbstractScene
 	{
-		E_MRT						mE_mainRT;
+		E_fxMRT						mE_fxmainRT;
 		int							m_width, m_height;
 		YP_Camera					*mT_camera;			// t stands for tools, i.e. YP_Camera comes under tools category
 		glm::vec3					mViewDirection;

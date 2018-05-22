@@ -43,7 +43,7 @@ namespace usr_scene
 		E_volume_ray_caster			mE_vrc; // volume ray caster
 
 		// render targets : I believe we need a separate class handling all the RTs.
-		E_MRT						mE_mainRT;
+		E_fxMRT						mE_fxmainRT;
 
 		int							m_width, m_height;
 		YP_Camera					*mT_camera;			// t stands for tools, i.e. YP_Camera comes under tools category

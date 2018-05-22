@@ -90,8 +90,8 @@ public:
 	ShaderProgram *colored_geometry;			//colored_geometry
 	ShaderProgram *volume_shader;				//volume: 3d texture
 	ShaderProgram *volume_ray_caster;			//volume: ray caster
-	ShaderProgram *lightscatter;				//god rays
-	ShaderProgram *grayscale;					
+	ShaderProgram *fx_lightscatter;				//god rays
+	ShaderProgram *fx_grayscale;
 
 	ShaderLibrary()
 	{ }
@@ -105,16 +105,16 @@ public:
 		colored_geometry			= new ShaderProgram("../src/renderer/shaders/colored_geometry");
 		volume_shader				= new ShaderProgram("../src/renderer/shaders/volume");
 		volume_ray_caster			= new ShaderProgram("../src/renderer/shaders/ray_caster");
-		lightscatter				= new ShaderProgram("../src/renderer/shaders/lightscatter");
-		grayscale					= new ShaderProgram("../src/renderer/shaders/grayscale");
+		fx_lightscatter				= new ShaderProgram("../src/renderer/shaders/lightscatter");
+		fx_grayscale				= new ShaderProgram("../src/renderer/shaders/grayscale");
 	}
 
 	~ShaderLibrary()
 	{
 		if (rendertarget != NULL)
 			delete rendertarget;
-		if (grayscale!= NULL)
-			delete grayscale;
+		if (fx_grayscale!= NULL)
+			delete fx_grayscale;
 		if (red_triangle_shader != NULL)
 			delete red_triangle_shader;
 		if (triangle_shader != NULL)
@@ -127,8 +127,8 @@ public:
 			delete volume_shader;
 		if (volume_ray_caster != NULL)
 			delete volume_ray_caster;
-		if (lightscatter!= NULL)
-			delete lightscatter;
+		if (fx_lightscatter!= NULL)
+			delete fx_lightscatter;
 	}
 };
 

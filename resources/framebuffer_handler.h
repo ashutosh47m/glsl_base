@@ -140,7 +140,7 @@ class PostProcess
 {
 	GLuint		m_VaoHandle;	// vao handle used for RT quad
 	glm::mat4	m_ModelMat;
-	float		m_zPosition;
+	float		m_ZPosition;
 
 public:
 	PostProcess() {}
@@ -150,18 +150,20 @@ public:
 	void initData(GLuint vaoHandle, float zPosition)
 	{
 		m_VaoHandle = vaoHandle;
-		m_zPosition = zPosition;
+		m_ZPosition = zPosition;
 	}
 
-	void draw(glsl_data& data, ShaderProgram *& shader, GLuint textureID)
+	void draw(glsl_data& data, ShaderProgram *& shader, GLuint textureID, GLuint texture)
 	{
 		glBindVertexArray(m_VaoHandle);
 
+		glActiveTexture(GL_TEXTURE0 + textureID);
+		glBindTexture(GL_TEXTURE_2D, texture);
 		shader->setUniform("u_RT1_tex", textureID);
 
 		m_ModelMat = data.glm_model;
 		m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(16.0f, 9.0f, 1.0f));
-		m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, m_zPosition));
+		m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, m_ZPosition));
 		shader->setUniform("u_m4MVP", data.glm_projection * data.getDefaultEye() * m_ModelMat);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	}
@@ -176,12 +178,14 @@ public:
 	GLuint					 m_DepthTexture;
 	GLuint					 m_Width, m_Height;
 	GLuint					 m_MRTTextureID;
-
+	float					 m_ZPosition;
+	glm::mat4				 m_ModelMat;
 	FrameBuffer() {}
 
-	FrameBuffer(GLuint w, GLuint h, GLuint &globalTextureCount) :
+	FrameBuffer(GLuint w, GLuint h, GLuint &globalTextureCount, float zpos) :
 		m_Width(w),
-		m_Height(h)
+		m_Height(h), 
+		m_ZPosition(zpos)
 	{
 		m_MRTTextureID = ++globalTextureCount;
 
@@ -217,7 +221,7 @@ public:
 };
 
 // this class is going to create multiple framebuffers for one draw call.
-class E_MRT
+class E_fxMRT
 {
 	rt_quad					 m_RTQuad;
 	GLuint					 m_VaoHandle;
@@ -225,10 +229,10 @@ class E_MRT
 	MRTFrameBuffer			*m_MRTFrameBuffer = NULL;
 	FrameBuffer				*m_fboGrayscale = NULL;
 	PostProcess				 postprocess;
-
+	glm::mat4				 m_ModelMat;
 public:
 
-	E_MRT() {}
+	E_fxMRT() {}
 
 	void incrZPosition()
 	{
@@ -245,7 +249,7 @@ public:
 	{
 		m_MRTFrameBuffer = new MRTFrameBuffer(w, h, globalTextureCount);
 
-		m_fboGrayscale = new FrameBuffer(w, h, globalTextureCount);
+		m_fboGrayscale = new FrameBuffer(w, h, globalTextureCount, m_ZPosition);
 
 		m_ZPosition = 2.0f;
 
@@ -272,7 +276,7 @@ public:
 		//glViewport(0, 0, m_FBOWidth, m_FBOHeight);
 	}
 
-	void draw(glsl_data& data, ShaderProgram *& shader)
+	void draw(glsl_data& data, ShaderProgram *& shader, ShaderProgram *& grayshader)
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glBindVertexArray(m_VaoHandle);
@@ -280,13 +284,31 @@ public:
 		
 		m_MRTFrameBuffer->activateMRTTextures();
 #ifdef _DEBUG 
-//		m_MRTFrameBuffer->drawDebugRenderTargets(data, shader);
+		m_MRTFrameBuffer->drawDebugRenderTargets(data, shader);
 #endif		
-		postprocess.draw(data, shader, m_MRTFrameBuffer->m_MRTTextureID + 0);
+		//bind ->
+		glBindFramebuffer(GL_FRAMEBUFFER, m_fboGrayscale->m_ID);
+		static const GLenum draw_buffers[] = { GL_COLOR_ATTACHMENT0 };
+		glDrawBuffers(1, draw_buffers);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			// draw
+			glUseProgram(grayshader->getShaderProgramHandle());
+			m_ModelMat = data.glm_model;
+			m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(16.0f, 9.0f, 1.0f));
+			m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, m_ZPosition));
+			grayshader->setUniform("u_RT1_tex", m_MRTFrameBuffer->m_MRTTextureID + 3);
+			grayshader->setUniform("u_m4MVP", data.glm_projection * data.getDefaultEye() * m_ModelMat);
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		//unbind -
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		postprocess.draw(data, shader, m_fboGrayscale->m_MRTTextureID, m_fboGrayscale->m_ColorTexture);
 	}
 
-	~E_MRT()
+	~E_fxMRT()
 	{
+		delete m_fboGrayscale;
 		delete m_MRTFrameBuffer;
 	}
 	GLuint getVAOHandle() { return m_VaoHandle; }

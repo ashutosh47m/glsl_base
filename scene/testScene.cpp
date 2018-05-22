@@ -20,7 +20,7 @@ void TestScene::initialize()
 	globalTextureCount = 0;
 	//render target
 	// the globalTextureCount will be incremented inside mainRTs initEntity based on the count of textures for RT
-	mE_mainRT.initEntity(globalTextureCount, m_width, m_height);
+	mE_fxmainRT.initEntity(globalTextureCount, m_width, m_height);
 
 	// triangles
 	mE_triangle.initEntity();	//inits the shaders and other resources
@@ -98,11 +98,11 @@ void TestScene::renderWorld()
 
 void TestScene::draw()
 {
-	mE_mainRT.bindFBOForDraw();
+	mE_fxmainRT.bindFBOForDraw();
 		renderWorld();
-	mE_mainRT.unBindFBO();
+	mE_fxmainRT.unBindFBO();
 	
-	mE_mainRT.draw(data, getShaderLibrary()->rendertarget);
+	mE_fxmainRT.draw(data, getShaderLibrary()->rendertarget, getShaderLibrary()->fx_grayscale);
 	glBindVertexArray(0);
 }
 
@@ -126,11 +126,11 @@ void TestScene::keyProcess(int key, int scancode, int action, int mods)
 			break;
 
 		case _2am_KEY_R:
-			mE_mainRT.decrZPosition();
+			mE_fxmainRT.decrZPosition();
 			break;
 
 		case _2am_KEY_T:
-			mE_mainRT.incrZPosition();
+			mE_fxmainRT.incrZPosition();
 			break;
 
 		case _2am_KEY_UP: break;

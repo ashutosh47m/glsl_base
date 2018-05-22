@@ -20,7 +20,7 @@ void MRTScene::initialize()
 	globalTextureCount = 0;
 	//render target
 	// the globalTextureCount will be incremented inside mainRTs initEntity based on the count of textures for RT
-	mE_mainRT.initEntity(globalTextureCount, m_width, m_height);
+	mE_fxmainRT.initEntity(globalTextureCount, m_width, m_height);
 
 	// inititlize the axes
 	initAxes();
@@ -54,11 +54,11 @@ void MRTScene::renderWorld()
 
 void MRTScene::draw()
 {
-	mE_mainRT.bindFBOForDraw();
+	mE_fxmainRT.bindFBOForDraw();
 		renderWorld();
-	mE_mainRT.unBindFBO();
+	mE_fxmainRT.unBindFBO();
 
-	mE_mainRT.draw(data, getShaderLibrary()->rendertarget);
+//	mE_fxmainRT.draw(data, getShaderLibrary()->rendertarget);
 	glBindVertexArray(0);
 }
 
@@ -82,11 +82,11 @@ void MRTScene::keyProcess(int key, int scancode, int action, int mods)
 			break;
 
 		case _2am_KEY_R:
-			mE_mainRT.decrZPosition();
+			mE_fxmainRT.decrZPosition();
 			break;
 
 		case _2am_KEY_T:
-			mE_mainRT.incrZPosition();
+			mE_fxmainRT.incrZPosition();
 			break;
 
 		case _2am_KEY_UP: break;
