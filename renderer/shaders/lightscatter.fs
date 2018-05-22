@@ -10,30 +10,30 @@ uniform sampler2D u_RT1_tex;
 
 layout (location = 0) out vec4 FragColor;
 
-const float exposure = 0.6;
-const float decay = 0.93;
-const float density = 0.96;
-const float weight = 0.4;
-const int NUM_SAMPLES = 80;
-const float clampMax = 1.0;
+uniform float u_exposure 	= 0.6;
+uniform float u_decay 		= 0.93;
+uniform float u_density 	= .96;
+uniform float u_weight 		= 0.4;
+uniform int   u_NUM_SAMPLES 	= 80;
+uniform float u_clampMax 	= 1.0;
 
 void main()
 {
     vec2 deltaTextCoord = vec2(fs_uv - lightPos.xy);
-    deltaTextCoord *= 1.0 /  float(NUM_SAMPLES) * density;
+    deltaTextCoord *= 1.0 /  float(u_NUM_SAMPLES) * u_density;
     vec2 coord = fs_uv;
     float illuminationDecay = 1.0;
 
-    for(int i=0; i < NUM_SAMPLES ; i++)
+    for(int i=0; i < u_NUM_SAMPLES ; i++)
     {
             coord -= deltaTextCoord;
             vec4 texel = texture2D(u_RT1_tex, coord);
-            texel *= illuminationDecay * weight;
+            texel *= illuminationDecay * u_weight;
 
             FragColor += texel;
 
-            illuminationDecay *= decay;
+            illuminationDecay *= u_decay;
     }
-    FragColor *= exposure;
-    FragColor = clamp(FragColor, 0.0, clampMax) * vec4(1.0,1.0,0.94, 1.0);
+    FragColor *= u_exposure;
+  //  FragColor = clamp(FragColor, 0.0, u_clampMax) * vec4(1.0,1.0,0.94, 1.0);
 }

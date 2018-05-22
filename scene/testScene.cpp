@@ -40,9 +40,9 @@ void TestScene::initialize()
 	//mE_vrc.initEntity				(++globalTextureCount, "..\\resources\\volumes\\engine256.raw", 256,256,256);
 	mE_vrc.initEntity				(++globalTextureCount, "..\\resources\\volumes\\head256x256x109\\head256x256x109.raw", 256,256,109);
 	
-	//cube			//colored
+	//cube			
 	mE_cube.initEntity(true);
-	mE_ColoredSkybox.initEntity(true);
+	mE_ColoredSkybox.initEntity(false);
 	
 	//load camera
 	mT_camera = new YP_Camera(m_width, m_height);

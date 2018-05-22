@@ -170,21 +170,28 @@ public:
 		m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, m_ZPosition));
 		shader->setUniform("u_m4MVP", data.glm_projection * data.getDefaultEye() * m_ModelMat);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		glUseProgram(0);
 	}
 
-	void CombinedDraw(glsl_data& data, ShaderProgram *& shader, GLuint textureID, GLuint texture)
+	void CombinedDraw(glsl_data& data, ShaderProgram *& shader, GLuint textureID1, GLuint texture1, GLuint textureID2, GLuint texture2 )
 	{
+		glUseProgram(shader->getShaderProgramHandle());
 		glBindVertexArray(m_VaoHandle);
 
-		glActiveTexture(GL_TEXTURE0 + textureID);
-		glBindTexture(GL_TEXTURE_2D, texture);
-		shader->setUniform("u_RT1_tex", textureID);
+		glActiveTexture(GL_TEXTURE0 + textureID1);
+		glBindTexture(GL_TEXTURE_2D, texture1);
+		shader->setUniform("u_godraysIntermediateTex", textureID1);
+
+		glActiveTexture(GL_TEXTURE0 + textureID2);
+		glBindTexture(GL_TEXTURE_2D, texture2);
+		shader->setUniform("u_colorTex", textureID2);
 
 		m_ModelMat = data.glm_model;
 		m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(16.0f, 9.0f, 1.0f));
 		m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, m_ZPosition));
 		shader->setUniform("u_m4MVP", data.glm_projection * data.getDefaultEye() * m_ModelMat);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		glUseProgram(0);
 	}
 };
 
@@ -239,28 +246,10 @@ public:
 		glDrawBuffers(1, draw_buffers);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
-	void renderToTexture(glsl_data& data, ShaderProgram *& shaderfx, GLuint textureID)
+	void renderToTexture()
 	{
 		bindFBO();
-		glUseProgram(shaderfx->getShaderProgramHandle());
-		m_ModelMat = data.glm_model;
-		m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(16.0f, 9.0f, 1.0f));
-		m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, m_ZPosition));
-		shaderfx->setUniform("u_RT1_tex", textureID);
-		
-		glm::mat4 __mvp = data.glm_projection * data.getDefaultEye() * m_ModelMat;
-		shaderfx->setUniform("u_m4MVP", __mvp);
-	
-		// this is not the place for calculating light position
-		glm::vec3 lightOnSS = 
-			(glm::vec3(__mvp[0][3]/ __mvp[3][3], __mvp[1][3]/ __mvp[3][3], __mvp[2][3]/ __mvp[3][3]))
-			* 0.5f
-			+ glm::vec3(0.5, 0.5, 0.5);
-
-		shaderfx->setUniform("lightPos", lightOnSS);
-
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
 		unbindFBO();
 	}
 	void unbindFBO()
@@ -332,6 +321,26 @@ public:
 		//glViewport(0, 0, m_FBOWidth, m_FBOHeight);
 	}
 
+	void sendLightPositionForScatter(glsl_data& data, ShaderProgram *& shaderfx, GLuint textureID)
+	{
+		glUseProgram(shaderfx->getShaderProgramHandle());
+		m_ModelMat = data.glm_model;
+		m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(16.0f, 9.0f, 1.0f));
+		m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, m_ZPosition));
+		shaderfx->setUniform("u_RT1_tex", textureID);
+
+		glm::mat4 __mvp = data.glm_projection * data.getDefaultEye() * m_ModelMat;
+		shaderfx->setUniform("u_m4MVP", __mvp);
+
+		// this is not the place for calculating light position
+		glm::vec3 lightOnSS =
+			(glm::vec3(__mvp[0][3] / __mvp[3][3], __mvp[1][3] / __mvp[3][3], __mvp[2][3] / __mvp[3][3]))
+			* 0.5f
+			+ glm::vec3(0.5, 0.5, 0.5);
+
+		shaderfx->setUniform("lightPos", lightOnSS);
+	}
+
 	void draw(glsl_data& data, ShaderLibrary* shaderLib)
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -343,9 +352,14 @@ public:
 		m_MRTFrameBuffer->drawDebugRenderTargets(data, shaderLib->fx_rendertarget);
 #endif		
 		// light scatter aka god rays
-		m_fboLightScatter->renderToTexture(data, shaderLib->fx_lightscatter, m_MRTFrameBuffer->m_MRTTextureID+1);
+		sendLightPositionForScatter(data, shaderLib->fx_lightscatter, m_MRTFrameBuffer->m_MRTTextureID + 1);
+		m_fboLightScatter->renderToTexture();
 		
-		postprocess.draw(data, shaderLib->fx_rendertarget, m_fboLightScatter->m_MRTTextureID, m_fboLightScatter->m_ColorTexture);
+		//postprocess.draw(data, shaderLib->fx_rendertarget, m_fboLightScatter->m_MRTTextureID, m_fboLightScatter->m_ColorTexture);
+		postprocess.CombinedDraw(data, shaderLib->fx_combineLightscatter, 
+			m_fboLightScatter->m_MRTTextureID, m_fboLightScatter->m_ColorTexture,
+			m_MRTFrameBuffer->m_MRTTextureID, m_MRTFrameBuffer->m_ColorTexture[0]);
+
 	}
 
 	~E_fxMRT()

@@ -96,6 +96,7 @@ public:
 	ShaderProgram *fx_rendertarget;				// a simple quad used for rendertargets
 	ShaderProgram *fx_lightscatter;				// god rays
 	ShaderProgram *fx_grayscale;
+	ShaderProgram *fx_combineLightscatter;
 
 	ShaderLibrary()
 	{ }
@@ -112,10 +113,13 @@ public:
 		fx_rendertarget				= new ShaderProgram("../src/renderer/shaders/rendertarget", "rendertarget");
 		fx_lightscatter				= new ShaderProgram("../src/renderer/shaders/lightscatter", "lightscatter");
 		fx_grayscale				= new ShaderProgram("../src/renderer/shaders/grayscale", "grayscale");
+		fx_combineLightscatter		= new ShaderProgram("../src/renderer/shaders/combineLightscatter", "combineLightscatter");
 	}
 
 	~ShaderLibrary()
 	{
+		if (fx_combineLightscatter != NULL)
+			delete fx_combineLightscatter;
 		if (fx_rendertarget != NULL)
 			delete fx_rendertarget;
 		if (fx_grayscale!= NULL)
