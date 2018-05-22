@@ -102,7 +102,7 @@ void TestScene::draw()
 		renderWorld();
 	mE_fxmainRT.unBindFBO();
 	
-	mE_fxmainRT.draw(data, getShaderLibrary()->rendertarget, getShaderLibrary()->fx_grayscale);
+	mE_fxmainRT.draw(data, getShaderLibrary()->rendertarget, getShaderLibrary()->fx_lightscatter);
 	glBindVertexArray(0);
 }
 

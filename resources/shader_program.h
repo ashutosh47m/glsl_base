@@ -11,6 +11,7 @@ Nov 2017, Ashutosh Morwal
 #include <glm/gtc/matrix_transform.hpp>
 #include <gl/glew.h>
 #include <gl/GL.h>
+#include <vector>
 
 using std::ifstream;
 
@@ -43,15 +44,16 @@ public:
 //	this class has tools to load, create, and maintain shaders
 class ShaderProgram 
 {
-	GLuint		programHandle;
-	int			type;
-	Shader		shaderVS, shaderFS;
+	std::string m_ShaderName;
+	GLuint		m_ProgramHandle;
+	int			m_Type;
+	Shader		m_ShaderVS, m_ShaderFS;
 public:
 	ShaderProgram();
-	ShaderProgram(std::string);
+	ShaderProgram(std::string, std::string);
 	~ShaderProgram();
 
-	std::string shaderPath;
+	std::string m_ShaderPath;
 
 	wchar_t		ws[1000]; //for error logs
 
@@ -90,23 +92,31 @@ public:
 	ShaderProgram *colored_geometry;			//colored_geometry
 	ShaderProgram *volume_shader;				//volume: 3d texture
 	ShaderProgram *volume_ray_caster;			//volume: ray caster
+	
+	// post fx shaders
 	ShaderProgram *fx_lightscatter;				//god rays
 	ShaderProgram *fx_grayscale;
 
 	ShaderLibrary()
 	{ }
 
+	void getPostFxShaders(std::vector<ShaderProgram*> &shaders)
+	{
+		shaders.push_back(fx_lightscatter);
+		shaders.push_back(fx_grayscale);
+	}
+
 	void loadShaders()
 	{
-		rendertarget				= new ShaderProgram("../src/renderer/shaders/rendertarget");
-		red_triangle_shader			= new ShaderProgram("../src/renderer/shaders/first_red_triangle");
-		triangle_shader				= new ShaderProgram("../src/renderer/shaders/first_triangle");
-		textured_colored_geometry	= new ShaderProgram("../src/renderer/shaders/textured_colored_geometry");
-		colored_geometry			= new ShaderProgram("../src/renderer/shaders/colored_geometry");
-		volume_shader				= new ShaderProgram("../src/renderer/shaders/volume");
-		volume_ray_caster			= new ShaderProgram("../src/renderer/shaders/ray_caster");
-		fx_lightscatter				= new ShaderProgram("../src/renderer/shaders/lightscatter");
-		fx_grayscale				= new ShaderProgram("../src/renderer/shaders/grayscale");
+		rendertarget				= new ShaderProgram("../src/renderer/shaders/rendertarget", "rendertarget");
+		red_triangle_shader			= new ShaderProgram("../src/renderer/shaders/first_red_triangle", "first_red_triangle");
+		triangle_shader				= new ShaderProgram("../src/renderer/shaders/first_triangle", "first_triangle");
+		textured_colored_geometry	= new ShaderProgram("../src/renderer/shaders/textured_colored_geometry", "textured_colored_geometry");
+		colored_geometry			= new ShaderProgram("../src/renderer/shaders/colored_geometry", "colored_geometry");
+		volume_shader				= new ShaderProgram("../src/renderer/shaders/volume", "volume");
+		volume_ray_caster			= new ShaderProgram("../src/renderer/shaders/ray_caster", "ray_caster");
+		fx_lightscatter				= new ShaderProgram("../src/renderer/shaders/lightscatter", "lightscatter");
+		fx_grayscale				= new ShaderProgram("../src/renderer/shaders/grayscale", "grayscale");
 	}
 
 	~ShaderLibrary()

@@ -14,7 +14,7 @@ const float exposure = 0.6;
 const float decay = 0.93;
 const float density = 0.96;
 const float weight = 0.4;
-const int NUM_SAMPLES = 20;
+const int NUM_SAMPLES = 80;
 const float clampMax = 1.0;
 
 void main()

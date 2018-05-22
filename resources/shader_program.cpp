@@ -106,21 +106,21 @@ void Shader::initializeShader(std::string sourcefile, int shadertype)
 
 void ShaderProgram::createProgram(std::string sourcefile)
 {
-	programHandle = glCreateProgram();
-	if (programHandle == 0)
+	m_ProgramHandle = glCreateProgram();
+	if (m_ProgramHandle == 0)
 		printf("error creating program\n");
 		//MessageBox(NULL, L"Error creating program\n", NULL, NULL);
 
 	// initialize vertex shader 
-	shaderVS.initializeShader(sourcefile.c_str(), E_Shaders::VERTEX_SHADER);
-	glAttachShader(programHandle, shaderVS.getShaderHandle());
+	m_ShaderVS.initializeShader(sourcefile.c_str(), E_Shaders::VERTEX_SHADER);
+	glAttachShader(m_ProgramHandle, m_ShaderVS.getShaderHandle());
 
 	// initialize fragment shader 
-	shaderFS.initializeShader(sourcefile.c_str(), E_Shaders::FRAGMENT_SHADER);
-	glAttachShader(programHandle, shaderFS.getShaderHandle());
+	m_ShaderFS.initializeShader(sourcefile.c_str(), E_Shaders::FRAGMENT_SHADER);
+	glAttachShader(m_ProgramHandle, m_ShaderFS.getShaderHandle());
 
 	// link the two shaders
-	if (!link(programHandle))
+	if (!link(m_ProgramHandle))
 	{
 		printf("error while linking shader\n");
 	}
@@ -128,23 +128,25 @@ void ShaderProgram::createProgram(std::string sourcefile)
 
 ShaderProgram::~ShaderProgram() //shutdown shaders here
 {
-	glDetachShader(programHandle, shaderVS.getShaderHandle());
-	glDetachShader(programHandle, shaderVS.getShaderHandle());
-	shaderVS.deleteShader();
-	shaderFS.deleteShader();
-	glDeleteProgram(programHandle);
+	glDetachShader(m_ProgramHandle, m_ShaderVS.getShaderHandle());
+	glDetachShader(m_ProgramHandle, m_ShaderVS.getShaderHandle());
+	m_ShaderVS.deleteShader();
+	m_ShaderFS.deleteShader();
+	glDeleteProgram(m_ProgramHandle);
 }
 
 ShaderProgram::ShaderProgram()
 {
-	programHandle = NULL;
+	m_ProgramHandle = NULL;
 	printf("shaderprogram constructor\n");
 }
 
 // you can either call a constructor with shader path or call initShader with shaderpath
-ShaderProgram::ShaderProgram(std::string path) : shaderPath(path) 
+ShaderProgram::ShaderProgram(std::string path, std::string name) : 
+	m_ShaderPath(path), 
+	m_ShaderName(name)
 {
-	createProgram(path);
+	createProgram(m_ShaderPath);
 }
 
 bool ShaderProgram::link(GLuint handle)
@@ -177,13 +179,13 @@ bool ShaderProgram::link(GLuint handle)
 
 GLuint ShaderProgram::getShaderProgramHandle()
 {
-	return programHandle;
+	return m_ProgramHandle;
 }
 
 void ShaderProgram::setUniform(const char *name, float x, float y, float z)
 {
 	//		glUseProgram(handle);
-	int loc = glGetUniformLocation(programHandle, name);
+	int loc = glGetUniformLocation(m_ProgramHandle, name);
 	if (loc >= 0)
 	{
 		glUniform3f(loc, x, y, z);
@@ -201,7 +203,7 @@ void  ShaderProgram::setUniform(const char *name, const glm::vec3 &v)
 {
 	//		glUseProgram(handle);
 
-	int loc = glGetUniformLocation(programHandle, name);
+	int loc = glGetUniformLocation(m_ProgramHandle, name);
 	if (loc >= 0)
 	{
 		glUniform3f(loc, v.x, v.y, v.z);
@@ -217,7 +219,7 @@ void  ShaderProgram::setUniform(const char *name, const glm::vec3 &v)
 void  ShaderProgram::setUniform(const char *name, const glm::vec4 &v)
 {
 	//		glUseProgram(handle);
-	int loc = glGetUniformLocation(programHandle, name);
+	int loc = glGetUniformLocation(m_ProgramHandle, name);
 	if (loc >= 0)
 	{
 		glUniform4f(loc, v.x, v.y, v.z, v.w);
@@ -233,7 +235,7 @@ void  ShaderProgram::setUniform(const char *name, const glm::vec4 &v)
 void  ShaderProgram::setUniform(const char *name, const glm::vec2 & v)
 {
 	//		glUseProgram(handle);
-	int loc = glGetUniformLocation(programHandle, name);
+	int loc = glGetUniformLocation(m_ProgramHandle, name);
 	if (loc >= 0) {
 		glUniform2f(loc, v.x, v.y);
 	}
@@ -247,7 +249,7 @@ void  ShaderProgram::setUniform(const char *name, const glm::vec2 & v)
 void  ShaderProgram::setUniform(const char *name, const glm::mat4 &m)
 {
 	//		glUseProgram(handle);
-	int loc = glGetUniformLocation(programHandle, name);
+	int loc = glGetUniformLocation(m_ProgramHandle, name);
 	if (loc >= 0)
 	{
 		glUniformMatrix4fv(loc, 1, GL_FALSE, &m[0][0]);
@@ -262,7 +264,7 @@ void  ShaderProgram::setUniform(const char *name, const glm::mat4 &m)
 void  ShaderProgram::setUniform(const char *name, const glm::mat3 &m)
 {
 	//		glUseProgram(handle);
-	int loc = glGetUniformLocation(programHandle, name);
+	int loc = glGetUniformLocation(m_ProgramHandle, name);
 	if (loc >= 0)
 	{
 		glUniformMatrix3fv(loc, 1, GL_FALSE, &m[0][0]);
@@ -277,7 +279,7 @@ void  ShaderProgram::setUniform(const char *name, const glm::mat3 &m)
 void  ShaderProgram::setUniform(const char *name, float val)
 {
 	//		glUseProgram(handle);
-	int loc = glGetUniformLocation(programHandle, name);
+	int loc = glGetUniformLocation(m_ProgramHandle, name);
 	if (loc >= 0)
 	{
 		glUniform1f(loc, val);
@@ -292,7 +294,7 @@ void  ShaderProgram::setUniform(const char *name, float val)
 void  ShaderProgram::setUniform(const char *name, int val)
 {
 	//		glUseProgram(handle);
-	int loc = glGetUniformLocation(programHandle, name);
+	int loc = glGetUniformLocation(m_ProgramHandle, name);
 	if (loc >= 0)
 	{
 
@@ -308,7 +310,7 @@ void  ShaderProgram::setUniform(const char *name, int val)
 void  ShaderProgram::setUniform(const char *name, unsigned int val)
 {
 	//		glUseProgram(handle);
-	int loc = glGetUniformLocation(programHandle, name);
+	int loc = glGetUniformLocation(m_ProgramHandle, name);
 	if (loc >= 0)
 	{
 		glUniform1i(loc, val);
@@ -323,7 +325,7 @@ void  ShaderProgram::setUniform(const char *name, unsigned int val)
 void  ShaderProgram::setUniform(const char *name, bool val)
 {
 	//		glUseProgram(handle);
-	int loc = glGetUniformLocation(programHandle, name);
+	int loc = glGetUniformLocation(m_ProgramHandle, name);
 	if (loc >= 0)
 	{
 		glUniform1i(loc, val);

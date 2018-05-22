@@ -228,7 +228,17 @@ public:
 		m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(16.0f, 9.0f, 1.0f));
 		m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, m_ZPosition));
 		shaderfx->setUniform("u_RT1_tex", textureID);
-		shaderfx->setUniform("u_m4MVP", data.glm_projection * data.getDefaultEye() * m_ModelMat);
+		
+		glm::mat4 __mvp = data.glm_projection * data.getDefaultEye() * m_ModelMat;
+		shaderfx->setUniform("u_m4MVP", __mvp);
+	
+		glm::vec3 lightOnSS = 
+			(glm::vec3(__mvp[0][3]/ __mvp[3][3], __mvp[1][3]/ __mvp[3][3], __mvp[2][3]/ __mvp[3][3]))
+			* 0.5f
+			+ glm::vec3(0.5, 0.5, 0.5);
+
+		shaderfx->setUniform("lightPos", lightOnSS);
+
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 		unbindFBO();
@@ -252,9 +262,10 @@ class E_fxMRT
 {
 	rt_quad					 m_RTQuad;
 	GLuint					 m_VaoHandle;
-	GLfloat					 m_ZPosition; 			// the position of the render target, u can move it closer to eye, or away from it
-	MRTFrameBuffer			*m_MRTFrameBuffer = NULL;
-	FrameBuffer				*m_fboGrayscale = NULL;
+	GLfloat					 m_ZPosition; 				// the position of the render target, u can move it closer to eye, or away from it
+	MRTFrameBuffer			*m_MRTFrameBuffer	= NULL;
+	FrameBuffer				*m_fboGrayscale		= NULL;
+	FrameBuffer				*m_fboLightScatter	= NULL;
 	PostProcess				 postprocess;
 	glm::mat4				 m_ModelMat;
 public:
@@ -276,8 +287,9 @@ public:
 	{
 		m_ZPosition = 2.0f;
 
-		m_MRTFrameBuffer = new MRTFrameBuffer(w, h, globalTextureCount);
-		m_fboGrayscale = new FrameBuffer(w, h, globalTextureCount, m_ZPosition);
+		m_MRTFrameBuffer	= new MRTFrameBuffer(w, h, globalTextureCount);
+		m_fboGrayscale		= new FrameBuffer	(w, h, globalTextureCount, m_ZPosition);
+		m_fboLightScatter	= new FrameBuffer	(w, h, globalTextureCount, m_ZPosition);
 
 		m_RTQuad.initEntity();
 		m_VaoHandle = m_RTQuad.getVaoHandle();
@@ -302,7 +314,7 @@ public:
 		//glViewport(0, 0, m_FBOWidth, m_FBOHeight);
 	}
 
-	void draw(glsl_data& data, ShaderProgram *& shader, ShaderProgram *& grayshader)
+	void draw(glsl_data& data, ShaderProgram *& shader, ShaderProgram *& lScattershader)
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glBindVertexArray(m_VaoHandle);
@@ -312,13 +324,14 @@ public:
 #ifdef _DEBUG 
 		m_MRTFrameBuffer->drawDebugRenderTargets(data, shader);
 #endif		
-		m_fboGrayscale->renderToTexture(data, grayshader, m_MRTFrameBuffer->m_MRTTextureID+0);
+		m_fboLightScatter->renderToTexture(data, lScattershader, m_MRTFrameBuffer->m_MRTTextureID+1);
 
-		postprocess.draw(data, shader, m_fboGrayscale->m_MRTTextureID, m_fboGrayscale->m_ColorTexture);
+		postprocess.draw(data, shader, m_fboLightScatter->m_MRTTextureID, m_fboLightScatter->m_ColorTexture);
 	}
 
 	~E_fxMRT()
 	{
+		delete m_fboLightScatter;
 		delete m_fboGrayscale;
 		delete m_MRTFrameBuffer;
 	}
