@@ -141,19 +141,38 @@ class PostProcess
 	GLuint		m_VaoHandle;	// vao handle used for RT quad
 	glm::mat4	m_ModelMat;
 	float		m_ZPosition;
+	rt_quad		m_RTQuad;
 
 public:
 	PostProcess() {}
 	PostProcess(GLuint vaohandle) : m_VaoHandle(vaohandle)
 	{}
 
-	void initData(GLuint vaoHandle, float zPosition)
+	void initData(GLuint &vaohandle, float zPosition)
 	{
-		m_VaoHandle = vaoHandle;
+		m_RTQuad.initEntity();
+		m_VaoHandle = m_RTQuad.getVaoHandle();
+		vaohandle = m_VaoHandle;
 		m_ZPosition = zPosition;
 	}
 
 	void draw(glsl_data& data, ShaderProgram *& shader, GLuint textureID, GLuint texture)
+	{
+		glUseProgram(shader->getShaderProgramHandle());
+		glBindVertexArray(m_VaoHandle);
+
+		glActiveTexture(GL_TEXTURE0 + textureID);
+		glBindTexture(GL_TEXTURE_2D, texture);
+		shader->setUniform("u_RT1_tex", textureID);
+
+		m_ModelMat = data.glm_model;
+		m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(16.0f, 9.0f, 1.0f));
+		m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, m_ZPosition));
+		shader->setUniform("u_m4MVP", data.glm_projection * data.getDefaultEye() * m_ModelMat);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	}
+
+	void CombinedDraw(glsl_data& data, ShaderProgram *& shader, GLuint textureID, GLuint texture)
 	{
 		glBindVertexArray(m_VaoHandle);
 
@@ -232,6 +251,7 @@ public:
 		glm::mat4 __mvp = data.glm_projection * data.getDefaultEye() * m_ModelMat;
 		shaderfx->setUniform("u_m4MVP", __mvp);
 	
+		// this is not the place for calculating light position
 		glm::vec3 lightOnSS = 
 			(glm::vec3(__mvp[0][3]/ __mvp[3][3], __mvp[1][3]/ __mvp[3][3], __mvp[2][3]/ __mvp[3][3]))
 			* 0.5f
@@ -247,6 +267,7 @@ public:
 	{
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glUseProgram(0);
 	}
 	
 	~FrameBuffer()
@@ -260,8 +281,7 @@ public:
 // this class is going to create multiple framebuffers for one draw call.
 class E_fxMRT
 {
-	rt_quad					 m_RTQuad;
-	GLuint					 m_VaoHandle;
+	GLuint					 m_VaoHandle;				// this is a vao handle for rt_quad 
 	GLfloat					 m_ZPosition; 				// the position of the render target, u can move it closer to eye, or away from it
 	MRTFrameBuffer			*m_MRTFrameBuffer	= NULL;
 	FrameBuffer				*m_fboGrayscale		= NULL;
@@ -291,8 +311,6 @@ public:
 		m_fboGrayscale		= new FrameBuffer	(w, h, globalTextureCount, m_ZPosition);
 		m_fboLightScatter	= new FrameBuffer	(w, h, globalTextureCount, m_ZPosition);
 
-		m_RTQuad.initEntity();
-		m_VaoHandle = m_RTQuad.getVaoHandle();
 		postprocess.initData(m_VaoHandle, m_ZPosition);
 	}
 
@@ -325,8 +343,8 @@ public:
 		m_MRTFrameBuffer->drawDebugRenderTargets(data, shaderLib->fx_rendertarget);
 #endif		
 		// light scatter aka god rays
-		m_fboLightScatter->renderToTexture(data, shaderLib->fx_lightscatter, m_MRTFrameBuffer->m_MRTTextureID+0);
-
+		m_fboLightScatter->renderToTexture(data, shaderLib->fx_lightscatter, m_MRTFrameBuffer->m_MRTTextureID+1);
+		
 		postprocess.draw(data, shaderLib->fx_rendertarget, m_fboLightScatter->m_MRTTextureID, m_fboLightScatter->m_ColorTexture);
 	}
 
