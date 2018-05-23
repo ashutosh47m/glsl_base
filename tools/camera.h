@@ -1,6 +1,6 @@
 /*
 GLSL_base
-Nov 2017, Ashutosh Morwal
+May 2017, Ashutosh Morwal
 @Email ashutosh47m@gmail.com
 @blog http://www.explicitgfx.wordpress.com/
 */

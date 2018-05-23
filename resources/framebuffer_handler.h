@@ -11,6 +11,7 @@ May 2018, Ashutosh Morwal
 #include "../Entity/Entity.h"
 #include "../resources/buffer_handler.h"
 #include "../resources/shader_program.h"
+#include "../tools/variables.h"
 
 // used by post-process and debugRTDraw to draw on
 class rt_quad
@@ -269,14 +270,30 @@ public:
 	}
 };
 
+// this class is nothing but an FBO, with loaded information
+class FBOLightScatter
+{
+public:
+	FrameBuffer	*m_FBO;
+	FBOLightScatter(int w, int h, GLuint &globalTextureCount, float z)
+	{
+		m_FBO = new FrameBuffer(w, h, globalTextureCount, z);
+	}
+
+	~FBOLightScatter()
+	{
+		delete m_FBO;
+	}
+};
+
 // this class is going to create multiple framebuffers for one draw call.
 class E_fxMRT
 {
 	GLuint					 m_VaoHandle;				// this is a vao handle for rt_quad 
 	GLfloat					 m_ZPosition; 				// the position of the render target, u can move it closer to eye, or away from it
 	MRTFrameBuffer			*m_MRTFrameBuffer	= NULL;
-	FrameBuffer				*m_fboGrayscale		= NULL;
-	FrameBuffer				*m_fboLightScatter	= NULL;
+	FrameBuffer				*m_Grayscale		= NULL;
+	FBOLightScatter			*m_LightScatter		= NULL;
 	PostProcess				 postprocess;
 	glm::mat4				 m_ModelMat;
 
@@ -302,9 +319,9 @@ public:
 	{
 		m_ZPosition = 2.0f;
 
-		m_MRTFrameBuffer	= new MRTFrameBuffer(w, h, globalTextureCount);
-		m_fboGrayscale		= new FrameBuffer	(w, h, globalTextureCount, m_ZPosition);
-		m_fboLightScatter	= new FrameBuffer	(w, h, globalTextureCount, m_ZPosition);
+		m_MRTFrameBuffer	= new MRTFrameBuffer (w, h, globalTextureCount);
+		m_Grayscale			= new FrameBuffer	 (w, h, globalTextureCount, m_ZPosition);
+		m_LightScatter		= new FBOLightScatter(w, h, globalTextureCount, m_ZPosition);
 
 		postprocess.initData(m_VaoHandle, m_ZPosition);
 	}
@@ -358,19 +375,18 @@ public:
 #endif		
 		// light scatter aka god rays
 		sendLightPositionForScatter(data, shaderLib->fx_lightscatter, m_MRTFrameBuffer->m_MRTTextureID + 1);
-		m_fboLightScatter->renderToTexture();
+		m_LightScatter->m_FBO->renderToTexture();
 		
 		//postprocess.draw(data, shaderLib->fx_rendertarget, m_fboLightScatter->m_MRTTextureID, m_fboLightScatter->m_ColorTexture);
 		postprocess.CombinedDraw(data, shaderLib->fx_combineLightscatter, 
-			m_fboLightScatter->m_MRTTextureID, m_fboLightScatter->m_ColorTexture,
+			m_LightScatter->m_FBO->m_MRTTextureID, m_LightScatter->m_FBO->m_ColorTexture,
 			m_MRTFrameBuffer->m_MRTTextureID, m_MRTFrameBuffer->m_ColorTexture[0]);
-
 	}
 
 	~E_fxMRT()
 	{
-		delete m_fboLightScatter;
-		delete m_fboGrayscale;
+		delete m_LightScatter;
+		delete m_Grayscale;
 		delete m_MRTFrameBuffer;
 	}
 	GLuint getVAOHandle() { return m_VaoHandle; }
