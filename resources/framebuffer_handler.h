@@ -274,10 +274,37 @@ public:
 class FBOLightScatter
 {
 public:
+	glm::mat4				m_ModelMat;
+	glm::mat4				m_MVP;
+	glm::vec3				m_LightOnSS;					// position of light in the screen space
+	float					m_ZPosition;
+	variable<int>			m_frames;
+
 	FrameBuffer	*m_FBO;
-	FBOLightScatter(int w, int h, GLuint &globalTextureCount, float z)
+	FBOLightScatter(int w, int h, GLuint &globalTextureCount, float z) : m_ZPosition(z)
 	{
+		m_frames.setValue(120);
 		m_FBO = new FrameBuffer(w, h, globalTextureCount, z);
+	}
+
+	void sendLightPositionForScatter(glsl_data& data, ShaderProgram *& shaderfx, GLuint textureID)
+	{
+		glUseProgram(shaderfx->getShaderProgramHandle());
+		m_ModelMat = data.glm_model;
+		m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(16.0f, 9.0f, 1.0f));
+		m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, m_ZPosition));
+		shaderfx->setUniform("u_RT1_tex", textureID);
+
+		m_MVP = data.glm_projection * data.getDefaultEye() * m_ModelMat;
+		shaderfx->setUniform("u_m4MVP", m_MVP);
+
+		// this is not the place for calculating light position
+		m_LightOnSS =
+			(glm::vec3(m_MVP[0][3] / m_MVP[3][3], m_MVP[1][3] / m_MVP[3][3], m_MVP[2][3] / m_MVP[3][3]))
+			* 0.5f
+			+ glm::vec3(0.5f, 0.5f, 0.5f);
+
+		shaderfx->setUniform("lightPos", m_LightOnSS);
 	}
 
 	~FBOLightScatter()
@@ -295,11 +322,6 @@ class E_fxMRT
 	FrameBuffer				*m_Grayscale		= NULL;
 	FBOLightScatter			*m_LightScatter		= NULL;
 	PostProcess				 postprocess;
-	glm::mat4				 m_ModelMat;
-
-	// needed for light calculations
-	glm::mat4				 __mvp;			
-	glm::vec3				 lightOnSS;					// position of light in the screen space
 public:
 
 	E_fxMRT() {}
@@ -344,26 +366,6 @@ public:
 		//glViewport(0, 0, m_FBOWidth, m_FBOHeight);
 	}
 
-	void sendLightPositionForScatter(glsl_data& data, ShaderProgram *& shaderfx, GLuint textureID)
-	{
-		glUseProgram(shaderfx->getShaderProgramHandle());
-		m_ModelMat = data.glm_model;
-		m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(16.0f, 9.0f, 1.0f));
-		m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, m_ZPosition));
-		shaderfx->setUniform("u_RT1_tex", textureID);
-
-		__mvp = data.glm_projection * data.getDefaultEye() * m_ModelMat;
-		shaderfx->setUniform("u_m4MVP", __mvp);
-
-		// this is not the place for calculating light position
-		lightOnSS =
-			(glm::vec3(__mvp[0][3] / __mvp[3][3], __mvp[1][3] / __mvp[3][3], __mvp[2][3] / __mvp[3][3]))
-			* 0.5f
-			+ glm::vec3(0.5f, 0.5f, 0.5f);
-
-		shaderfx->setUniform("lightPos", lightOnSS);
-	}
-
 	void draw(glsl_data& data, ShaderLibrary* shaderLib)
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -374,7 +376,7 @@ public:
 		m_MRTFrameBuffer->drawDebugRenderTargets(data, shaderLib->fx_rendertarget);
 #endif		
 		// light scatter aka god rays
-		sendLightPositionForScatter(data, shaderLib->fx_lightscatter, m_MRTFrameBuffer->m_MRTTextureID + 1);
+		m_LightScatter->sendLightPositionForScatter(data, shaderLib->fx_lightscatter, m_MRTFrameBuffer->m_MRTTextureID + 1);
 		m_LightScatter->m_FBO->renderToTexture();
 		
 		//postprocess.draw(data, shaderLib->fx_rendertarget, m_fboLightScatter->m_MRTTextureID, m_fboLightScatter->m_ColorTexture);

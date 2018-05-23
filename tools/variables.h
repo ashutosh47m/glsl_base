@@ -10,27 +10,20 @@ May 2017, Ashutosh Morwal
 //these variables will typically be changed from user input.
 
 
-class variables
+
+template<class T>
+class variable
 {
-	/*
-	template<class T>
-	class variable
-	{
-		T x;
-	Public:
-		variable(T tx) : x(tx) {}
-		
-		void incr(T inc)
-		{
-			x += inc;
-		}
+	T x;
+public:
+	variable() {}
+	variable(T tx) : x(tx) {}
+	
+	inline T getValue() { return T; }
 
-		void decr(T dec)
-		{
-			x += dec;
-		}
-	};
+	inline void setValue(T tx) { x = tx; }
 
-	*/
+	inline void incr(T inc) { x += inc; }
 
+	inline void decr(T dec) { x += dec; }
 };
