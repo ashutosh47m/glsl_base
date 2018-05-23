@@ -31,8 +31,6 @@ void TestScene::initialize()
 	initAxes();
 
 	//quad
-	mE_quad.initEntity();
-	
 	mE_Woodenquad.initEntity		(++globalTextureCount, "..\\resources\\textures\\wooden.jpg");
 	mE_Marblequad.initEntity		(++globalTextureCount, "..\\resources\\textures\\marble.jpg");
 	mE_grassStonequad.initEntity	(++globalTextureCount, "..\\resources\\textures\\grassstone.jpg");
@@ -71,8 +69,6 @@ void TestScene::renderWorld()
 		mE_triangle.draw(data, getShaderLibrary()->colored_geometry);
 		mE_red_triangle.draw(data, getShaderLibrary()->red_triangle_shader);
 		mE_texturedTriangle.draw(data, getShaderLibrary()->textured_colored_geometry, glm::vec3(2, 1, 0));
-
-		mE_quad.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(4, 0, 0));
 
 		mE_Woodenquad.enable();
 		mE_Woodenquad.draw(data, getShaderLibrary()->textured_colored_geometry, glm::vec3(-1, 1, 0));

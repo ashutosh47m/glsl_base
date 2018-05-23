@@ -32,7 +32,6 @@ namespace usr_scene
 		E_first_triangle			mE_triangle;			// e stands for entity
 		E_textured_triangle			mE_texturedTriangle;
 		E_first_red_triangle		mE_red_triangle;
-		E_colored_quad				mE_quad;
 		E_textured_quad				mE_Woodenquad;
 		E_textured_quad				mE_Marblequad;
 		E_textured_quad				mE_grassStonequad;

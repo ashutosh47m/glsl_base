@@ -120,6 +120,8 @@ public:
 	void drawDebugRenderTargets(glsl_data& data, ShaderProgram *& shader)
 	{
 		float j = 0;
+		glUseProgram(shader->getShaderProgramHandle()); 
+
 		for (GLuint i = 0; i < m_MRTCount; i++, j -= 1.1f)
 		{
 			shader->setUniform("u_RT1_tex", m_MRTTextureID + i);
@@ -277,6 +279,10 @@ class E_fxMRT
 	FrameBuffer				*m_fboLightScatter	= NULL;
 	PostProcess				 postprocess;
 	glm::mat4				 m_ModelMat;
+
+	// needed for light calculations
+	glm::mat4				 __mvp;			
+	glm::vec3				 lightOnSS;					// position of light in the screen space
 public:
 
 	E_fxMRT() {}
@@ -329,14 +335,14 @@ public:
 		m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, m_ZPosition));
 		shaderfx->setUniform("u_RT1_tex", textureID);
 
-		glm::mat4 __mvp = data.glm_projection * data.getDefaultEye() * m_ModelMat;
+		__mvp = data.glm_projection * data.getDefaultEye() * m_ModelMat;
 		shaderfx->setUniform("u_m4MVP", __mvp);
 
 		// this is not the place for calculating light position
-		glm::vec3 lightOnSS =
+		lightOnSS =
 			(glm::vec3(__mvp[0][3] / __mvp[3][3], __mvp[1][3] / __mvp[3][3], __mvp[2][3] / __mvp[3][3]))
 			* 0.5f
-			+ glm::vec3(0.5, 0.5, 0.5);
+			+ glm::vec3(0.5f, 0.5f, 0.5f);
 
 		shaderfx->setUniform("lightPos", lightOnSS);
 	}
@@ -345,7 +351,6 @@ public:
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glBindVertexArray(m_VaoHandle);
-		glUseProgram(shaderLib->fx_rendertarget->getShaderProgramHandle()); 
 		
 		m_MRTFrameBuffer->activateMRTTextures();
 #ifdef _DEBUG 
