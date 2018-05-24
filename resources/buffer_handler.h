@@ -18,6 +18,33 @@ Nov 2017, Ashutosh Morwal
 #define _SHADER_BUF
 #define EPSILON 0.0001f
 
+class UniformBufferBlock
+{
+	GLuint bufferHandle;
+public:
+	GLuint getBufferHandle() { return bufferHandle; }
+	void initResource(GLsizei size, void *scd)
+	{
+		glGenBuffers(1, &bufferHandle);
+		glBindBuffer(GL_UNIFORM_BUFFER, bufferHandle);
+		glBufferData(GL_UNIFORM_BUFFER, size, scd, GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	}
+
+	void setUniformBlock(GLuint shaderhandle, const char * blockname, void *scd)
+	{
+		unsigned int block_index = glGetUniformBlockIndex(shaderhandle, blockname);
+		GLuint binding_point_index = 2;
+		glBindBufferBase(GL_UNIFORM_BUFFER, binding_point_index, bufferHandle);
+		glUniformBlockBinding(shaderhandle, block_index, binding_point_index);
+
+		glBindBuffer(GL_UNIFORM_BUFFER, bufferHandle);
+		GLvoid* p = glMapBuffer(GL_UNIFORM_BUFFER, GL_WRITE_ONLY);
+		memcpy(p, scd, sizeof(scd));
+		glUnmapBuffer(GL_UNIFORM_BUFFER);
+	}
+};
+
 class ShaderBuffer
 {
 public:
