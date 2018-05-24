@@ -10,12 +10,15 @@ uniform sampler2D u_RT1_tex;
 
 layout (location = 0) out vec4 FragColor;
 
-uniform float u_exposure 	= 0.6;
-uniform float u_decay 		= 0.93;
-uniform float u_density 	= .96;
-uniform float u_weight 		= 0.4;
-uniform int   u_NUM_SAMPLES 	= 80;
-uniform float u_clampMax 	= 1.0;
+layout (std140) uniform u_lightscatterData
+{
+	float u_exposure 	;
+	float u_decay 		;
+	float u_density 	;
+	float u_weight 		;
+	float u_clampMax 	;
+	int   u_NUM_SAMPLES 	;	
+};
 
 void main()
 {
@@ -25,7 +28,7 @@ void main()
     float illuminationDecay = 1.0;
 
     for(int i=0; i < u_NUM_SAMPLES ; i++)
-    {
+    {																	
             coord -= deltaTextCoord;
             vec4 texel = texture2D(u_RT1_tex, coord);
             texel *= illuminationDecay * u_weight;

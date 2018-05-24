@@ -274,17 +274,40 @@ public:
 class FBOLightScatter
 {
 public:
+	struct scatterData
+	{
+		float u_exposure = 0.6f;
+		float u_decay = 0.93f;
+		float u_density = .96f;
+		float u_weight = 0.4f;
+		float u_clampMax = 1.0f;
+		int   u_NUM_SAMPLES = 90;
+	}scd;
+
 	glm::mat4				m_ModelMat;
 	glm::mat4				m_MVP;
 	glm::vec3				m_LightOnSS;					// position of light in the screen space
 	float					m_ZPosition;
 	variable<int>			m_frames;
+	GLuint ubo = 0;
 
 	FrameBuffer	*m_FBO;
 	FBOLightScatter(int w, int h, GLuint &globalTextureCount, float z) : m_ZPosition(z)
 	{
 		m_frames.setValue(120);
 		m_FBO = new FrameBuffer(w, h, globalTextureCount, z);
+
+		glGenBuffers(1, &ubo);
+		glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+		glBufferData(GL_UNIFORM_BUFFER, sizeof(scd), &scd, GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+		scd.u_exposure = 0.6f;
+		scd.u_decay = 0.93f;
+		scd.u_density = .96f;
+		scd.u_weight = 0.4f;
+		scd.u_clampMax = 1.0f;
+		scd.u_NUM_SAMPLES = 90;
 	}
 
 	void sendLightPositionForScatter(glsl_data& data, ShaderProgram *& shaderfx, GLuint textureID)
@@ -304,7 +327,16 @@ public:
 			* 0.5f
 			+ glm::vec3(0.5f, 0.5f, 0.5f);
 
+		unsigned int block_index = glGetUniformBlockIndex(shaderfx->getShaderProgramHandle(), "u_lightscatterData");
+		GLuint binding_point_index = 2;
+		glBindBufferBase(GL_UNIFORM_BUFFER, binding_point_index, ubo);	
+		glUniformBlockBinding(shaderfx->getShaderProgramHandle(), block_index, binding_point_index);
+		
 		shaderfx->setUniform("lightPos", m_LightOnSS);
+		glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+		GLvoid* p = glMapBuffer(GL_UNIFORM_BUFFER, GL_WRITE_ONLY);
+		memcpy(p, &scd, sizeof(scd));
+		glUnmapBuffer(GL_UNIFORM_BUFFER);
 	}
 
 	~FBOLightScatter()
