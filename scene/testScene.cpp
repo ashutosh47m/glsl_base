@@ -20,7 +20,7 @@ void TestScene::initialize()
 	globalTextureCount = 0;
 	//render target
 	// the globalTextureCount will be incremented inside mainRTs initEntity based on the count of textures for RT
-	mE_fxmainRT.initEntity(globalTextureCount, m_width, m_height);
+	mE_fxmainRT.initEntity(globalTextureCount, m_width, m_height, getShaderLibrary());
 
 	// triangles
 	mE_triangle.initEntity();	//inits the shaders and other resources

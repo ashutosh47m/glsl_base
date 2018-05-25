@@ -289,7 +289,7 @@ public:
 		.81997f,
 		.414f
 	},
-	Medium
+		Medium
 	{
 		100,
 		0.587f,
@@ -297,7 +297,7 @@ public:
 		0.960f,
 		0.400f,
 	},
-	Low
+		Low
 	{
 		50,
 		0.679999f,
@@ -307,11 +307,6 @@ public:
 	},
 	Test
 	{
-		50,
-		0.679999f,
-		0.933296f,
-		0.603005f,
-		0.454999f,
 	},
 	defaultScatter
 	{
@@ -320,28 +315,39 @@ public:
 		0.93f,
 		.96f,
 		0.4f
+	},
+	off
+	{
+		0,
 	};
-	scatterSetting current = High;
+	scatterSetting			m_current = Medium;
 
-	variable<int>			m_numSamples 	= variable<int>  ("Sam", current.sam, 6, 1000);
-	variable<float>			m_exposure 		= variable<float>("exp", current.exp);
-	variable<float>			m_decay 		= variable<float>("dec", current.dec, 0, 1.0f);
-	variable<float>			m_density 		= variable<float>("den", current.den);
-	variable<float>			m_weight 		= variable<float>("wei", current.wei); // weight will be more for objects like sun
+	variable<int>			m_numSamples 	= variable<int>  ("Sam", m_current.sam, 6, 1000);
+	variable<float>			m_exposure 		= variable<float>("exp", m_current.exp);
+	variable<float>			m_decay 		= variable<float>("dec", m_current.dec, 0, 1.0f);
+	variable<float>			m_density 		= variable<float>("den", m_current.den);
+	variable<float>			m_weight 		= variable<float>("wei", m_current.wei); // weight will be more for objects like sun
 
-	FrameBuffer	*m_FBO;
-	FBOLightScatter(int w, int h, GLuint &globalTextureCount) 
+	FrameBuffer			   *m_FBO;
+	FBOLightScatter(int w, int h, GLuint &globalTextureCount, ShaderProgram *& fx) 
 	{
 		m_FBO = new FrameBuffer(w, h, globalTextureCount);
+		glUseProgram(fx->getShaderProgramHandle());
+
+		fx->setUniform("u_NUM_SAMPLES", m_numSamples.getValue());
+		fx->setUniform("u_exposure", m_exposure.getValue());
+		fx->setUniform("u_decay", m_decay.getValue());
+		fx->setUniform("u_density", m_density.getValue());
+		fx ->setUniform("u_weight", m_weight.getValue());
 	}
 
 	void resetSettings()
 	{
-		m_numSamples.setValue(current.sam);
-		m_exposure.setValue(current.exp);
-		m_decay.setValue(current.dec);
-		m_density.setValue(current.den);
-		m_weight.setValue(current.wei);
+		m_numSamples.setValue(m_current.sam);
+		m_exposure.setValue(m_current.exp);
+		m_decay.setValue(m_current.dec);
+		m_density.setValue(m_current.den);
+		m_weight.setValue(m_current.wei);
 	}
 
 	void sendLightPositionForScatter(glsl_data& data, ShaderProgram *& shaderfx, GLuint textureID, float zpos)
@@ -361,15 +367,6 @@ public:
 			* 0.5f
 			+ glm::vec3(0.5f, 0.5f, 0.5f);
 		shaderfx->setUniform("u_lightPos", glm::vec2(m_lightPosOnSS.x, m_lightPosOnSS.y));
-
-#if _DEBUG
-		// this will be set once, for now debugging purposes i am keeping them here.
-		shaderfx->setUniform("u_NUM_SAMPLES",	m_numSamples.getValue());
-		shaderfx->setUniform("u_exposure",		m_exposure.getValue());
-		shaderfx->setUniform("u_decay",			m_decay.getValue());
-		shaderfx->setUniform("u_density",		m_density.getValue());
-		shaderfx->setUniform("u_weight",		m_weight.getValue());
-#endif
 	}
 
 	~FBOLightScatter()
@@ -399,13 +396,13 @@ public:
 
 	E_fxMRT() {}
 
-	void initEntity(GLuint &globalTextureCount, int w, int h)
+	void initEntity(GLuint &globalTextureCount, int w, int h, ShaderLibrary* lib)
 	{
 		m_ZPosition.setValue(DEFAULT_ZPOSITION_FOR_RENDER_TARGET);
 
 		m_MRTFrameBuffer	= new MRTFrameBuffer (w, h, globalTextureCount);
 		m_Grayscale			= new FrameBuffer	 (w, h, globalTextureCount);
-		m_LightScatter		= new FBOLightScatter(w, h, globalTextureCount);
+		m_LightScatter		= new FBOLightScatter(w, h, globalTextureCount, lib->fx_lightscatter);
 
 		postprocess.initData(m_VaoHandle);
 	}
@@ -431,11 +428,13 @@ public:
 	void update()
 	{
 		//m_ZPosition.update(1);
+		/*
 		m_LightScatter->m_numSamples.update(1);
 		m_LightScatter->m_exposure.update(.001f);
 		m_LightScatter->m_decay.update(.0001f);
 		m_LightScatter->m_density.update(.001f);
 		m_LightScatter->m_weight.update(.001f);
+		*/
 	}
 
 	void draw(glsl_data& data, ShaderLibrary* shaderLib)

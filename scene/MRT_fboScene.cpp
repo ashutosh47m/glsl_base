@@ -20,7 +20,7 @@ void MRTScene::initialize()
 	globalTextureCount = 0;
 	//render target
 	// the globalTextureCount will be incremented inside mainRTs initEntity based on the count of textures for RT
-	mE_fxmainRT.initEntity(globalTextureCount, m_width, m_height);
+	mE_fxmainRT.initEntity(globalTextureCount, m_width, m_height, getShaderLibrary());
 
 	// inititlize the axes
 	initAxes();
