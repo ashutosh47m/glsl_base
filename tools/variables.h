@@ -14,7 +14,9 @@ May 2017, Ashutosh Morwal
 template<class T>
 class variable
 {
-	T x;
+	T m_var;
+	T m_varMax = 30767;
+	T m_varMin =-30767;
 public:
 	// toggle = 0
 	// toggle = 1 
@@ -22,13 +24,37 @@ public:
 	int Toggle;
 
 	variable() {}
-	variable(T tx) : x(tx) {}
+	variable(T tx)
+		: x(tx)
+	{}
+	variable(T tx, T min, T max)
+		: m_var(tx), m_varMin(min), m_varMax(max)
+	{}
 	
-	inline T getValue() { return x; }
+	void update(T tx)
+	{
+		if (Toggle > 0)
+		{
+			if (Toggle == 1)
+			{
+				if (m_var >= m_varMax)
+					return;
+				incr(tx);
+			}
+			else if (Toggle == 2)
+			{
+				if (m_var <= m_varMin)
+					return;
+				decr(tx);
+			}
+		}
+	}
 
-	inline void setValue(T tx) { x = tx; }
+	inline T getValue() { return m_var; }
 
-	inline void incr(T inc) { x += inc; }
+	inline void setValue(T tx) { m_var = tx; }
 
-	inline void decr(T dec) { x -= dec; }
+	inline void incr(T inc) { m_var += inc; }
+
+	inline void decr(T dec) { m_var -= dec; }
 };

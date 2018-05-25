@@ -272,22 +272,11 @@ public:
 class FBOLightScatter
 {
 public:
-	/*struct scatterData
-	{
-		float		u_exposure = 0.6f;
-		float		u_decay = 0.93f;
-		float		u_density = .96f;
-		float		u_weight = 0.4f;
-		//float		u_clampMax = 1.0f;
-		int			u_NUM_SAMPLES = 90;
-	}scd; */
-	
 	glm::vec3				m_lightPosOnSS;
-	//UniformBufferBlock		u_LightScatterBlock;
-
 	glm::mat4				m_ModelMat;
 	glm::mat4				m_MVP;
-	variable<int>			m_numSamples;
+
+	variable<int>			m_numSamples = variable<int>(62, 6, 1000);
 	variable<float>			m_exposure;
 	variable<float>			m_decay;
 	variable<float>			m_density;
@@ -346,10 +335,10 @@ class E_fxMRT
 	GLuint					 m_VaoHandle;				// this is a vao handle for rt_quad 
 	MRTFrameBuffer			*m_MRTFrameBuffer	= NULL;
 	FrameBuffer				*m_Grayscale		= NULL;
-	FBOLightScatter			*m_LightScatter		= NULL;
 	PostProcess				 postprocess;
 public:
 
+	FBOLightScatter			*m_LightScatter = NULL;
 	variable<GLfloat>		 m_ZPosition; 				// the position of the render target, u can move it closer to eye, or away from it
 
 	E_fxMRT() {}
@@ -383,21 +372,16 @@ public:
 		//glViewport(0, 0, m_FBOWidth, m_FBOHeight);
 	}
 
+	void update()
+	{
+		//m_ZPosition.update(1);
+		m_LightScatter->m_numSamples.update(1);
+		printf("samples %d \n", m_LightScatter->m_numSamples.getValue());
+
+	}
+
 	void draw(glsl_data& data, ShaderLibrary* shaderLib)
 	{
-		if (m_ZPosition.Toggle > 0)
-		{
-			if (m_ZPosition.Toggle == 1)
-			{
-				m_ZPosition.incr(.01f);
-			}
-			else if (m_ZPosition.Toggle == 2)
-			{
-				m_ZPosition.decr(.01f);
-			}
-			//printf("zpos %f \n", m_ZPosition.getValue());
-		}
-
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glBindVertexArray(m_VaoHandle);
 		

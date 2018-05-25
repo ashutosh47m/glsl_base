@@ -56,6 +56,7 @@ void TestScene::update()
 
 	glClearColor(.5f, .515f, .515f, 1);
 	mT_camera->cam_control(wasd, data.glm_eye, data.glm_view, mViewDirection);
+	mE_fxmainRT.update();
 }
 
 void TestScene::renderWorld()
@@ -121,13 +122,11 @@ void TestScene::keyProcess(int key, int scancode, int action, int mods)
 			wasd[3] = true;
 			break;
 
-		case _2am_KEY_R:
-			mE_fxmainRT.m_ZPosition.Toggle = 1;
-			break;
+		//case _2am_KEY_R: mE_fxmainRT.m_ZPosition.Toggle = 1; break;
+		//case _2am_KEY_F: mE_fxmainRT.m_ZPosition.Toggle = 2; break;
 
-		case _2am_KEY_T:
-			mE_fxmainRT.m_ZPosition.Toggle = 2;
-			break;
+		case _2am_KEY_T: mE_fxmainRT.m_LightScatter->m_numSamples.Toggle = 1; break;
+		case _2am_KEY_G: mE_fxmainRT.m_LightScatter->m_numSamples.Toggle = 2; break;
 
 		case _2am_KEY_UP: break;
 		case _2am_KEY_DOWN: break;
@@ -151,12 +150,16 @@ void TestScene::keyProcess(int key, int scancode, int action, int mods)
 		case _2am_KEY_D:
 			wasd[3] = false;
 			break;
-
-		case _2am_KEY_R:
+		//case _2am_KEY_R:
+		//case _2am_KEY_F:
 		case _2am_KEY_T:
+		case _2am_KEY_G:
+			// reset variable toggles when a key is released.
 			mE_fxmainRT.m_ZPosition.Toggle = 0;
+			mE_fxmainRT.m_LightScatter->m_numSamples.Toggle = 0;
 			break;
 		}
+
 	}
 	else if (action == _2am_KEY_REPEAT)
 	{
