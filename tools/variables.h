@@ -10,10 +10,11 @@ May 2017, Ashutosh Morwal
 //these variables will typically be changed from user input.
 
 
-
+#include <iostream>
 template<class T>
 class variable
 {
+	std::string name;
 	T m_var;
 	T m_varMax = 30767;
 	T m_varMin =-30767;
@@ -24,11 +25,11 @@ public:
 	int Toggle;
 
 	variable() {}
-	variable(T tx)
-		: x(tx)
+	variable(std::string nme, T tx)
+		: m_var(tx), name(nme)
 	{}
-	variable(T tx, T min, T max)
-		: m_var(tx), m_varMin(min), m_varMax(max)
+	variable(std::string nme, T tx, T min, T max)
+		: m_var(tx), m_varMin(min), m_varMax(max), name(nme)
 	{}
 	
 	void update(T tx)
@@ -47,6 +48,7 @@ public:
 					return;
 				decr(tx);
 			}
+			std::cout << name << m_var << std::endl;
 		}
 	}
 

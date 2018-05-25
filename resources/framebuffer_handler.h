@@ -276,23 +276,16 @@ public:
 	glm::mat4				m_ModelMat;
 	glm::mat4				m_MVP;
 
-	variable<int>			m_numSamples = variable<int>(62, 6, 1000);
-	variable<float>			m_exposure;
-	variable<float>			m_decay;
-	variable<float>			m_density;
-	variable<float>			m_weight;
+	variable<int>			m_numSamples 	= variable<int>  ("m_numSamples", 62, 6, 1000);
+	variable<float>			m_exposure 		= variable<float>("m_exposure", .6f);
+	variable<float>			m_decay 		= variable<float>("m_decay", .93f);;
+	variable<float>			m_density 		= variable<float>("m_density", .96f);;
+	variable<float>			m_weight 		= variable<float>("m_weight", .4f);;
 
 	FrameBuffer	*m_FBO;
 	FBOLightScatter(int w, int h, GLuint &globalTextureCount) 
 	{
-		m_numSamples.setValue(62);
-		m_exposure.setValue(.6f);
-		m_decay.setValue(.93f);
-		m_density.setValue(.96f);
-		m_weight.setValue(.4f);
-
 		m_FBO = new FrameBuffer(w, h, globalTextureCount);
-
 	}
 
 	void sendLightPositionForScatter(glsl_data& data, ShaderProgram *& shaderfx, GLuint textureID, float zpos)
@@ -376,8 +369,10 @@ public:
 	{
 		//m_ZPosition.update(1);
 		m_LightScatter->m_numSamples.update(1);
-		printf("samples %d \n", m_LightScatter->m_numSamples.getValue());
-
+		m_LightScatter->m_exposure.update(.001f);
+		m_LightScatter->m_decay.update(.001f);
+		m_LightScatter->m_density.update(.001f);
+		m_LightScatter->m_weight.update(.001f);
 	}
 
 	void draw(glsl_data& data, ShaderLibrary* shaderLib)
