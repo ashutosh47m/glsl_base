@@ -60,7 +60,6 @@ public:
 class MRTFrameBuffer
 {
 public:
-	glm::mat4				 m_ModelMat;
 	GLuint					 m_ID;				// used for generating the FBO
 	GLuint					 m_DepthTexture;
 	GLuint					 m_Width, m_Height;
@@ -69,6 +68,7 @@ public:
 	GLuint					 m_MRTTextureID;
 	float					 m_debugRenderTargetPosition = 3.3f;
 	std::vector<GLenum>	 	 m_drawBuffers;
+	glm::mat4				 m_modelRT;
 
 	MRTFrameBuffer() {}
 
@@ -131,10 +131,10 @@ public:
 		{
 			shader->setUniform("u_RT1_tex", m_MRTTextureID + i);
 
-			m_ModelMat = data.glm_model;
-			m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(1.6f, .9f, 1.0f));
-			m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(m_debugRenderTargetPosition, m_debugRenderTargetPosition + j, 1));
-			shader->setUniform("u_m4MVP", data.glm_projection * data.getDefaultEye() * m_ModelMat);
+			m_modelRT = data.glm_model;
+			m_modelRT *= glm::scale(glm::mat4(1.0f), glm::vec3(1.6f, .9f, 1.0f));
+			m_modelRT *= glm::translate(glm::mat4(1.0f), glm::vec3(m_debugRenderTargetPosition, m_debugRenderTargetPosition + j, 1));
+			shader->setUniform("u_m4MVP", data.glm_projection * data.getDefaultEye() * m_modelRT);
 
 			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		}
@@ -146,7 +146,6 @@ public:
 class PostProcess
 {
 	GLuint		m_VaoHandle;	// vao handle used for RT quad
-	glm::mat4	m_ModelMat;
 	rt_quad		m_RTQuad;
 
 public:
@@ -161,7 +160,7 @@ public:
 		vaohandle = m_VaoHandle;
 	}
 
-	void draw(glsl_data& data, ShaderProgram *& shader, GLuint textureID, GLuint texture, float zpos)
+	void draw(glsl_data& data, ShaderProgram *& shader, GLuint textureID, GLuint texture, glm::mat4 model)
 	{
 		glUseProgram(shader->getShaderProgramHandle());
 		glBindVertexArray(m_VaoHandle);
@@ -170,15 +169,12 @@ public:
 		glBindTexture(GL_TEXTURE_2D, texture);
 		shader->setUniform("u_RT1_tex", textureID);
 
-		m_ModelMat = data.glm_model;
-		m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(16.0f, 9.0f, 1.0f));
-		m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, zpos));
-		shader->setUniform("u_m4MVP", data.glm_projection * data.getDefaultEye() * m_ModelMat);
+		shader->setUniform("u_m4MVP", data.glm_projection * data.getDefaultEye() * model);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		glUseProgram(0);
 	}
 
-	void CombinedDraw(glsl_data& data, ShaderProgram *& shader, GLuint textureID1, GLuint texture1, GLuint textureID2, GLuint texture2, float zpos)
+	void CombinedDraw(glsl_data& data, ShaderProgram *& shader, GLuint textureID1, GLuint texture1, GLuint textureID2, GLuint texture2, glm::mat4 model)
 	{
 		glUseProgram(shader->getShaderProgramHandle());
 		glBindVertexArray(m_VaoHandle);
@@ -191,10 +187,7 @@ public:
 		glBindTexture(GL_TEXTURE_2D, texture2);
 		shader->setUniform("u_colorTex", textureID2);
 
-		m_ModelMat = data.glm_model;
-		m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(16.0f, 9.0f, 1.0f));
-		m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, zpos));
-		shader->setUniform("u_m4MVP", data.glm_projection * data.getDefaultEye() * m_ModelMat);
+		shader->setUniform("u_m4MVP", data.glm_projection * data.getDefaultEye() * model);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		glUseProgram(0);
 	}
@@ -209,7 +202,6 @@ public:
 	GLuint					 m_DepthTexture;
 	GLuint					 m_Width, m_Height;
 	GLuint					 m_MRTTextureID;
-	glm::mat4				 m_ModelMat;
 	FrameBuffer() {}
 
 	FrameBuffer(GLuint w, GLuint h, GLuint &globalTextureCount) :
@@ -275,7 +267,6 @@ class FBOLightScatter
 {
 public:
 	glm::vec3				m_lightPosOnSS;
-	glm::mat4				m_ModelMat;
 	glm::mat4				m_MVP;
 
 	struct scatterSetting
@@ -358,17 +349,12 @@ public:
 		m_weight.setValue(m_current.wei);
 	}
 
-	void sendLightPositionForScatter(glsl_data& data, ShaderProgram *& shaderfx, GLuint textureID, float zpos)
+	void sendLightPositionForScatter(glsl_data& data, ShaderProgram *& shaderfx, GLuint textureID, glm::mat4 & model)
 	{
 		glUseProgram(shaderfx->getShaderProgramHandle());
-		m_ModelMat = data.glm_model;
-		m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(16.0f, 9.0f, 1.0f));
-		m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, zpos));
-
-		m_MVP = data.glm_projection * data.getDefaultEye() * m_ModelMat;
+		m_MVP = data.glm_projection * data.getDefaultEye() * model;
 		shaderfx->setUniform("u_m4MVP", m_MVP);
 
-		// this is not the place for calculating light position
 		m_lightPosOnSS =
 			(glm::vec3(m_MVP[0][3] / m_MVP[3][3], m_MVP[1][3] / m_MVP[3][3], m_MVP[2][3] / m_MVP[3][3]))
 			* 0.5f
@@ -395,6 +381,7 @@ class E_fxMRT
 	GLuint					 m_VaoHandle;				// this is a vao handle for rt_quad 
 	MRTFrameBuffer			*m_MRTFrameBuffer	= NULL;
 	PostProcess				 postprocess;
+	glm::mat4				 m_ModelMat;
 public:
 
 	FBOLightScatter			*m_LightScatter = NULL;
@@ -402,9 +389,13 @@ public:
 
 	E_fxMRT() {}
 
-	void initEntity(GLuint &globalTextureCount, int w, int h, ShaderLibrary* lib)
+	void initEntity(GLuint &globalTextureCount, int w, int h, ShaderLibrary* lib, glm::mat4 &datamodel)
 	{
 		m_ZPosition.setValue(DEFAULT_ZPOSITION_FOR_RENDER_TARGET);
+
+		m_ModelMat = datamodel;
+		m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(16.0f, 9.0f, 1.0f));
+		m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, m_ZPosition.getValue()));
 
 		m_MRTFrameBuffer	= new MRTFrameBuffer (w, h, globalTextureCount);
 		m_LightScatter		= new FBOLightScatter(w, h, globalTextureCount, lib->fx_lightscatter, m_MRTFrameBuffer->m_MRTTextureID);
@@ -453,14 +444,14 @@ public:
 		m_MRTFrameBuffer->drawDebugRenderTargets(data, shaderLib->fx_rendertarget);
 #endif		
 		// light scatter aka god rays ------------------------------------------------------
-		m_LightScatter->sendLightPositionForScatter(data, shaderLib->fx_lightscatter, m_MRTFrameBuffer->m_MRTTextureID + 1, m_ZPosition.getValue());
+		m_LightScatter->sendLightPositionForScatter(data, shaderLib->fx_lightscatter, m_MRTFrameBuffer->m_MRTTextureID + 1, m_ModelMat);
 		m_LightScatter->m_FBO->renderToTexture();
 		//----------------------------------------------------------------------------------		
 		
 //		postprocess.draw(data, shaderLib->fx_rendertarget, m_MRTFrameBuffer->m_MRTTextureID, m_MRTFrameBuffer->m_ColorTexture[0], m_ZPosition.getValue());
 		postprocess.CombinedDraw(data, shaderLib->fx_combineLightscatter, 
 			m_LightScatter->m_FBO->m_MRTTextureID, m_LightScatter->m_FBO->m_ColorTexture, // god rays 
-			m_MRTFrameBuffer->m_MRTTextureID, m_MRTFrameBuffer->m_ColorTexture[0], m_ZPosition.getValue()); // color texture
+			m_MRTFrameBuffer->m_MRTTextureID, m_MRTFrameBuffer->m_ColorTexture[0], m_ModelMat); // color texture
 	}
 
 	~E_fxMRT()
