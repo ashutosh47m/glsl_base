@@ -19,7 +19,7 @@ public:
 	variable() {}
 	variable(T tx) : x(tx) {}
 	
-	inline T getValue() { return T; }
+	inline T getValue() { return x; }
 
 	inline void setValue(T tx) { x = tx; }
 

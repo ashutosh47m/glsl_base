@@ -10,15 +10,12 @@ uniform vec2  u_lightPos	;
 
 layout (location = 0) out vec4 FragColor;
 
-layout (std140) uniform u_lightscatterData
-{
-	float u_exposure 	;
-	float u_decay 		;
-	float u_density 	;
-	float u_weight 		;
-	//float u_clampMax 	;
-	int   u_NUM_SAMPLES ;	
-};
+uniform float	u_exposure 	;
+uniform float	u_decay 		;
+uniform float	u_density 	;
+uniform float	u_weight 		;
+uniform int		u_NUM_SAMPLES ;	
+//uniform float	u_clampMax 	;
 
 void main()
 {

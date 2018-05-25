@@ -274,7 +274,7 @@ public:
 class FBOLightScatter
 {
 public:
-	struct scatterData
+	/*struct scatterData
 	{
 		float		u_exposure = 0.6f;
 		float		u_decay = 0.93f;
@@ -282,30 +282,31 @@ public:
 		float		u_weight = 0.4f;
 		//float		u_clampMax = 1.0f;
 		int			u_NUM_SAMPLES = 90;
-	}scd;
-
+	}scd; */
+	
 	glm::vec3				m_lightPosOnSS;
-	UniformBufferBlock		u_LightScatterBlock;
+	//UniformBufferBlock		u_LightScatterBlock;
 
 	glm::mat4				m_ModelMat;
 	glm::mat4				m_MVP;
 	float					m_ZPosition;
-	variable<int>			m_frames;
+	variable<int>			m_numSamples;
+	variable<float>			m_exposure;
+	variable<float>			m_decay;
+	variable<float>			m_density;
+	variable<float>			m_weight;
 
 	FrameBuffer	*m_FBO;
 	FBOLightScatter(int w, int h, GLuint &globalTextureCount, float z) : m_ZPosition(z)
 	{
-		m_frames.setValue(120);
+		m_numSamples.setValue(62);
+		m_exposure.setValue(.6f);
+		m_decay.setValue(.93f);
+		m_density.setValue(.96f);
+		m_weight.setValue(.4f);
+
 		m_FBO = new FrameBuffer(w, h, globalTextureCount, z);
 
-		scd.u_exposure = 0.6f;
-		scd.u_decay = 0.93f;
-		scd.u_density = .96f;
-		scd.u_weight = 0.4f;
-		//scd.u_clampMax = 1.0f;
-		scd.u_NUM_SAMPLES = 90;
-		
-		u_LightScatterBlock.initResource(sizeof(scd), &scd);
 	}
 
 	void sendLightPositionForScatter(glsl_data& data, ShaderProgram *& shaderfx, GLuint textureID)
@@ -326,7 +327,14 @@ public:
 			+ glm::vec3(0.5f, 0.5f, 0.5f);
 		shaderfx->setUniform("u_lightPos", glm::vec2(m_lightPosOnSS.x, m_lightPosOnSS.y));
 
-		u_LightScatterBlock.setUniformBlock(shaderfx->getShaderProgramHandle(), "u_lightscatterData", &scd);
+#if _DEBUG
+		// this will be set once, for now debugging purposes i am keeping them here.
+		shaderfx->setUniform("u_NUM_SAMPLES", m_numSamples.getValue());
+		shaderfx->setUniform("u_exposure", m_exposure.getValue());
+		shaderfx->setUniform("u_decay", m_decay.getValue());
+		shaderfx->setUniform("u_density", m_density.getValue());
+		shaderfx->setUniform("u_weight", m_weight.getValue());
+#endif
 	}
 
 	~FBOLightScatter()

@@ -34,7 +34,7 @@ public:
 	void setUniformBlock(GLuint shaderhandle, const char * blockname, void *scd)
 	{
 		unsigned int block_index = glGetUniformBlockIndex(shaderhandle, blockname);
-		GLuint binding_point_index = 2;
+		GLuint binding_point_index = 1;
 		glBindBufferBase(GL_UNIFORM_BUFFER, binding_point_index, bufferHandle);
 		glUniformBlockBinding(shaderhandle, block_index, binding_point_index);
 
