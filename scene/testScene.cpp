@@ -190,6 +190,9 @@ void TestScene::keyProcess(int key, int scancode, int action, int mods)
 		case _2am_KEY_L:
 			mE_fxmainRT.m_LightScatter->m_weight.Toggle = 0;
 			break;
+		case _2am_KEY_SPACE:
+			mE_fxmainRT.m_LightScatter->resetSettings();
+			break;
 		}
 
 	}

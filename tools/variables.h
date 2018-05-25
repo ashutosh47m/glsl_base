@@ -48,7 +48,7 @@ public:
 					return;
 				decr(tx);
 			}
-			std::cout << name << m_var << std::endl;
+			std::cout << name <<" " << m_var << std::endl;
 		}
 	}
 

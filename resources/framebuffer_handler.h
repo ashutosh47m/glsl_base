@@ -276,16 +276,72 @@ public:
 	glm::mat4				m_ModelMat;
 	glm::mat4				m_MVP;
 
-	variable<int>			m_numSamples 	= variable<int>  ("m_numSamples", 62, 6, 1000);
-	variable<float>			m_exposure 		= variable<float>("m_exposure", .6f);
-	variable<float>			m_decay 		= variable<float>("m_decay", .93f);;
-	variable<float>			m_density 		= variable<float>("m_density", .96f);;
-	variable<float>			m_weight 		= variable<float>("m_weight", .4f);;
+	struct scatterSetting
+	{
+		int sam; float exp, dec, den, wei;
+	}
+	// setting presets for god rays.
+	High
+	{
+		 150,
+		.894f,
+		.968803f,
+		.81997f,
+		.414f
+	},
+	Medium
+	{
+		100,
+		0.587f,
+		0.952f,
+		0.960f,
+		0.400f,
+	},
+	Low
+	{
+		50,
+		0.679999f,
+		0.933296f,
+		0.603005f,
+		0.454999f,
+	},
+	Test
+	{
+		50,
+		0.679999f,
+		0.933296f,
+		0.603005f,
+		0.454999f,
+	},
+	defaultScatter
+	{
+		80,
+		0.6f,
+		0.93f,
+		.96f,
+		0.4f
+	};
+	scatterSetting current = High;
+
+	variable<int>			m_numSamples 	= variable<int>  ("Sam", current.sam, 6, 1000);
+	variable<float>			m_exposure 		= variable<float>("exp", current.exp);
+	variable<float>			m_decay 		= variable<float>("dec", current.dec, 0, 1.0f);
+	variable<float>			m_density 		= variable<float>("den", current.den);
+	variable<float>			m_weight 		= variable<float>("wei", current.wei); // weight will be more for objects like sun
 
 	FrameBuffer	*m_FBO;
 	FBOLightScatter(int w, int h, GLuint &globalTextureCount) 
 	{
 		m_FBO = new FrameBuffer(w, h, globalTextureCount);
+	}
+
+	void resetSettings()
+	{
+		m_numSamples.setValue(current.sam);
+		m_exposure.setValue(current.exp);
+		m_decay.setValue(current.dec);
+		m_density.setValue(current.den);
+		m_weight.setValue(current.wei);
 	}
 
 	void sendLightPositionForScatter(glsl_data& data, ShaderProgram *& shaderfx, GLuint textureID, float zpos)
@@ -318,7 +374,14 @@ public:
 
 	~FBOLightScatter()
 	{
+#ifdef _DEBUG
+		FILE * f;
+		fopen_s(&f,"scattersetting.txt", "w");
+		fprintf(f, "%d\n%f\n%f\n%f\n%f\n", m_numSamples.getValue(), m_exposure.getValue(),
+			m_decay.getValue(), m_density.getValue(), m_weight.getValue());
+		fclose(f);
 		delete m_FBO;
+#endif
 	}
 };
 
@@ -370,7 +433,7 @@ public:
 		//m_ZPosition.update(1);
 		m_LightScatter->m_numSamples.update(1);
 		m_LightScatter->m_exposure.update(.001f);
-		m_LightScatter->m_decay.update(.001f);
+		m_LightScatter->m_decay.update(.0001f);
 		m_LightScatter->m_density.update(.001f);
 		m_LightScatter->m_weight.update(.001f);
 	}
