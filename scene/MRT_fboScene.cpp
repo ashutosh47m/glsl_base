@@ -82,11 +82,11 @@ void MRTScene::keyProcess(int key, int scancode, int action, int mods)
 			break;
 
 		case _2am_KEY_R:
-			mE_fxmainRT.decrZPosition();
+			//mE_fxmainRT.decrZPosition();
 			break;
 
 		case _2am_KEY_T:
-			mE_fxmainRT.incrZPosition();
+			//mE_fxmainRT.incrZPosition();
 			break;
 
 		case _2am_KEY_UP: break;

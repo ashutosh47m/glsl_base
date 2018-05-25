@@ -16,6 +16,11 @@ class variable
 {
 	T x;
 public:
+	// toggle = 0
+	// toggle = 1 
+	// toggle = 2 
+	int Toggle;
+
 	variable() {}
 	variable(T tx) : x(tx) {}
 	
@@ -25,5 +30,5 @@ public:
 
 	inline void incr(T inc) { x += inc; }
 
-	inline void decr(T dec) { x += dec; }
+	inline void decr(T dec) { x -= dec; }
 };

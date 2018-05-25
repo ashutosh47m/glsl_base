@@ -122,11 +122,11 @@ void TestScene::keyProcess(int key, int scancode, int action, int mods)
 			break;
 
 		case _2am_KEY_R:
-			mE_fxmainRT.decrZPosition();
+			mE_fxmainRT.m_ZPosition.Toggle = 1;
 			break;
 
 		case _2am_KEY_T:
-			mE_fxmainRT.incrZPosition();
+			mE_fxmainRT.m_ZPosition.Toggle = 2;
 			break;
 
 		case _2am_KEY_UP: break;
@@ -150,6 +150,11 @@ void TestScene::keyProcess(int key, int scancode, int action, int mods)
 			break;
 		case _2am_KEY_D:
 			wasd[3] = false;
+			break;
+
+		case _2am_KEY_R:
+		case _2am_KEY_T:
+			mE_fxmainRT.m_ZPosition.Toggle = 0;
 			break;
 		}
 	}
