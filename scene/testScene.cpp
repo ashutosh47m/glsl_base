@@ -98,7 +98,7 @@ void TestScene::draw()
 		renderWorld();
 	mE_fxmainRT.unBindFBO();
 	
-	mE_fxmainRT.postProcess(data, getShaderLibrary());
+	mE_fxmainRT.postProcessPass(data, getShaderLibrary());
 	glBindVertexArray(0);
 }
 

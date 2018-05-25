@@ -63,7 +63,7 @@ public:
 	GLuint					 m_ID;				// used for generating the FBO
 	GLuint					 m_DepthTexture;
 	GLuint					 m_Width, m_Height;
-	static const GLuint		 m_MRTCount = 2; 	// cannot be less than 1, as 1 render target is must for rendering
+	static const GLuint		 m_MRTCount = 4; 	// cannot be less than 1, as 1 render target is must for rendering
 	GLuint					 m_ColorTexture[m_MRTCount];
 	GLuint					 m_MRTTextureID;
 	float					 m_debugRenderTargetPosition = 3.3f;
@@ -160,10 +160,9 @@ public:
 		vaohandle = m_VaoHandle;
 	}
 
-	void draw(glsl_data& data, ShaderProgram *& shader, GLuint textureID, GLuint texture, glm::mat4 model)
+	void draw(glsl_data& data, ShaderProgram *& shader, GLuint textureID, GLuint texture, glm::mat4& model)
 	{
 		glUseProgram(shader->getShaderProgramHandle());
-		glBindVertexArray(m_VaoHandle);
 
 		glActiveTexture(GL_TEXTURE0 + textureID);
 		glBindTexture(GL_TEXTURE_2D, texture);
@@ -174,10 +173,12 @@ public:
 		glUseProgram(0);
 	}
 
-	void CombinedDraw(glsl_data& data, ShaderProgram *& shader, GLuint textureID1, GLuint texture1, GLuint textureID2, GLuint texture2, glm::mat4 model)
+	void CombinedDraw(glsl_data& data, ShaderProgram *& shader, 
+		GLuint textureID1, GLuint texture1, 
+		GLuint textureID2, GLuint texture2, 
+		glm::mat4& model)
 	{
 		glUseProgram(shader->getShaderProgramHandle());
-		glBindVertexArray(m_VaoHandle);
 
 		glActiveTexture(GL_TEXTURE0 + textureID1);
 		glBindTexture(GL_TEXTURE_2D, texture1);
@@ -349,7 +350,7 @@ public:
 		m_weight.setValue(m_current.wei);
 	}
 
-	void sendLightPositionForScatter(glsl_data& data, ShaderProgram *& shaderfx, GLuint textureID, glm::mat4 & model)
+	void sendLightPositionForScatter(glsl_data& data, ShaderProgram*& shaderfx, GLuint textureID, glm::mat4& model)
 	{
 		glUseProgram(shaderfx->getShaderProgramHandle());
 		m_MVP = data.glm_projection * data.getDefaultEye() * model;
@@ -365,12 +366,15 @@ public:
 	~FBOLightScatter()
 	{
 #ifdef _DEBUG
+// this code will write the values of light scatter before quitting in a file.
+/*
 		FILE * f;
 		fopen_s(&f,"scattersetting.txt", "w");
 		fprintf(f, "%d\n%f\n%f\n%f\n%f\n", m_numSamples.getValue(), m_exposure.getValue(),
 			m_decay.getValue(), m_density.getValue(), m_weight.getValue());
 		fclose(f);
 		delete m_FBO;
+*/
 #endif
 	}
 };
@@ -434,7 +438,7 @@ public:
 		*/
 	}
 
-	void postProcess(glsl_data& data, ShaderLibrary* shaderLib)
+	void postProcessPass(glsl_data& data, ShaderLibrary* shaderLib)
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glBindVertexArray(m_VaoHandle); // this is a vaoHandle for the render target quad
@@ -463,7 +467,7 @@ public:
 
 	void enable()
 	{
-		glBindVertexArray(m_VaoHandle);
+		//glBindVertexArray(m_VaoHandle);
 	}
 };
 
