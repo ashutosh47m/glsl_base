@@ -78,13 +78,12 @@ void TestScene::renderWorld()
 		mE_grassStonequad.draw(data, getShaderLibrary()->textured_colored_geometry, glm::vec3(1, 2, 0));
 	//glEnable(GL_CULL_FACE);
 
-	mE_X_axes.draw(data, getShaderLibrary()->colored_geometry);
-	mE_Y_axes.draw(data, getShaderLibrary()->colored_geometry);
-	mE_Z_axes.draw(data, getShaderLibrary()->colored_geometry);
+	//mE_X_axes.draw(data, getShaderLibrary()->colored_geometry);
+	//mE_Y_axes.draw(data, getShaderLibrary()->colored_geometry);
+	//mE_Z_axes.draw(data, getShaderLibrary()->colored_geometry);
 
 	m_ModelMat = data.glm_model;
 	m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(24, 24, 24));
-	m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
 	mE_ColoredSkybox.draw(data, getShaderLibrary()->colored_geometry, m_ModelMat);
 
 	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(0, 2, 2));
@@ -99,7 +98,7 @@ void TestScene::draw()
 		renderWorld();
 	mE_fxmainRT.unBindFBO();
 	
-	mE_fxmainRT.draw(data, getShaderLibrary());
+	mE_fxmainRT.postProcess(data, getShaderLibrary());
 	glBindVertexArray(0);
 }
 
@@ -191,7 +190,8 @@ void TestScene::keyProcess(int key, int scancode, int action, int mods)
 			mE_fxmainRT.m_LightScatter->m_weight.Toggle = 0;
 			break;
 		case _2am_KEY_SPACE:
-			mE_fxmainRT.m_LightScatter->resetSettings();
+			// reset changed uniform params for light scatter
+			//mE_fxmainRT.m_LightScatter->resetSettings();
 			break;
 		}
 

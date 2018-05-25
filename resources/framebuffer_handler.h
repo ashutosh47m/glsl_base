@@ -14,7 +14,8 @@ May 2018, Ashutosh Morwal
 #include "../tools/variables.h"
 
 #define DEFAULT_ZPOSITION_FOR_RENDER_TARGET 2.0f
-
+#define MRT_COLOR_ALBEDO 0
+#define MRT_WHITE_GODRAYS 1
 // used by post-process and debugRTDraw to draw on
 class rt_quad
 {
@@ -63,7 +64,7 @@ public:
 	GLuint					 m_ID;				// used for generating the FBO
 	GLuint					 m_DepthTexture;
 	GLuint					 m_Width, m_Height;
-	static const GLuint		 m_MRTCount = 4; 	// cannot be less than 1, as 1 render target is must for rendering
+	static const GLuint		 m_MRTCount = 2; 	// cannot be less than 1, as 1 render target is must for rendering
 	GLuint					 m_ColorTexture[m_MRTCount];
 	GLuint					 m_MRTTextureID;
 	float					 m_debugRenderTargetPosition = 3.3f;
@@ -87,7 +88,7 @@ public:
 		for (GLuint i = 0; i < m_MRTCount; i++)
 		{
 			glBindTexture(GL_TEXTURE_2D, m_ColorTexture[i]);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, w, h, 0, GL_RGBA, GL_FLOAT, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_FLOAT, NULL);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
@@ -120,6 +121,7 @@ public:
 		}
 	}
 
+	// just a small function that draws debug render targets for visuazlization on screen
 	void drawDebugRenderTargets(glsl_data& data, ShaderProgram *& shader)
 	{
 		float j = 0;
@@ -222,14 +224,14 @@ public:
 		glGenTextures(1, &m_ColorTexture);
 		glBindTexture(GL_TEXTURE_2D, m_ColorTexture);
 		//	change GL_RGBA8 to GL_RGBA32 for better results
-		glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, m_Width, m_Height);
+		glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB32F, m_Width, m_Height);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		glGenTextures(1, &m_DepthTexture);
 		glBindTexture(GL_TEXTURE_2D, m_DepthTexture);
-		glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT32F, m_Width, m_Height);
+		glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT, m_Width, m_Height);
 
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_ColorTexture, 0);
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_DepthTexture, 0);
@@ -289,7 +291,7 @@ public:
 		.81997f,
 		.414f
 	},
-		Medium
+	Medium
 	{
 		100,
 		0.587f,
@@ -297,7 +299,7 @@ public:
 		0.960f,
 		0.400f,
 	},
-		Low
+	Low
 	{
 		50,
 		0.679999f,
@@ -320,7 +322,7 @@ public:
 	{
 		0,
 	};
-	scatterSetting			m_current = Medium;
+	scatterSetting			m_current = High;
 
 	variable<int>			m_numSamples 	= variable<int>  ("Sam", m_current.sam, 6, 1000);
 	variable<float>			m_exposure 		= variable<float>("exp", m_current.exp);
@@ -329,7 +331,7 @@ public:
 	variable<float>			m_weight 		= variable<float>("wei", m_current.wei); // weight will be more for objects like sun
 
 	FrameBuffer			   *m_FBO;
-	FBOLightScatter(int w, int h, GLuint &globalTextureCount, ShaderProgram *& fx) 
+	FBOLightScatter(int w, int h, GLuint &globalTextureCount, ShaderProgram *& fx, GLuint MRTtextureID) 
 	{
 		m_FBO = new FrameBuffer(w, h, globalTextureCount);
 		glUseProgram(fx->getShaderProgramHandle());
@@ -338,7 +340,13 @@ public:
 		fx->setUniform("u_exposure", m_exposure.getValue());
 		fx->setUniform("u_decay", m_decay.getValue());
 		fx->setUniform("u_density", m_density.getValue());
-		fx ->setUniform("u_weight", m_weight.getValue());
+		fx->setUniform("u_weight", m_weight.getValue());
+
+		// MRTtextureID + 0 : default colore albedo texture which will be written from the MRT.  
+		// MRTtextureID + 1 : will represent the lights in the scene for which we need god rays.
+
+		// interesting fact: if you were to use MRTtextureID + 0 instead of 1, you will see some interesting effects.
+		fx->setUniform("u_RT1_tex", MRTtextureID + 1); 
 	}
 
 	void resetSettings()
@@ -356,7 +364,6 @@ public:
 		m_ModelMat = data.glm_model;
 		m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(16.0f, 9.0f, 1.0f));
 		m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, zpos));
-		shaderfx->setUniform("u_RT1_tex", textureID);
 
 		m_MVP = data.glm_projection * data.getDefaultEye() * m_ModelMat;
 		shaderfx->setUniform("u_m4MVP", m_MVP);
@@ -387,7 +394,6 @@ class E_fxMRT
 {
 	GLuint					 m_VaoHandle;				// this is a vao handle for rt_quad 
 	MRTFrameBuffer			*m_MRTFrameBuffer	= NULL;
-	FrameBuffer				*m_Grayscale		= NULL;
 	PostProcess				 postprocess;
 public:
 
@@ -401,8 +407,7 @@ public:
 		m_ZPosition.setValue(DEFAULT_ZPOSITION_FOR_RENDER_TARGET);
 
 		m_MRTFrameBuffer	= new MRTFrameBuffer (w, h, globalTextureCount);
-		m_Grayscale			= new FrameBuffer	 (w, h, globalTextureCount);
-		m_LightScatter		= new FBOLightScatter(w, h, globalTextureCount, lib->fx_lightscatter);
+		m_LightScatter		= new FBOLightScatter(w, h, globalTextureCount, lib->fx_lightscatter, m_MRTFrameBuffer->m_MRTTextureID);
 
 		postprocess.initData(m_VaoHandle);
 	}
@@ -421,6 +426,7 @@ public:
 	{
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glUseProgram(0);
 		// reset the viewport
 		//glViewport(0, 0, m_FBOWidth, m_FBOHeight);
 	}
@@ -437,29 +443,29 @@ public:
 		*/
 	}
 
-	void draw(glsl_data& data, ShaderLibrary* shaderLib)
+	void postProcess(glsl_data& data, ShaderLibrary* shaderLib)
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glBindVertexArray(m_VaoHandle);
+		glBindVertexArray(m_VaoHandle); // this is a vaoHandle for the render target quad
 		
 		m_MRTFrameBuffer->activateMRTTextures();
 #ifdef _DEBUG 
 		m_MRTFrameBuffer->drawDebugRenderTargets(data, shaderLib->fx_rendertarget);
 #endif		
-		// light scatter aka god rays
+		// light scatter aka god rays ------------------------------------------------------
 		m_LightScatter->sendLightPositionForScatter(data, shaderLib->fx_lightscatter, m_MRTFrameBuffer->m_MRTTextureID + 1, m_ZPosition.getValue());
 		m_LightScatter->m_FBO->renderToTexture();
+		//----------------------------------------------------------------------------------		
 		
-		//postprocess.draw(data, shaderLib->fx_rendertarget, m_fboLightScatter->m_MRTTextureID, m_fboLightScatter->m_ColorTexture);
+//		postprocess.draw(data, shaderLib->fx_rendertarget, m_MRTFrameBuffer->m_MRTTextureID, m_MRTFrameBuffer->m_ColorTexture[0], m_ZPosition.getValue());
 		postprocess.CombinedDraw(data, shaderLib->fx_combineLightscatter, 
-			m_LightScatter->m_FBO->m_MRTTextureID, m_LightScatter->m_FBO->m_ColorTexture,
-			m_MRTFrameBuffer->m_MRTTextureID, m_MRTFrameBuffer->m_ColorTexture[0], m_ZPosition.getValue());
+			m_LightScatter->m_FBO->m_MRTTextureID, m_LightScatter->m_FBO->m_ColorTexture, // god rays 
+			m_MRTFrameBuffer->m_MRTTextureID, m_MRTFrameBuffer->m_ColorTexture[0], m_ZPosition.getValue()); // color texture
 	}
 
 	~E_fxMRT()
 	{
 		delete m_LightScatter;
-		delete m_Grayscale;
 		delete m_MRTFrameBuffer;
 	}
 	GLuint getVAOHandle() { return m_VaoHandle; }

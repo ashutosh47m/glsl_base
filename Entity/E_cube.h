@@ -93,7 +93,7 @@ public:
 	}
 	
 	// draw at the given modelmat
-	void draw(glsl_data& data, ShaderProgram *& shader, glm::mat4 modelMat)
+	void draw(glsl_data& data, ShaderProgram *& shader, glm::mat4& modelMat)
 	{
 		glBindVertexArray(m_VaoHandle);
 		glUseProgram(shader->getShaderProgramHandle());
