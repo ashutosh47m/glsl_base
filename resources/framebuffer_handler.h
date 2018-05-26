@@ -209,12 +209,17 @@ public:
 	GLuint					 m_DepthTexture;
 	GLuint					 m_Width, m_Height;
 	GLuint					 m_MRTTextureID;
+	GLuint					 m_Wdownsampled, m_Hdownsampled;
+	
 	FrameBuffer() {}
 
-	FrameBuffer(GLuint w, GLuint h, GLuint &globalTextureCount) :
+	FrameBuffer(GLuint w, GLuint h, int downsample, GLuint &globalTextureCount) :
 		m_Width(w),
 		m_Height(h) 
 	{
+		m_Wdownsampled = w / downsample;
+		m_Hdownsampled = h / downsample;
+
 		m_MRTTextureID = ++globalTextureCount;
 
 		glGenFramebuffers(1, &m_ID);
@@ -223,14 +228,14 @@ public:
 		glGenTextures(1, &m_ColorTexture);
 		glBindTexture(GL_TEXTURE_2D, m_ColorTexture);
 		//	change GL_RGBA8 to GL_RGBA32 for better results
-		glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB32F, m_Width, m_Height);
+		glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB32F, m_Wdownsampled, m_Hdownsampled);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		glGenTextures(1, &m_DepthTexture);
 		glBindTexture(GL_TEXTURE_2D, m_DepthTexture);
-		glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT, m_Width, m_Height);
+		glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT, m_Wdownsampled, m_Hdownsampled);
 
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_ColorTexture, 0);
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_DepthTexture, 0);
@@ -247,6 +252,7 @@ public:
 	// in FBO when only one color attachment is present, you do not need to explicitely call glDrawBuffers 
 		//static const GLenum draw_buffers[] = { GL_COLOR_ATTACHMENT0 };
 		//glDrawBuffers(1, draw_buffers);
+		glViewport(0, 0, m_Wdownsampled, m_Hdownsampled);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 	void renderToTexture()
@@ -257,6 +263,7 @@ public:
 	}
 	void unbindFBO()
 	{
+		glViewport(0, 0, m_Width, m_Height);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glUseProgram(0);
@@ -276,7 +283,7 @@ class FBOLightScatter
 public:
 	glm::vec3				m_lightPosOnSS;
 	glm::mat4				m_MVP;
-
+	int						m_downsample = 2; // set this to 1 for no downsampling
 	struct scatterSetting
 	{
 		int sam; float exp, dec, den, wei;
@@ -335,7 +342,7 @@ public:
 
 	FBOLightScatter(int w, int h, GLuint &globalTextureCount, ShaderProgram *& fx, GLuint MRTtextureID) 
 	{
-		m_FBO = new FrameBuffer(w, h, globalTextureCount);
+		m_FBO = new FrameBuffer(w, h, m_downsample, globalTextureCount);
 
 		// the information which needs to be updated only once should be sent here.
 		glUseProgram(fx->getShaderProgramHandle());
@@ -407,6 +414,7 @@ class E_fxMRT
 	MRTFrameBuffer			*m_MRTFrameBuffer	= NULL;
 	PostProcess				 postprocess;
 	glm::mat4				 m_ModelMat;
+	
 	struct fxGlobalSettings
 	{
 		bool	global_postprocess;
