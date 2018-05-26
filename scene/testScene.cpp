@@ -17,26 +17,24 @@ void TestScene::initAxes()
 void TestScene::initialize()
 {
 	loadShaders();
-	globalTextureCount = 0;
+	global2DTextureCount = 0;
+	global3DTextureCount = 0;
 	//render target
 	// the globalTextureCount will be incremented inside mainRTs initEntity based on the count of textures for RT
-	mE_fxmainRT.initEntity(globalTextureCount, m_width, m_height, getShaderLibrary(), data);
+	if (mE_fxmainRT.fx.global_postprocess)
+		mE_fxmainRT.initEntity(global2DTextureCount, m_width, m_height, getShaderLibrary(), data);
 
-	// triangles
-	mE_triangle.initEntity();	//inits the shaders and other resources
-	mE_red_triangle.initEntity();
-	mE_texturedTriangle.initEntity	(++globalTextureCount, "..\\resources\\textures\\grassstone.jpg");
 
 	// inititlize the axes
 	initAxes();
 
+	mE_brickTriangle.initEntity		(++global2DTextureCount, "..\\resources\\textures\\brick.jpg");
 	//quad
-	mE_Woodenquad.initEntity		(++globalTextureCount, "..\\resources\\textures\\wooden.jpg");
-	mE_Marblequad.initEntity		(++globalTextureCount, "..\\resources\\textures\\marble.jpg");
-	mE_grassStonequad.initEntity	(++globalTextureCount, "..\\resources\\textures\\grassstone.jpg");
+	mE_Junglequad.initEntity		(++global2DTextureCount, "..\\resources\\textures\\jungle.jpg");
+	mE_Woodenquad.initEntity		(++global2DTextureCount, "..\\resources\\textures\\wooden.jpg");
+	mE_grassStonequad.initEntity	(++global2DTextureCount, "..\\resources\\textures\\green.jpg");
 	
-	//mE_vrc.initEntity				(++globalTextureCount, "..\\resources\\volumes\\engine256.raw", 256,256,256);
-	mE_vrc.initEntity				(++globalTextureCount, "..\\resources\\volumes\\head256x256x109\\head256x256x109.raw", 256,256,109);
+	mE_vrc.initEntity				(  global3DTextureCount, "..\\resources\\volumes\\head256x256x109\\head256x256x109.raw", 256,256,109);
 	
 	//cube			
 	mE_cube.initEntity(true);
@@ -67,15 +65,12 @@ void TestScene::renderWorld()
 	mE_vrc.draw(data, getShaderLibrary()->volume_ray_caster, data.glm_eye);
 
 	//glDisable(GL_CULL_FACE);
-		mE_triangle.draw(data, getShaderLibrary()->colored_geometry);
-		mE_red_triangle.draw(data, getShaderLibrary()->red_triangle_shader);
-		mE_texturedTriangle.draw(data, getShaderLibrary()->textured_colored_geometry, glm::vec3(2, 1, 0));
-
-		mE_Woodenquad.enable();
-		mE_Woodenquad.draw(data, getShaderLibrary()->textured_colored_geometry, glm::vec3(-1, 1, 0));
-		mE_Woodenquad.draw(data, getShaderLibrary()->textured_colored_geometry, glm::vec3(-3, 1, 0));
-		mE_Marblequad.draw(data, getShaderLibrary()->textured_colored_geometry, glm::vec3(-1, 2, 0));
-		mE_grassStonequad.draw(data, getShaderLibrary()->textured_colored_geometry, glm::vec3(1, 2, 0));
+		
+	mE_Woodenquad.draw		(data, getShaderLibrary()->textured_colored_geometry,	glm::vec3( -1.1, 0, 0));
+	mE_Woodenquad.draw		(data, getShaderLibrary()->textured_colored_geometry,	glm::vec3(  0,   0, 0));
+	mE_brickTriangle.draw	(data, getShaderLibrary()->textured_colored_geometry, glm::vec3(-2.2, 0, 0));
+	mE_Junglequad.draw		(data, getShaderLibrary()->textured_colored_geometry,	glm::vec3(  1.1, 0, 0));
+	mE_grassStonequad.draw	(data, getShaderLibrary()->textured_colored_geometry,	glm::vec3(  2.2, 0, 0));
 	//glEnable(GL_CULL_FACE);
 
 	//mE_X_axes.draw(data, getShaderLibrary()->colored_geometry);

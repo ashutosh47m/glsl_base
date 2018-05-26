@@ -165,6 +165,7 @@ public:
 			//delete the volume data allocated on heap
 			delete[] pData;
 			isValid = true;
+			glBindTexture(GL_TEXTURE_3D, 0);
 		}
 		else 
 		{

@@ -29,19 +29,21 @@ namespace usr_scene
 {
 	class TestScene : public AbstractScene
 	{
-		E_first_triangle			mE_triangle;			// e stands for entity
-		E_textured_triangle			mE_texturedTriangle;
-		E_first_red_triangle		mE_red_triangle;
+		E_textured_triangle			mE_brickTriangle;
+
 		E_textured_quad				mE_Woodenquad;
-		E_textured_quad				mE_Marblequad;
+		E_textured_quad				mE_Junglequad;
 		E_textured_quad				mE_grassStonequad;
+
 		E_colored_line				mE_X_axes, mE_Y_axes, mE_Z_axes;
+
 		//E_3d_texture_volume		mE_vol;
+
 		E_cube						mE_cube;
 		E_cube						mE_ColoredSkybox;
+
 		E_volume_ray_caster			mE_vrc; // volume ray caster
 
-		// render targets : I believe we need a separate class handling all the RTs.
 		E_fxMRT						mE_fxmainRT;
 
 		int							m_width, m_height;

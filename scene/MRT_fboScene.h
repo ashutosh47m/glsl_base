@@ -14,10 +14,12 @@ May 2018, Ashutosh Morwal
 #include "../tools/camera.h"
 #include "../tools/keys.h"
 #include "../Entity/E_origin_axis.h"
+#include "../Entity/E_cube.h"
+#include "../Entity/E_textured_quad.h"
 
 namespace mrt_scene
 {
-	class MRTScene : public AbstractScene
+	class GodRayTestScene : public AbstractScene
 	{
 		E_fxMRT						mE_fxmainRT;
 		int							m_width, m_height;
@@ -26,6 +28,9 @@ namespace mrt_scene
 	
 		bool						wasd[4] = { false };
 		E_colored_line				mE_X_axes, mE_Y_axes, mE_Z_axes;
+		glm::mat4					m_ModelMat;
+		E_cube						mE_ColoredSkybox;
+		E_textured_quad				mE_Marblequad;
 
 		void initAxes();
 		void initialize();
@@ -36,11 +41,11 @@ namespace mrt_scene
 	public:
 		void keyProcess(int key, int scancode, int action, int mods);
 
-		MRTScene()
+		GodRayTestScene()
 		{
 
 		}
-		~MRTScene()
+		~GodRayTestScene()
 		{
 		}
 

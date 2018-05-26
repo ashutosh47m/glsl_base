@@ -1,8 +1,9 @@
 #include "MRT_fboScene.h"
+#include "../Entity/E_textured_quad.h"
 
 using namespace mrt_scene;
 
-void MRTScene::initAxes()
+void GodRayTestScene::initAxes()
 {
 	std::vector<float> pos_line = { -100,0,0, 100,0,0 };
 	std::vector<float> col_line = { 1,1,1,1,1,1 };
@@ -14,22 +15,25 @@ void MRTScene::initAxes()
 	mE_Z_axes.initEntity(pos_line, col_line);
 }
 
-void MRTScene::initialize()
+void GodRayTestScene::initialize()
 {
 	loadShaders();
-	globalTextureCount = 0;
+	global2DTextureCount = 0;
 	//render target
 	// the globalTextureCount will be incremented inside mainRTs initEntity based on the count of textures for RT
-//	mE_fxmainRT.initEntity(globalTextureCount, m_width, m_height, getShaderLibrary(), data.glm_model);
-
+	mE_fxmainRT.initEntity(global2DTextureCount, m_width, m_height, getShaderLibrary(), data);
+	
 	// inititlize the axes
 	initAxes();
+
+	mE_ColoredSkybox.initEntity(false);
+	mE_Marblequad.initEntity(++global2DTextureCount, "..\\resources\\textures\\jungle.jpg");
 
 	//load camera
 	mT_camera = new YP_Camera(m_width, m_height);
 }
 
-void MRTScene::update()
+void GodRayTestScene::update()
 {
 	glEnable(GL_DEPTH_TEST);
 
@@ -41,28 +45,42 @@ void MRTScene::update()
 	mT_camera->cam_control(wasd, data.glm_eye, data.glm_view, mViewDirection);
 }
 
-void MRTScene::renderWorld()
+void GodRayTestScene::renderWorld()
 {
 	// we need this clear color to change the color inside the main RT
 	glClearColor(.0f, .0f, .0f, 1);
+	
+	m_ModelMat = data.glm_model;
+	m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(24, 24, 24));
+	mE_ColoredSkybox.draw(data, getShaderLibrary()->colored_geometry, m_ModelMat);
 
 	glLineWidth(10.0f);
 	mE_X_axes.draw(data, getShaderLibrary()->colored_geometry);
 	mE_Y_axes.draw(data, getShaderLibrary()->colored_geometry);
 	mE_Z_axes.draw(data, getShaderLibrary()->colored_geometry);
+
+	mE_Marblequad.enable();
+	mE_Marblequad.draw(data, getShaderLibrary()->textured_colored_geometry, glm::vec3(0, 0,  0));
 }
 
-void MRTScene::draw()
+void GodRayTestScene::draw()
 {
-	mE_fxmainRT.bindFBOForDraw();
+	if (mE_fxmainRT.fx.global_postprocess)
+	{
+		mE_fxmainRT.bindFBOForDraw();
 		renderWorld();
-	mE_fxmainRT.unBindFBO();
+		mE_fxmainRT.unBindFBO();
 
-//	mE_fxmainRT.draw(data, getShaderLibrary()->rendertarget);
-	glBindVertexArray(0);
+		mE_fxmainRT.postProcessPass(data, getShaderLibrary());
+	}
+	else
+	{
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		renderWorld();
+	}
 }
 
-void MRTScene::keyProcess(int key, int scancode, int action, int mods)
+void GodRayTestScene::keyProcess(int key, int scancode, int action, int mods)
 {
 	if (action == _2am_KEY_PRESS)
 	{

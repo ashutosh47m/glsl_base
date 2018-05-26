@@ -52,8 +52,11 @@ public:
 
 	~rt_quad()
 	{
-		m_RTData->deleteResource();
-		delete m_RTData;
+		if (m_RTData != NULL)
+		{
+			m_RTData->deleteResource();
+			delete m_RTData;
+		}
 	}
 };
 
@@ -66,7 +69,7 @@ public:
 	GLuint					 m_Width, m_Height;
 	// the number of render targets this MRT is going to have. 
 	// this value cannot be less than 1, as 1 render target is must for rendering	; 	
-	static const GLuint		 m_MRTCount = 3;
+	static const GLuint		 m_MRTCount = 4;
 	
 	GLuint					 m_ColorTexture[m_MRTCount];
 	GLuint					 m_MRTTextureID;
@@ -91,6 +94,7 @@ public:
 		glBindFramebuffer(GL_FRAMEBUFFER, m_ID);
 
 		glGenTextures(m_MRTCount, m_ColorTexture);
+		globalTextureCount++;
 		glGenTextures(1, &m_DepthTexture);
 
 		for (GLuint i = 0; i < m_MRTCount; i++)
@@ -234,6 +238,7 @@ public:
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		glGenTextures(1, &m_DepthTexture);
+		globalTextureCount++;
 		glBindTexture(GL_TEXTURE_2D, m_DepthTexture);
 		glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT, m_Wdownsampled, m_Hdownsampled);
 

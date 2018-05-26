@@ -75,8 +75,8 @@ public:
 			shader->setUniform("u_step_size", 1.0f / m_Xdim, 1.0f / m_Ydim, 1.0f / m_Zdim);
 			shader->setUniform("u_m4MVP", data.glm_projection * data.glm_view * m_ModelMat);
 			shader->setUniform("u_camPos", cam_position);
-			glBindTexture(GL_TEXTURE_3D, m_T3d.getTextureID());
 			glActiveTexture(GL_TEXTURE0 + m_T3d.getUniformID());
+			glBindTexture(GL_TEXTURE_3D, m_T3d.getTextureID());
 			shader->setUniform(m_T3d.getUniformVar(), m_T3d.getUniformID());
 			glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
 		glDisable(GL_BLEND);
@@ -89,9 +89,12 @@ public:
 
 	~E_volume_ray_caster()
 	{
-		m_CubeData->deleteResource();
-		m_T3d.deleteResource();
-		delete m_CubeData;
+		if (m_CubeData)
+		{
+			m_CubeData->deleteResource();
+			m_T3d.deleteResource();
+			delete m_CubeData;
+		}
 	}
 };
 

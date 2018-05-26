@@ -59,13 +59,16 @@ public:
 	void draw(glsl_data& data, ShaderProgram *& shader, glm::vec3 position)
 	{
 		glBindVertexArray(m_VaoHandle);
+
 		glUseProgram(shader->getShaderProgramHandle());
-		glBindTexture(GL_TEXTURE_2D, m_T.getTextureID());
 		m_ModelMat = data.glm_model;
 		m_ModelMat *= glm::translate(glm::mat4(1.0f), position);
 		m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(2));
+
 		glActiveTexture(GL_TEXTURE0 + m_T.getUniformID());
-		shader->setUniform("u_var_tex", m_T.getUniformID());
+		glBindTexture(GL_TEXTURE_2D, m_T.getTextureID());
+		shader->setUniform("u_var_tex", m_T.getTextureID());
+
 		shader->setUniform("u_m4MVP", data.glm_projection * data.glm_view * m_ModelMat);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 	}
