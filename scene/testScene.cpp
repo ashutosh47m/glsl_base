@@ -94,11 +94,19 @@ void TestScene::renderWorld()
 
 void TestScene::draw()
 {
-	mE_fxmainRT.bindFBOForDraw();
-		renderWorld();
-	mE_fxmainRT.unBindFBO();
+	if(mE_fxmainRT.fx.global_postprocess)
+	{ 
+		mE_fxmainRT.bindFBOForDraw();
+			renderWorld();
+		mE_fxmainRT.unBindFBO();
 	
-	mE_fxmainRT.postProcessPass(data, getShaderLibrary());
+		mE_fxmainRT.postProcessPass(data, getShaderLibrary());
+	}
+	else
+	{
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		renderWorld();
+	}
 	glBindVertexArray(0);
 }
 

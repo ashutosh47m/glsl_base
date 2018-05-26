@@ -13,9 +13,10 @@ May 2018, Ashutosh Morwal
 #include "../resources/shader_program.h"
 #include "../tools/variables.h"
 
-#define DEFAULT_ZPOSITION_FOR_RENDER_TARGET 2.0f
+#define DEFAULT_ZPOSITION_FOR_RENDER_TARGET 2.0f  
 #define MRT_COLOR_ALBEDO 0
 #define MRT_WHITE_GODRAYS 1
+
 // used by post-process and debugRTDraw to draw on
 class rt_quad
 {
@@ -61,12 +62,18 @@ class MRTFrameBuffer
 {
 public:
 	GLuint					 m_ID;				// used for generating the FBO
-	GLuint					 m_DepthTexture;
+	GLuint					 m_DepthTexture;	
 	GLuint					 m_Width, m_Height;
-	static const GLuint		 m_MRTCount = 2; 	// cannot be less than 1, as 1 render target is must for rendering
+	// the number of render targets this MRT is going to have. 
+	// this value cannot be less than 1, as 1 render target is must for rendering	; 	
+	static const GLuint		 m_MRTCount = 3;
+	
 	GLuint					 m_ColorTexture[m_MRTCount];
 	GLuint					 m_MRTTextureID;
+	
+	// only for debug
 	float					 m_debugRenderTargetPosition = 3.3f;
+
 	std::vector<GLenum>	 	 m_drawBuffers;
 	glm::mat4				 m_modelRT;
 
@@ -76,6 +83,7 @@ public:
 		m_Width(w),
 		m_Height(h)
 	{
+		// we increase the global texture count based on the number of RTs we have
 		m_MRTTextureID = globalTextureCount;
 		globalTextureCount += m_MRTCount;
 
@@ -143,21 +151,18 @@ public:
 
 // after the multi-render pass post-process is used for rendering the desired framebuffer object onto the screen
 // this is what user will see.
+// this contents the rt_quad data
 class PostProcess
 {
-	GLuint		m_VaoHandle;	// vao handle used for RT quad
 	rt_quad		m_RTQuad;
 
 public:
 	PostProcess() {}
-	PostProcess(GLuint vaohandle) : m_VaoHandle(vaohandle)
-	{}
 
 	void initData(GLuint &vaohandle)
 	{
 		m_RTQuad.initEntity();
-		m_VaoHandle = m_RTQuad.getVaoHandle();
-		vaohandle = m_VaoHandle;
+		vaohandle = m_RTQuad.getVaoHandle();
 	}
 
 	void draw(ShaderProgram *& shader, GLuint textureID, GLuint texture, glm::mat4& model)
@@ -239,8 +244,9 @@ public:
 	void bindFBO()
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_ID);
-		static const GLenum draw_buffers[] = { GL_COLOR_ATTACHMENT0 };
-		glDrawBuffers(1, draw_buffers);
+	// in FBO when only one color attachment is present, you do not need to explicitely call glDrawBuffers 
+		//static const GLenum draw_buffers[] = { GL_COLOR_ATTACHMENT0 };
+		//glDrawBuffers(1, draw_buffers);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 	void renderToTexture()
@@ -276,6 +282,7 @@ public:
 		int sam; float exp, dec, den, wei;
 	}
 	// setting presets for god rays.
+	// to increase performance set to low
 	High
 	{
 		 150,
@@ -287,7 +294,7 @@ public:
 	Medium
 	{
 		100,
-		0.587f,
+		0.987f,
 		0.952f,
 		0.960f,
 		0.400f,
@@ -295,7 +302,7 @@ public:
 	Low
 	{
 		50,
-		0.679999f,
+		0.899999f,
 		0.933296f,
 		0.603005f,
 		0.454999f,
@@ -315,7 +322,8 @@ public:
 	{
 		0,
 	};
-	scatterSetting			m_current = High;
+
+	scatterSetting			m_current		= High;
 
 	variable<int>			m_numSamples 	= variable<int>  ("Sam", m_current.sam, 6, 1000);
 	variable<float>			m_exposure 		= variable<float>("exp", m_current.exp);
@@ -324,9 +332,12 @@ public:
 	variable<float>			m_weight 		= variable<float>("wei", m_current.wei); // weight will be more for objects like sun
 
 	FrameBuffer			   *m_FBO;
+
 	FBOLightScatter(int w, int h, GLuint &globalTextureCount, ShaderProgram *& fx, GLuint MRTtextureID) 
 	{
 		m_FBO = new FrameBuffer(w, h, globalTextureCount);
+
+		// the information which needs to be updated only once should be sent here.
 		glUseProgram(fx->getShaderProgramHandle());
 
 		fx->setUniform("u_NUM_SAMPLES", m_numSamples.getValue());
@@ -342,6 +353,8 @@ public:
 		fx->setUniform("u_RT1_tex", MRTtextureID + 1); 
 	}
 
+	// this function is only for the debug purposes
+#if _DEBUG
 	void resetSettings()
 	{
 		m_numSamples.setValue(m_current.sam);
@@ -350,6 +363,7 @@ public:
 		m_density.setValue(m_current.den);
 		m_weight.setValue(m_current.wei);
 	}
+#endif
 
 	void sendLightPositionForScatter(ShaderProgram*& shaderfx, GLuint textureID, glm::mat4& model)
 	{
@@ -357,9 +371,11 @@ public:
 		shaderfx->setUniform("u_m4MVP", model);
 
 		m_lightPosOnSS =
-			(glm::vec3(model[0][3] / model[3][3], model[1][3] / model[3][3], model[2][3] / model[3][3]))
+		(
+			glm::vec3(model[0][3] / model[3][3], model[1][3] / model[3][3], model[2][3] / model[3][3]))
 			* 0.5f
-			+ glm::vec3(0.5f, 0.5f, 0.5f);
+			+ glm::vec3(0.5f, 0.5f, 0.5f
+		);
 		shaderfx->setUniform("u_lightPos", glm::vec2(m_lightPosOnSS.x, m_lightPosOnSS.y));
 	}
 
@@ -379,15 +395,27 @@ public:
 	}
 };
 
-// this class is going to create multiple framebuffers for one draw call.
+/*
+	E_fxMRT class will be used by the scene to call all the post processing functions.
+	this class will hold the configuration/setting needed for post process.
+
+	This class also creates multiple render targets for deferred rendering.
+*/ 
 class E_fxMRT
 {
 	GLuint					 m_VaoHandle;				// this is a vao handle for rt_quad 
 	MRTFrameBuffer			*m_MRTFrameBuffer	= NULL;
 	PostProcess				 postprocess;
 	glm::mat4				 m_ModelMat;
+	struct fxGlobalSettings
+	{
+		bool	global_postprocess;
+		bool	godrays;
+	};
+	
 public:
 
+	fxGlobalSettings		 fx{ true, true};
 	FBOLightScatter			*m_LightScatter = NULL;
 	variable<GLfloat>		 m_ZPosition; 				// the position of the render target, u can move it closer to eye, or away from it
 
@@ -397,12 +425,16 @@ public:
 	{
 		m_ZPosition.setValue(DEFAULT_ZPOSITION_FOR_RENDER_TARGET);
 
+		// once m_ModelMat is set for render targets its going to be constant throughout the life of a program.
+		// coz we hardly change the render target of a game
 		m_ModelMat = data.glm_model;
 		m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(16.0f, 9.0f, 1.0f));
 		m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, m_ZPosition.getValue()));
 
 		m_MRTFrameBuffer	= new MRTFrameBuffer (w, h, globalTextureCount);
-		m_LightScatter		= new FBOLightScatter(w, h, globalTextureCount, lib->fx_lightscatter, m_MRTFrameBuffer->m_MRTTextureID);
+		m_LightScatter		= new FBOLightScatter(w, h, globalTextureCount, 
+											lib->fx_lightscatter, 
+											m_MRTFrameBuffer->m_MRTTextureID);
 
 		postprocess.initData(m_VaoHandle);
 	}
@@ -442,39 +474,42 @@ public:
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glBindVertexArray(m_VaoHandle); // this is a vaoHandle for the render target quad
-		
+
 		m_MRTFrameBuffer->activateMRTTextures();
 #ifdef _DEBUG 
 		m_MRTFrameBuffer->drawDebugRenderTargets(data, shaderLib->fx_rendertarget);
 #endif		
-		// light scatter aka god rays ------------------------------------------------------
-		m_LightScatter->sendLightPositionForScatter
-		(	
-			shaderLib->fx_lightscatter,
-			m_MRTFrameBuffer->m_MRTTextureID + 1, 
-			data.glm_projection * data.getDefaultEye() * m_ModelMat
-		);
-		
-		// commenting line below will increase performance, this calls the shader which creates god rays using sampling
-		m_LightScatter->m_FBO->renderToTexture();
-		//----------------------------------------------------------------------------------		
-		postprocess.CombinedDraw
-		(
-			shaderLib->fx_combineLightscatter,											  // shader which combines 2 shaders
-			m_LightScatter->m_FBO->m_MRTTextureID, m_LightScatter->m_FBO->m_ColorTexture, // processed god rays texture
-			m_MRTFrameBuffer->m_MRTTextureID, m_MRTFrameBuffer->m_ColorTexture[0],		  // color texture 
-			data.glm_projection * data.getDefaultEye() * m_ModelMat						  // modelViewMatrix
-		);					  
+		if (fx.godrays)
+		{
+			// light scatter aka god rays ------------------------------------------------------
+			m_LightScatter->sendLightPositionForScatter
+			(
+				shaderLib->fx_lightscatter,
+				m_MRTFrameBuffer->m_MRTTextureID + 1,
+				data.glm_projection * data.getDefaultEye() * m_ModelMat
+			);
 
-		/*
-		//NON-Post process render
-		postprocess.draw
-		(
-			shaderLib->fx_rendertarget,
-			m_MRTFrameBuffer->m_MRTTextureID, m_MRTFrameBuffer->m_ColorTexture[0],
-			data.glm_projection * data.getDefaultEye() * m_ModelMat	
-		);
-		*/
+			// commenting line below will increase performance, this calls the shader which creates god rays using sampling
+			m_LightScatter->m_FBO->renderToTexture();
+			//----------------------------------------------------------------------------------		
+			postprocess.CombinedDraw
+			(
+				shaderLib->fx_combineLightscatter,											  // shader which combines 2 shaders
+				m_LightScatter->m_FBO->m_MRTTextureID, m_LightScatter->m_FBO->m_ColorTexture, // processed god rays texture
+				m_MRTFrameBuffer->m_MRTTextureID, m_MRTFrameBuffer->m_ColorTexture[0],		  // color texture 
+				data.glm_projection * data.getDefaultEye() * m_ModelMat						  // modelViewMatrix
+			);
+		}
+		else
+		{
+			// draw the normal color buffer gotten from the MRT
+			postprocess.draw
+			(
+				shaderLib->fx_rendertarget,
+				m_MRTFrameBuffer->m_MRTTextureID, m_MRTFrameBuffer->m_ColorTexture[0],
+				data.glm_projection * data.getDefaultEye() * m_ModelMat
+			);
+		}
 	}
 
 	~E_fxMRT()

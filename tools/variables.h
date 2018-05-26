@@ -32,6 +32,9 @@ public:
 		: m_var(tx), m_varMin(min), m_varMax(max), name(nme)
 	{}
 	
+
+	// the value supplied to update function is the amount by which the variable will be changed.
+	// as this is a template class the param could be anything. ;) 
 	void update(T tx)
 	{
 		if (Toggle > 0)
