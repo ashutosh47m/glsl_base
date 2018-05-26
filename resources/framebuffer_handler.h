@@ -63,7 +63,7 @@ public:
 	GLuint					 m_ID;				// used for generating the FBO
 	GLuint					 m_DepthTexture;
 	GLuint					 m_Width, m_Height;
-	static const GLuint		 m_MRTCount = 4; 	// cannot be less than 1, as 1 render target is must for rendering
+	static const GLuint		 m_MRTCount = 2; 	// cannot be less than 1, as 1 render target is must for rendering
 	GLuint					 m_ColorTexture[m_MRTCount];
 	GLuint					 m_MRTTextureID;
 	float					 m_debugRenderTargetPosition = 3.3f;
@@ -160,7 +160,7 @@ public:
 		vaohandle = m_VaoHandle;
 	}
 
-	void draw(glsl_data& data, ShaderProgram *& shader, GLuint textureID, GLuint texture, glm::mat4& model)
+	void draw(ShaderProgram *& shader, GLuint textureID, GLuint texture, glm::mat4& model)
 	{
 		glUseProgram(shader->getShaderProgramHandle());
 
@@ -168,12 +168,13 @@ public:
 		glBindTexture(GL_TEXTURE_2D, texture);
 		shader->setUniform("u_RT1_tex", textureID);
 
-		shader->setUniform("u_m4MVP", data.glm_projection * data.getDefaultEye() * model);
+		shader->setUniform("u_m4MVP", model);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		glUseProgram(0);
 	}
 
-	void CombinedDraw(glsl_data& data, ShaderProgram *& shader, 
+	void CombinedDraw(
+		ShaderProgram *& shader, 
 		GLuint textureID1, GLuint texture1, 
 		GLuint textureID2, GLuint texture2, 
 		glm::mat4& model)
@@ -188,7 +189,7 @@ public:
 		glBindTexture(GL_TEXTURE_2D, texture2);
 		shader->setUniform("u_colorTex", textureID2);
 
-		shader->setUniform("u_m4MVP", data.glm_projection * data.getDefaultEye() * model);
+		shader->setUniform("u_m4MVP", model);
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		glUseProgram(0);
 	}
@@ -350,14 +351,13 @@ public:
 		m_weight.setValue(m_current.wei);
 	}
 
-	void sendLightPositionForScatter(glsl_data& data, ShaderProgram*& shaderfx, GLuint textureID, glm::mat4& model)
+	void sendLightPositionForScatter(ShaderProgram*& shaderfx, GLuint textureID, glm::mat4& model)
 	{
 		glUseProgram(shaderfx->getShaderProgramHandle());
-		m_MVP = data.glm_projection * data.getDefaultEye() * model;
-		shaderfx->setUniform("u_m4MVP", m_MVP);
+		shaderfx->setUniform("u_m4MVP", model);
 
 		m_lightPosOnSS =
-			(glm::vec3(m_MVP[0][3] / m_MVP[3][3], m_MVP[1][3] / m_MVP[3][3], m_MVP[2][3] / m_MVP[3][3]))
+			(glm::vec3(model[0][3] / model[3][3], model[1][3] / model[3][3], model[2][3] / model[3][3]))
 			* 0.5f
 			+ glm::vec3(0.5f, 0.5f, 0.5f);
 		shaderfx->setUniform("u_lightPos", glm::vec2(m_lightPosOnSS.x, m_lightPosOnSS.y));
@@ -393,11 +393,11 @@ public:
 
 	E_fxMRT() {}
 
-	void initEntity(GLuint &globalTextureCount, int w, int h, ShaderLibrary* lib, glm::mat4 &datamodel)
+	void initEntity(GLuint &globalTextureCount, int w, int h, ShaderLibrary* lib, glsl_data &data)
 	{
 		m_ZPosition.setValue(DEFAULT_ZPOSITION_FOR_RENDER_TARGET);
 
-		m_ModelMat = datamodel;
+		m_ModelMat = data.glm_model;
 		m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(16.0f, 9.0f, 1.0f));
 		m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, m_ZPosition.getValue()));
 
@@ -448,14 +448,33 @@ public:
 		m_MRTFrameBuffer->drawDebugRenderTargets(data, shaderLib->fx_rendertarget);
 #endif		
 		// light scatter aka god rays ------------------------------------------------------
-		m_LightScatter->sendLightPositionForScatter(data, shaderLib->fx_lightscatter, m_MRTFrameBuffer->m_MRTTextureID + 1, m_ModelMat);
+		m_LightScatter->sendLightPositionForScatter
+		(	
+			shaderLib->fx_lightscatter,
+			m_MRTFrameBuffer->m_MRTTextureID + 1, 
+			data.glm_projection * data.getDefaultEye() * m_ModelMat
+		);
+		
+		// commenting line below will increase performance, this calls the shader which creates god rays using sampling
 		m_LightScatter->m_FBO->renderToTexture();
 		//----------------------------------------------------------------------------------		
-		
-//		postprocess.draw(data, shaderLib->fx_rendertarget, m_MRTFrameBuffer->m_MRTTextureID, m_MRTFrameBuffer->m_ColorTexture[0], m_ZPosition.getValue());
-		postprocess.CombinedDraw(data, shaderLib->fx_combineLightscatter, 
-			m_LightScatter->m_FBO->m_MRTTextureID, m_LightScatter->m_FBO->m_ColorTexture, // god rays 
-			m_MRTFrameBuffer->m_MRTTextureID, m_MRTFrameBuffer->m_ColorTexture[0], m_ModelMat); // color texture
+		postprocess.CombinedDraw
+		(
+			shaderLib->fx_combineLightscatter,											  // shader which combines 2 shaders
+			m_LightScatter->m_FBO->m_MRTTextureID, m_LightScatter->m_FBO->m_ColorTexture, // processed god rays texture
+			m_MRTFrameBuffer->m_MRTTextureID, m_MRTFrameBuffer->m_ColorTexture[0],		  // color texture 
+			data.glm_projection * data.getDefaultEye() * m_ModelMat						  // modelViewMatrix
+		);					  
+
+		/*
+		//NON-Post process render
+		postprocess.draw
+		(
+			shaderLib->fx_rendertarget,
+			m_MRTFrameBuffer->m_MRTTextureID, m_MRTFrameBuffer->m_ColorTexture[0],
+			data.glm_projection * data.getDefaultEye() * m_ModelMat	
+		);
+		*/
 	}
 
 	~E_fxMRT()
