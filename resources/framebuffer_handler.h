@@ -283,7 +283,9 @@ class FBOLightScatter
 public:
 	glm::vec3				m_lightPosOnSS;
 	glm::mat4				m_MVP;
-	int						m_downsample = 2; // set this to 1 for no downsampling
+	// set this to 1 for no downsampling
+	int						m_downsample = 2; 
+
 	struct scatterSetting
 	{
 		int sam; float exp, dec, den, wei;

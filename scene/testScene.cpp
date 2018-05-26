@@ -90,6 +90,7 @@ void TestScene::renderWorld()
 	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(0, 1, -2));
 	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(-2, 0, 0));
 	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(2, -1, 0));
+	glBindVertexArray(0);
 }
 
 void TestScene::draw()
@@ -107,7 +108,6 @@ void TestScene::draw()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		renderWorld();
 	}
-	glBindVertexArray(0);
 }
 
 void TestScene::keyProcess(int key, int scancode, int action, int mods)
