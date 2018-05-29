@@ -61,6 +61,13 @@ void YP_Camera::cam_control(bool *wasd, glm::vec3& f_position, glm::mat4& view, 
 		up						// Head is up (set to 0,-1,0 to look upside-down)
 		);
 
+	glm::mat4 lightView = glm::lookAt
+		(
+			position,				// Camera is here
+			glm::vec3(0, 0, 0),	// and looks here : at the same position, plus "direction"
+			glm::vec3(0, 1, 0)						// Head is up (set to 0,-1,0 to look upside-down)
+			);
+
 	lookatdir = position + direction;
 	f_position = position;
 }

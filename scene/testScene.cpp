@@ -40,8 +40,13 @@ void TestScene::initialize()
 	mE_cube.initEntity(true);
 	mE_ColoredSkybox.initEntity(false);
 	
+
+	_enableDebugCam = false;
 	//load camera
-	mT_camera = new YP_Camera(m_width, m_height);
+	if(!_enableDebugCam)
+		mT_camera = new YP_Camera(m_width, m_height);
+	else 
+		data.setViewMatrix(_debugCamPosition);
 }
 
 void TestScene::update()
@@ -53,8 +58,10 @@ void TestScene::update()
 	//glCullFace(GL_BACK);
 
 	glClearColor(.5f, .515f, .515f, 1);
-	mT_camera->cam_control(wasd, data.glm_eye, data.glm_view, mViewDirection);
-	mE_fxmainRT.update();
+	if (_enableDebugCam)
+		data.setViewMatrix(_debugCamPosition);
+	else
+		mT_camera->cam_control(wasd, data.glm_eye, data.glm_view, mViewDirection);
 }
 
 void TestScene::renderWorld()
@@ -92,6 +99,8 @@ void TestScene::draw()
 {
 	if(mE_fxmainRT.fx.global_postprocess)
 	{ 
+		mE_fxmainRT.update();
+
 		mE_fxmainRT.bindFBOForDraw();
 			renderWorld();
 		mE_fxmainRT.unBindFBO();
@@ -112,16 +121,34 @@ void TestScene::keyProcess(int key, int scancode, int action, int mods)
 		switch (key)
 		{
 		case _2am_KEY_W:
-			wasd[0] = true;
+			if(_enableDebugCam)
+				_debugCamPosition.z++;
+			else 
+				wasd[0] = true;
 			break;
 		case _2am_KEY_A:
-			wasd[1] = true;
+			if (_enableDebugCam)
+				_debugCamPosition.x--;
+			else
+				wasd[1] = true;
 			break;
 		case _2am_KEY_S:
-			wasd[2] = true;
+			if (_enableDebugCam)
+				_debugCamPosition.z--;
+			else
+				wasd[2] = true;
 			break;
 		case _2am_KEY_D:
-			wasd[3] = true;
+			if (_enableDebugCam)
+				_debugCamPosition.x++;
+			else
+				wasd[3] = true;
+			break;
+		case _2am_KEY_Q:
+			_debugCamPosition.y++;
+			break;
+		case _2am_KEY_Z:
+			_debugCamPosition.y--;
 			break;
 
 		//case _2am_KEY_R: mE_fxmainRT.m_ZPosition.Toggle = 1; break;

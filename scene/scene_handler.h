@@ -34,6 +34,10 @@ public:
 
 		glm_eye = glm::vec3(0.0f, 0.0f, 5.0f);
 	}
+	void setViewMatrix(glm::vec3 pos)
+	{
+		glm_view = glm::lookAt(pos, glm::vec3(0, 0, 0), glm::vec3(0.0f, 1.0f, 0.0f));
+	}
 	glm::mat4 glm_model; 
 	glm::mat4 glm_view ;
 	glm::mat4 glm_projection;

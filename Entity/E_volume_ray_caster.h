@@ -72,6 +72,8 @@ public:
 			glBindVertexArray(m_VaoHandle);
 			glUseProgram(shader->getShaderProgramHandle());
 			m_ModelMat = data.glm_model;
+			m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(3,3,.3));
+
 			shader->setUniform("u_step_size", 1.0f / m_Xdim, 1.0f / m_Ydim, 1.0f / m_Zdim);
 			shader->setUniform("u_m4MVP", data.glm_projection * data.glm_view * m_ModelMat);
 			shader->setUniform("u_camPos", cam_position);

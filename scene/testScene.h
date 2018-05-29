@@ -50,6 +50,9 @@ namespace usr_scene
 		YP_Camera					*mT_camera;			// t stands for tools, i.e. YP_Camera comes under tools category
 		glm::vec3					mViewDirection;
 		glm::mat4					m_ModelMat;
+		bool						_enableDebugCam;
+		glm::vec3					_debugCamPosition = glm::vec3(4, 4, 4);
+
 		bool						wasd[4] = { false };
 	
 		void initAxes();
