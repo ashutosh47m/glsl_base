@@ -59,8 +59,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lmCmdLine
 	reactor->window->setHeight(720);
 #endif
 
-	reactor->window->setWidth(systemWidth);
-	reactor->window->setHeight(systemHeight);
+	//reactor->window->setWidth(systemWidth);
+	//reactor->window->setHeight(systemHeight);
 	
 	reactor->window->setName("2am engine : glsl_base");
 	reactor->window->fullscreen = false;
@@ -74,7 +74,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lmCmdLine
 							NULL);
 
 #if _DEBUG
-	glfwSetWindowPos(window2, 0, 0);
+	glfwSetWindowPos(window2, 410, 0);
 #else
 	if(systemWidth == reactor->window->getWidth())
 		glfwSetWindowPos(window2, 0, 0);

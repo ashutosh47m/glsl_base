@@ -52,4 +52,29 @@ public:
 	void cam_control(bool *wasd, glm::vec3& f_position, glm::mat4& view, glm::vec3& lookatdir);
 };
 
+
+class YP_Camera_debug_from_glsl_terrain
+{
+	int			window_width;
+	int			window_height;
+	float		m_x_cc, m_y_cc;
+	YP_Camera_debug_from_glsl_terrain(int w, int h)
+	{
+		window_width = w;
+		window_height = h;
+		f_xPosition = 0;
+		f_yPosition = 0;
+		f_zPosition = -4;
+		yaw = 0;
+		pitch = 0;
+	}
+
+	float f_xPosition, f_yPosition, f_zPosition;
+	float yaw, pitch;
+	void move_camXZ(float dist, float dir);
+	void move_camY(float dist, float dir);
+	void lockcamera();
+	void cam_controlYP(bool *wasd, glm::mat4&);
+
+};
 #endif
