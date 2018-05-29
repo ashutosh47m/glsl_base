@@ -379,18 +379,22 @@ public:
 	}
 #endif
 
-	void sendLightPositionForScatter(ShaderProgram*& shaderfx, GLuint textureID, glm::mat4& model)
+	void sendLightPositionForScatter(ShaderProgram*& shaderfx, GLuint textureID, glm::mat4& mvp_model, glm::mat4 mvp_lightposition)
 	{
 		glUseProgram(shaderfx->getShaderProgramHandle());
-		shaderfx->setUniform("u_m4MVP", model);
+		shaderfx->setUniform("u_m4MVP", mvp_model);
 
 		m_lightPosOnSS =
 		(
-			glm::vec3(model[0][3] / model[3][3], model[1][3] / model[3][3], model[2][3] / model[3][3]))
+			glm::vec3(
+			mvp_lightposition[0][3] / mvp_lightposition[3][3], 
+			mvp_lightposition[1][3] / mvp_lightposition[3][3], 
+			mvp_lightposition[2][3] / mvp_lightposition[3][3]))
 			* 0.5f
 			+ glm::vec3(0.5f, 0.5f, 0.5f
 		);
 		shaderfx->setUniform("u_lightPos", glm::vec2(m_lightPosOnSS.x, m_lightPosOnSS.y));
+		//printf("%f %f \n, ", m_lightPosOnSS.x, m_lightPosOnSS.y);
 	}
 
 	~FBOLightScatter()
@@ -485,7 +489,7 @@ public:
 		*/
 	}
 
-	void postProcessPass(glsl_data& data, ShaderLibrary* shaderLib)
+	void postProcessPass(glsl_data& data, ShaderLibrary* shaderLib, glm::mat4 &mvp_lightposition)
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glBindVertexArray(m_VaoHandle); // this is a vaoHandle for the render target quad
@@ -501,7 +505,8 @@ public:
 			(
 				shaderLib->fx_lightscatter,
 				m_MRTFrameBuffer->m_MRTTextureID + 1,
-				data.glm_projection * data.getDefaultEye() * m_ModelMat
+				data.glm_projection * data.getDefaultEye() * m_ModelMat, // mvp for render target
+				data.glm_projection * data.glm_view * mvp_lightposition  // mvp for light
 			);
 
 			// commenting line below will increase performance, this calls the shader which creates god rays using sampling

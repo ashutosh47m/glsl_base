@@ -105,7 +105,7 @@ void TestScene::draw()
 			renderWorld();
 		mE_fxmainRT.unBindFBO();
 	
-		mE_fxmainRT.postProcessPass(data, getShaderLibrary());
+		mE_fxmainRT.postProcessPass(data, getShaderLibrary(), mE_vrc.getModel());
 	}
 	else
 	{

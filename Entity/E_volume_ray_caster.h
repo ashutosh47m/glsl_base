@@ -71,9 +71,9 @@ public:
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glBindVertexArray(m_VaoHandle);
 			glUseProgram(shader->getShaderProgramHandle());
+			
 			m_ModelMat = data.glm_model;
-			m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(3,3,.3));
-
+			m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(1, 0, 0));
 			shader->setUniform("u_step_size", 1.0f / m_Xdim, 1.0f / m_Ydim, 1.0f / m_Zdim);
 			shader->setUniform("u_m4MVP", data.glm_projection * data.glm_view * m_ModelMat);
 			shader->setUniform("u_camPos", cam_position);
@@ -83,6 +83,8 @@ public:
 			glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
 		glDisable(GL_BLEND);
 	}
+
+	glm::mat4 getModel() { return m_ModelMat; }
 
 	void enable()
 	{
