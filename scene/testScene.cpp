@@ -27,6 +27,7 @@ void TestScene::initialize()
 
 	// inititlize the axes
 	initAxes();
+	//mE_box4 = new mesher::meshLoader("..\\resources\\models\\terrain\\grassTest.obj", "..\\resources\\models\\terrain\\");
 
 	mE_brickTriangle.initEntity		(++global2DTextureCount, "..\\resources\\textures\\brick.jpg");
 	//quad
@@ -74,7 +75,6 @@ void TestScene::renderWorld()
 	//glDisable(GL_CULL_FACE);
 		
 	mE_Woodenquad.draw		(data, getShaderLibrary()->textured_colored_geometry,	glm::vec3( -1.1, 0, 0));
-	mE_Woodenquad.draw		(data, getShaderLibrary()->textured_colored_geometry,	glm::vec3(  0,   0, 0));
 	mE_brickTriangle.draw	(data, getShaderLibrary()->textured_colored_geometry, glm::vec3(-2.2, 0, 0));
 	mE_Junglequad.draw		(data, getShaderLibrary()->textured_colored_geometry,	glm::vec3(  1.1, 0, 0));
 	mE_grassStonequad.draw	(data, getShaderLibrary()->textured_colored_geometry,	glm::vec3(  2.2, 0, 0));

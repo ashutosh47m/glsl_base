@@ -15,9 +15,9 @@ uniform sampler2D u_RT1_tex;
 //	A temp solution to that would be to have the position of the light fixed.
 //	but I believe what needs to happen is, we PROPERLY need to calculate the position of the light on the screen.
 
-/* temp solution */	vec2  u_lightPos = vec2( .2,.2 )	;
+/* temp solution */ //	vec2  u_lightPos = vec2( .2, 1.2 )	;
 
-//uniform vec2  u_lightPos;
+uniform vec2  u_lightPos;
 
 layout (location = 0) out vec4 FragColor;
 

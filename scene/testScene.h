@@ -25,6 +25,8 @@ Nov 2017, Ashutosh Morwal
 #include "../tools/camera.h"
 #include "../tools/keys.h"
 
+//#include "../tools/meshLoader.h"
+
 namespace usr_scene
 {
 	class TestScene : public AbstractScene
@@ -38,6 +40,8 @@ namespace usr_scene
 		E_colored_line				mE_X_axes, mE_Y_axes, mE_Z_axes;
 
 		//E_3d_texture_volume		mE_vol;
+
+		//mesher::meshLoader		   *mE_box4;
 
 		E_cube						mE_cube;
 		E_cube						mE_ColoredSkybox;
