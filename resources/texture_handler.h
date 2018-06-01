@@ -15,8 +15,6 @@ Nov 2017, Ashutosh Morwal
 
 class texture
 {
-	GLuint		width;                              
-	GLuint		height;                             
 	GLuint		uniform_ID;  
 	GLuint		ui_texID;
 	GLuint		jpg_ID;
@@ -26,8 +24,9 @@ class texture
 public:
 	GLuint getTextureID() { return ui_texID; }
 	GLuint getUniformID() { return uniform_ID; }
-	texture(GLuint cnt, std::string u_var, std::string text_location) :
-		uniform_ID(cnt),
+	
+	texture(GLuint& cnt, std::string u_var, std::string text_location) :
+		uniform_ID(++cnt),
 		uniform_var(u_var),
 		location(text_location)
 	{

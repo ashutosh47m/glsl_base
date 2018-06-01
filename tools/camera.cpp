@@ -14,6 +14,11 @@ void YP_Camera::cam_control(bool *wasd, glm::vec3& f_position, glm::mat4& view, 
 	currentTime = glfwGetTime();
 	deltaTime   = float(currentTime - lastTime);
 
+#if _DEBUG
+	if(debug_cam)
+		deltaTime = 1.0f;
+#endif
+
 	GetCursorPos(&mouse);
 	SetCursorPos((int)window_width / 2, (int)window_height / 2);
 

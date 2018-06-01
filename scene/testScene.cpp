@@ -29,13 +29,13 @@ void TestScene::initialize()
 	initAxes();
 	//mE_box4 = new mesher::meshLoader("..\\resources\\models\\terrain\\grassTest.obj", "..\\resources\\models\\terrain\\");
 
-	mE_brickTriangle.initEntity		(++global2DTextureCount, "..\\resources\\textures\\brick.jpg");
+	mE_brickTriangle.initEntity		(global2DTextureCount, "..\\resources\\textures\\brick.jpg");
 	//quad
-	mE_Junglequad.initEntity		(++global2DTextureCount, "..\\resources\\textures\\jungle.jpg");
-	mE_Woodenquad.initEntity		(++global2DTextureCount, "..\\resources\\textures\\wooden.jpg");
-	mE_grassStonequad.initEntity	(++global2DTextureCount, "..\\resources\\textures\\green.jpg");
+	mE_Junglequad.initEntity		(global2DTextureCount, "..\\resources\\textures\\jungle.jpg");
+	mE_Woodenquad.initEntity		(global2DTextureCount, "..\\resources\\textures\\wooden.jpg");
+	mE_grassStonequad.initEntity	(global2DTextureCount, "..\\resources\\textures\\green.jpg");
 	
-	mE_vrc.initEntity				(  global3DTextureCount, "..\\resources\\volumes\\head256x256x109\\head256x256x109.raw", 256,256,109);
+	mE_vrc.initEntity				(global3DTextureCount, "..\\resources\\volumes\\head256x256x109\\head256x256x109.raw", 256,256,109);
 	
 	//cube			
 	mE_cube.initEntity(true);
@@ -58,7 +58,7 @@ void TestScene::update()
 	//glEnable(GL_CULL_FACE);
 	//glCullFace(GL_BACK);
 
-	glClearColor(.5f, .515f, .515f, 1);
+	glClearColor(.0f, .0f, .0f, 1);
 	if (_enableDebugCam)
 		data.setViewMatrix(_debugCamPosition);
 	else
@@ -85,13 +85,15 @@ void TestScene::renderWorld()
 	//mE_Z_axes.draw(data, getShaderLibrary()->colored_geometry);
 
 	m_ModelMat = data.glm_model;
-	m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(24, 24, 24));
+	m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(1224, 1224, 1224));
 	mE_ColoredSkybox.draw(data, getShaderLibrary()->colored_geometry, m_ModelMat);
 
 	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(0, 2, 2));
 	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(0, 1, -2));
 	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(-2, 0, 0));
 	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(2, -1, 0));
+
+	//mE_box4->draw(getShaderLibrary()->textured_colored_geometry->getShaderProgramHandle());
 	glBindVertexArray(0);
 }
 
@@ -146,6 +148,12 @@ void TestScene::keyProcess(int key, int scancode, int action, int mods)
 			break;
 		case _2am_KEY_Q:
 			_debugCamPosition.y++;
+			break;
+		case _2am_KEY_C:
+			if(mT_camera->getDebugCam())
+				mT_camera->setDebugCam(false);
+			else
+				mT_camera->setDebugCam(true);
 			break;
 		case _2am_KEY_Z:
 			_debugCamPosition.y--;

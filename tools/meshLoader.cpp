@@ -3,13 +3,12 @@
 
 using namespace mesher;
 
-tools::instancing *ml_instance;
-meshLoader::meshLoader(const char * file, const char* textPath, shaderprog &glProg,bool tp, tools::instancing *instance)
+instancing *ml_instance;
+meshLoader::meshLoader(const char * file, const char* textPath, bool tp, instancing *instance)
 {
 	if(tp) saveUV=true;
 	else saveUV=false;
 
-	glslProg=glProg;
 	if(instance != NULL)
 	{
 		/*
@@ -205,7 +204,7 @@ void meshLoader::processMesh(aiMesh* mesh, const aiScene* scene)
 		}
 	}
 
-    meshes.push_back(new meshData(glslProg, &vdata, &indices, &tdata));
+    meshes.push_back(new meshData(&vdata, &indices, &tdata));
 } 
 
 meshLoader::~meshLoader()
@@ -214,9 +213,9 @@ meshLoader::~meshLoader()
         delete meshes[i];
 }
 
-void meshLoader::draw(shaderprog &glProg, tools::instancing *instance, GLuint instance_count)
+void meshLoader::draw(GLuint glProg, instancing *instance, GLuint instance_count)
 {
-	glUseProgram(glProg.getHandle());
+	glUseProgram(glProg);
 	unsigned int i=0;
 
     for(; i<meshes.size(); i++)
@@ -236,44 +235,11 @@ void meshLoader::draw(shaderprog &glProg, tools::instancing *instance, GLuint in
 
 GLuint meshLoader::loadTexture(std::string file, GLuint& id)
 {	
-/*    tools::image_handler temp;
-
-	char *s =(char*) file.c_str();
-	if(temp.LoadTGA(s)== false)
-        exit(-13);
-
-    glGenTextures(1, &id);                    // Generate OpenGL texture IDs
-
-    // Build A Texture From The Data
-    //if there were multiple textures, we'd be supplying an array as a 2nd param.
- 
-   glBindTexture(GL_TEXTURE_2D, id);             // Bind Our Texture
 	float aniso=16.0f;
-
-    if (temp.bpp==24)                    // Was The TGA 24 Bits
-    {
-        temp.type=GL_RGB;                            // If So Set The 'type' To GL_RGB
-    }
-    else // if bits per pixel == 32, the image contains alpha channel.
-        temp.type = GL_RGBA;
- 
-	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &aniso);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, aniso);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, temp.type, temp.width, temp.height, 0, temp.type, GL_UNSIGNED_BYTE, temp.imageData);
-
-	glGenerateMipmap(GL_TEXTURE_2D);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);		// Linear Filtered
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);		// Linear Filtered
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR );   // Linear Filtered
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);   // Linear Filtered
-
-	return id;
-	*/	
-	float aniso=16.0f;
-
+	/*
 	tools::image_handler texture;
 	texture.location=file;
+
 	if(texture.location.substr(texture.location.length()-4, texture.location.length()).compare(".tga")==0)
 	{
 		glGenTextures(1, &id);
@@ -316,8 +282,8 @@ GLuint meshLoader::loadTexture(std::string file, GLuint& id)
 		success = ilLoadImage(t.c_str());
 		if (success)
 		{
-			success = ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE); /* Convert every colour component into
-																 unsigned byte. If your image contains alpha channel you can replace IL_RGB with IL_RGBA */
+			success = ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE); // Convert every colour component into
+																// unsigned byte. If your image contains alpha channel you can replace IL_RGB with IL_RGBA 
 			if (!success)
 			{
 				MessageBox(NULL, L"image conversion failed", NULL, NULL);
@@ -356,12 +322,13 @@ GLuint meshLoader::loadTexture(std::string file, GLuint& id)
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);   // Linear Filtered
 
 	//prog.setUniform(texture.uniform_var.c_str(), texture.uniform_ID);	
+	*/
 	return id;
 }
 
 
 //generate VBO and other data in this constructor
-meshData::meshData(shaderprog  &glProg, std::vector <vertexData> *vd, std::vector <GLuint> *id, std::vector <textureData> *td)
+meshData::meshData(std::vector <vertexData> *vd, std::vector <GLuint> *id, std::vector <textureData> *td)
 {
 	onceOnly=false;
 	vdata	= *vd;
@@ -453,13 +420,13 @@ meshData::~meshData()
 	glDeleteBuffers(1, &VBO); 
 	glDeleteBuffers(1, &INDBO);
 
-	for (int i = 0; i<tdata.size(); i++)
+	for (unsigned int i = 0; i<tdata.size(); i++)
 	{
 		glDeleteTextures(1, &tdata[i].id);
 	}
 }
 
-void meshData::draw(shaderprog  &glProg, tools::instancing *instance, GLuint instance_count)
+void meshData::draw(GLuint  &glProg, instancing *instance, GLuint instance_count)
 {
 	glBindVertexArray(meshVAOHandle );
 //	glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -474,9 +441,9 @@ void meshData::draw(shaderprog  &glProg, tools::instancing *instance, GLuint ins
 		glActiveTexture(GL_TEXTURE0+i);
 		glBindTexture(GL_TEXTURE_2D, tdata[i].id);
 
-		string s = temp+(char)(i+'0');
+		std::string s = temp+(char)(i+'0');
 		const char* t = s.c_str();
-		glProg.setUniform(t, i);
+		//glProg.setUniform(t, i);
 	}
 	if(instance!=NULL)
 	{
@@ -490,7 +457,7 @@ void meshData::draw(shaderprog  &glProg, tools::instancing *instance, GLuint ins
 	else if(instance==NULL)
 	{
    	 	glDrawElements(GL_TRIANGLES, (GLsizei)indices.size(), GL_UNSIGNED_INT, 0);
-//  		glPointSize(4);
+//  	glPointSize(4);
 // 		glLineWidth(1.4f);
 //		glDrawElements(GL_LINES, indices.size(), GL_UNSIGNED_INT, 0);
 // 		glDrawElements(GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0);

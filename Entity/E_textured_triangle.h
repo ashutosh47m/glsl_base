@@ -25,7 +25,7 @@ public:
 	E_textured_triangle() {}
 	void initEntity()  {}
 
-	void initEntity(GLuint globalTextureCount, std::string textureName) 
+	void initEntity(GLuint& globalTextureCount, std::string textureName) 
 	{
 		m_T = texture(globalTextureCount, "u_var_tex", textureName);
 

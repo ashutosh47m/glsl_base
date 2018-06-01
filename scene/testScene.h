@@ -25,7 +25,7 @@ Nov 2017, Ashutosh Morwal
 #include "../tools/camera.h"
 #include "../tools/keys.h"
 
-//#include "../tools/meshLoader.h"
+#include "../tools/meshLoader.h"
 
 namespace usr_scene
 {
@@ -74,6 +74,8 @@ public:
 		}
 		~TestScene()
 		{
+			delete mT_camera;
+			//delete mE_box4;
 		}
 
 		void setResolution(int w, int h)

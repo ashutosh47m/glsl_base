@@ -23,6 +23,7 @@
 #pragma comment(lib, "ILU.lib")
 #pragma comment(lib, "ILUT.lib")
 #pragma comment(lib, "glfw3.lib")
+#pragma comment(lib, "assimp-vc140-mt.lib")
 
 /*
 #pragma comment(lib, "assimp.lib")
