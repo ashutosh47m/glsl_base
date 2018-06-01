@@ -10,6 +10,8 @@
 #include <assimp/Importer.hpp> //c++ importer
 #include <assimp/scene.h>          
 #include <assimp/postprocess.h>    
+#include "../resources/shader_program.h"
+#include "IL/il.h"
 
 //its okay to use "..." below, as we have all the files in the 'glsl_tools' direcotry
 //#include "meshData.h"
@@ -57,7 +59,7 @@ namespace mesher
 		  meshData (std::vector <vertexData>* vd,  std::vector <GLuint> *id,  std::vector <textureData> *td = NULL);
 
 		~meshData();
-		void draw(GLuint& glProg, instancing *instance=NULL, GLuint instance_count=0);
+		void draw(ShaderProgram*& glProg, instancing *instance=NULL, GLuint instance_count=0);
 	}; 
 
 	class meshLoader
@@ -77,7 +79,7 @@ namespace mesher
 		std::vector<meshData*> meshes; 
 		void recProcess  (aiNode* ,const  aiScene* );
 		void processMesh (aiMesh* ,const  aiScene* );
-		void draw(GLuint glProg,instancing *instance = NULL, GLuint instance_count=0);
+		void draw(ShaderProgram*& glProg,instancing *instance = NULL, GLuint instance_count=0);
 		GLuint loadTexture(std::string file, GLuint&);
 	};
 

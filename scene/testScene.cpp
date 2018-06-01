@@ -27,7 +27,7 @@ void TestScene::initialize()
 
 	// inititlize the axes
 	initAxes();
-	//mE_box4 = new mesher::meshLoader("..\\resources\\models\\terrain\\grassTest.obj", "..\\resources\\models\\terrain\\");
+	mE_box4 = new mesher::meshLoader("..\\resources\\models\\terrain\\grassTest.obj", "..\\resources\\models\\terrain\\");
 
 	mE_brickTriangle.initEntity		(global2DTextureCount, "..\\resources\\textures\\brick.jpg");
 	//quad
@@ -93,7 +93,7 @@ void TestScene::renderWorld()
 	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(-2, 0, 0));
 	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(2, -1, 0));
 
-	//mE_box4->draw(getShaderLibrary()->textured_colored_geometry->getShaderProgramHandle());
+	mE_box4->draw(getShaderLibrary()->textured_colored_geometry);
 	glBindVertexArray(0);
 }
 

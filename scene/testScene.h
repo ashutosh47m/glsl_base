@@ -41,7 +41,7 @@ namespace usr_scene
 
 		//E_3d_texture_volume		mE_vol;
 
-		//mesher::meshLoader		   *mE_box4;
+		mesher::meshLoader		   *mE_box4;
 
 		E_cube						mE_cube;
 		E_cube						mE_ColoredSkybox;
@@ -75,7 +75,7 @@ public:
 		~TestScene()
 		{
 			delete mT_camera;
-			//delete mE_box4;
+			delete mE_box4;
 		}
 
 		void setResolution(int w, int h)

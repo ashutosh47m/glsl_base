@@ -213,9 +213,9 @@ meshLoader::~meshLoader()
         delete meshes[i];
 }
 
-void meshLoader::draw(GLuint glProg, instancing *instance, GLuint instance_count)
+void meshLoader::draw(ShaderProgram*& glProg, instancing *instance, GLuint instance_count)
 {
-	glUseProgram(glProg);
+	glUseProgram(glProg->getShaderProgramHandle());
 	unsigned int i=0;
 
     for(; i<meshes.size(); i++)
@@ -249,7 +249,8 @@ GLuint meshLoader::loadTexture(std::string file, GLuint& id)
 		texture.format = TGA;
 		if(texture.LoadTGA((char*)texture.location.c_str())== false)
 		{
-			MessageBox(NULL, L"Texture not loaded", NULL, NULL);
+			printf("texture not loaded\n");
+			//MessageBox(NULL, L"Texture not loaded", NULL, NULL);
 			//return false;	
 		}	
 
@@ -286,7 +287,8 @@ GLuint meshLoader::loadTexture(std::string file, GLuint& id)
 																// unsigned byte. If your image contains alpha channel you can replace IL_RGB with IL_RGBA 
 			if (!success)
 			{
-				MessageBox(NULL, L"image conversion failed", NULL, NULL);
+				printf("image conversion failed\n");
+				//MessageBox(NULL, L"image conversion failed", NULL, NULL);
 			}
 			glGenTextures(1, &id);
 //			glActiveTexture(GL_TEXTURE0+texture.uniform_ID);
@@ -310,7 +312,8 @@ GLuint meshLoader::loadTexture(std::string file, GLuint& id)
 		}
 		else
 		{
-			MessageBox(NULL, L"Texture not loaded", NULL, NULL);
+			printf("texture not loaded\n");
+			//MessageBox(NULL, L"Texture not loaded", NULL, NULL);
 			//return false;
 		}
 	}
@@ -426,7 +429,7 @@ meshData::~meshData()
 	}
 }
 
-void meshData::draw(GLuint  &glProg, instancing *instance, GLuint instance_count)
+void meshData::draw(ShaderProgram*& glProg, instancing *instance, GLuint instance_count)
 {
 	glBindVertexArray(meshVAOHandle );
 //	glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -443,7 +446,7 @@ void meshData::draw(GLuint  &glProg, instancing *instance, GLuint instance_count
 
 		std::string s = temp+(char)(i+'0');
 		const char* t = s.c_str();
-		//glProg.setUniform(t, i);
+		glProg->setUniform(t, i);
 	}
 	if(instance!=NULL)
 	{
