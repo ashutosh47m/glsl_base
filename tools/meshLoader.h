@@ -83,5 +83,65 @@ namespace mesher
 		GLuint loadTexture(std::string file, GLuint&);
 	};
 
+	class meshImage
+	{
+		const int TgaTypeHeaderLength = 12;
+		const unsigned char UncompressedTgaHeader[12] = { 0,0,2,0,0,0,0,0,0,0,0,0 };
+		const unsigned char CompressedTgaHeader[12] = { 0,0,10,0,0,0,0,0,0,0,0,0 };
+
+		enum TgaType
+		{
+			TgaUncompressed,
+			TgaCompressed,
+			TgaUnknown
+		};
+
+	public:
+		GLubyte *imageData;                         // Image Data (Up To 32 Bits)
+		GLuint  bpp;                                // Image Color Depth In Bits Per Pixel.
+		GLuint  width;                              // Image Width
+		GLuint  height;                             // Image Height
+		GLuint  ui_texID;                              // Texture ID Used To Select A Textur+e
+		GLuint  type;
+		GLuint  imageSize;										// Used To Store The Image Size When Setting Aside Ram
+		TgaType compression;
+		GLuint  bytesPerPixel;
+		std::string	uniform_var;
+		GLuint uniform_ID;
+		GLuint jpg_id;
+		std::string location;
+		GLuint format;
+		//GLfloat heightMap[MAP_X][MAP_Z];
+		bool LoadTGA(char *);             // Loads A TGA File Into Memory
+		bool loadFromData(GLubyte *);
+		bool LoadUncompressed(GLubyte *src, unsigned int size, unsigned int width, unsigned int height, unsigned int bpp);
+		bool LoadCompressed(GLubyte *src, unsigned int width, unsigned int height, unsigned int bpp);
+		void deleteImage();
+		bool loadJPG(const char *);
+
+		const int TGA_ID = 42314;
+		const int JPG_ID = 12314;
+
+		meshImage();
+		~meshImage();
+	};
+
+
+	/*
+	class sound
+	{
+	public:
+		FMOD::System *system;
+		FMOD_RESULT result;
+		unsigned int version;
+		int numDrivers;
+		FMOD_SPEAKERMODE speakerMode;
+		FMOD_CAPS caps;
+		char name[256];
+		sound::sound(); //init FMOD
+		void FMODErrorCheck(FMOD_RESULT result);
+		~sound();
+	};
+	*/
 }
 #endif

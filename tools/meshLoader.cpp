@@ -236,8 +236,8 @@ void meshLoader::draw(ShaderProgram*& glProg, instancing *instance, GLuint insta
 GLuint meshLoader::loadTexture(std::string file, GLuint& id)
 {	
 	float aniso=16.0f;
-	/*
-	tools::image_handler texture;
+
+	meshImage texture;
 	texture.location=file;
 
 	if(texture.location.substr(texture.location.length()-4, texture.location.length()).compare(".tga")==0)
@@ -246,7 +246,7 @@ GLuint meshLoader::loadTexture(std::string file, GLuint& id)
 //		glActiveTexture(GL_TEXTURE0+texture.uniform_ID);
 		glBindTexture(GL_TEXTURE_2D, id);
 
-		texture.format = TGA;
+		texture.format = texture.TGA_ID;
 		if(texture.LoadTGA((char*)texture.location.c_str())== false)
 		{
 			printf("texture not loaded\n");
@@ -273,7 +273,7 @@ GLuint meshLoader::loadTexture(std::string file, GLuint& id)
 	else if(texture.location.substr(texture.location.length()-4, texture.location.length()).compare(".jpg")==0 
 		|| texture.location.substr(texture.location.length()-4, texture.location.length()).compare(".jpeg")==0)
 	{
-		texture.format = JPG;
+		texture.format = texture.JPG_ID;
 	    ILboolean success;
 		ilInit();
 		ilGenImages(1, &texture.jpg_id);
@@ -291,7 +291,7 @@ GLuint meshLoader::loadTexture(std::string file, GLuint& id)
 				//MessageBox(NULL, L"image conversion failed", NULL, NULL);
 			}
 			glGenTextures(1, &id);
-//			glActiveTexture(GL_TEXTURE0+texture.uniform_ID);
+			glActiveTexture(GL_TEXTURE0+texture.uniform_ID);
 			glBindTexture(GL_TEXTURE_2D, id);
         
 			glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &aniso);
@@ -325,7 +325,6 @@ GLuint meshLoader::loadTexture(std::string file, GLuint& id)
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);   // Linear Filtered
 
 	//prog.setUniform(texture.uniform_var.c_str(), texture.uniform_ID);	
-	*/
 	return id;
 }
 
@@ -384,12 +383,12 @@ meshData::meshData(std::vector <vertexData> *vd, std::vector <GLuint> *id, std::
 		&indices[0], GL_STATIC_DRAW
 	);
 
-	int vertex = 0;//glGetAttribLocation(glProg.getHandle(), "in_model_v3Position");
-	int normal = 1;// glGetAttribLocation(glProg.getHandle(), "in_model_v3Normal");
-	int tangent = 2;// glGetAttribLocation(glProg.getHandle(), "in_model_v3Tangent");
-	int color = 3;// glGetAttribLocation(glProg.getHandle(), "in_model_v3Color");
-	int UV = 4;// glGetAttribLocation(glProg.getHandle(), "in_model_v2UV");
-	int i_positions = 5;//glGetAttribLocation(glProg.getHandle(), "in_model_v4instancedPositions");      //location 8
+	int vertex		= 0;	// glGetAttribLocation(glProg.getHandle(), "in_model_v3Position");
+	int normal		= 1;	// glGetAttribLocation(glProg.getHandle(), "in_model_v3Normal");
+	int tangent		= 2;	// glGetAttribLocation(glProg.getHandle(), "in_model_v3Tangent");
+	int color		= 3;	// glGetAttribLocation(glProg.getHandle(), "in_model_v3Color");
+	int UV			= 4;	// glGetAttribLocation(glProg.getHandle(), "in_model_v2UV");
+	int i_positions = 5;	// glGetAttribLocation(glProg.getHandle(), "in_model_v4instancedPositions");      //location 8
 
 
 	glEnableVertexAttribArray(vertex);
@@ -473,4 +472,244 @@ void meshData::draw(ShaderProgram*& glProg, instancing *instance, GLuint instanc
 	glBindVertexArray(0);
 //	glBindBuffer(GL_ARRAY_BUFFER, 0);
 //	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+// -------------------------------------------- <MESH-TOOLS> -------------------------------------------------
+
+meshImage::meshImage()
+{
+	imageData = NULL;
+}
+
+meshImage::~meshImage()
+{
+	deleteImage();
+}
+void meshImage::deleteImage()
+{
+	glDeleteTextures(1, &ui_texID);
+	if (format == JPG_ID)
+		ilDeleteImage(jpg_id);
+	else if (!imageData)
+		free(imageData);
+}
+
+// if the TGA file contains alpha channel, the image will be 32 bit.
+bool meshImage::LoadTGA(char *filename)             // Loads A TGA File Into Memory
+{
+	FILE * fp;
+	fopen_s(&fp, filename, "rb");
+	if (fp == NULL)
+	{
+		return false;
+	}
+	fseek(fp, 0, SEEK_END);
+	long lSize = ftell(fp);
+	rewind(fp);
+
+	void *temp_data = malloc(sizeof(unsigned char)*lSize);
+	if (temp_data == NULL)
+	{
+		return false;
+	}
+
+	// copy the file into the buffer:
+	size_t rsult = fread(temp_data, 1, lSize, fp);
+	if (rsult != lSize) { fputs("Reading error", stderr); exit(3); }
+
+	//const unsigned char *pos = (const unsigned char *)temp_data;
+
+	compression = TgaUnknown;
+
+	if (memcmp(UncompressedTgaHeader, temp_data, TgaTypeHeaderLength) == 0)
+		compression = TgaUncompressed;
+	if (memcmp(CompressedTgaHeader, temp_data, TgaTypeHeaderLength) == 0)
+		compression = TgaCompressed;
+
+	if (compression == TgaUnknown)
+	{
+		return false;
+	}
+	free(temp_data);
+	fclose(fp);
+
+	if (compression == TgaCompressed)
+	{
+		FILE *t_f;
+		fopen_s(&t_f, filename, "rb");
+		if (t_f == NULL)
+		{
+			return false;
+		}
+		fseek(t_f, 0, SEEK_END);
+		long lSize = ftell(t_f);
+		rewind(t_f);
+
+		GLubyte *t_data = (GLubyte *)malloc(sizeof(unsigned char)*lSize);
+		if (t_data == NULL) { fputs("Memory error", stderr); exit(2); }
+
+		// copy the file into the buffer:
+		size_t rsult = fread(t_data, 1, lSize, t_f);
+		if (rsult != lSize) { fputs("Reading error", stderr); exit(3); }
+		// We're done with the type header
+
+		t_data += TgaTypeHeaderLength;
+
+		width = t_data[1] * 256 + t_data[0];
+		height = t_data[3] * 256 + t_data[2];
+		bpp = t_data[4];
+
+		// We're done with the data header
+		const static int TgaDataHeaderLength = 6;
+		t_data += TgaDataHeaderLength;
+
+		if (width <= 0 || height <= 0)
+		{
+			return false;
+		}
+
+		if (bpp != 24 && bpp != 32)
+		{
+			return false;
+		}
+
+		const unsigned int data_size = width * height * bpp / 8;
+		imageData = (GLubyte *)malloc(data_size);
+		// call tgaloadCOMPRESSED --------------------------------
+		bytesPerPixel = bpp / 8;
+
+		if (bpp == 24)
+			type = GL_RGB;
+		if (bpp == 32)
+			type = GL_RGBA;
+
+		const unsigned int PixelCount = height * width;
+
+		const static unsigned int MaxBytesPerPixel = 4;
+		unsigned char pixel_buffer[MaxBytesPerPixel];
+
+		unsigned int pixel = 0;
+		unsigned int byte = 0;
+
+		while (pixel < PixelCount)
+		{
+			unsigned char chunkheader = 0;
+			memcpy(&chunkheader, t_data, sizeof(unsigned char));
+			t_data += sizeof(unsigned char);
+
+			if (chunkheader < 128)
+			{
+				chunkheader++;
+				for (short i = 0; i < chunkheader; i++)
+				{
+					memcpy(pixel_buffer, t_data, bytesPerPixel);
+					t_data += bytesPerPixel;
+
+					imageData[byte + 0] = pixel_buffer[2];
+					imageData[byte + 1] = pixel_buffer[1];
+					imageData[byte + 2] = pixel_buffer[0];
+					if (bytesPerPixel == 4) imageData[byte + 3] = pixel_buffer[3];
+
+					byte += bytesPerPixel;
+					pixel++;
+
+					if (pixel > PixelCount) return false;
+				}
+			}
+			else
+			{
+				chunkheader -= 127;
+
+				memcpy(pixel_buffer, t_data, bytesPerPixel);
+				t_data += bytesPerPixel;
+
+				for (short i = 0; i < chunkheader; i++)
+				{
+					imageData[byte + 0] = pixel_buffer[2];
+					imageData[byte + 1] = pixel_buffer[1];
+					imageData[byte + 2] = pixel_buffer[0];
+					if (bytesPerPixel == 4) imageData[byte + 3] = pixel_buffer[3];
+
+					byte += bytesPerPixel;
+					pixel++;
+
+					if (pixel > PixelCount) return false;
+				}
+			}
+		}
+	}
+
+	if (compression == TgaUncompressed)
+	{
+		GLubyte     TGAheader[12] = { 0,0,2,0,0,0,0,0,0,0,0,0 };        // Uncompressed TGA Header
+		GLubyte     TGAcompare[12];									// Used To Compare TGA Header
+		GLubyte     header[6];										// First 6 Useful Bytes From The Header
+		GLuint      temp;											// Temporary Variable
+		FILE *file; 
+		fopen_s(&file, filename, "rb");							// Open The TGA File
+
+		if (file == NULL ||															// Does File Even Exist?
+			fread(TGAcompare, 1, sizeof(TGAcompare), file) != sizeof(TGAcompare) ||   // Are There 12 Bytes To Read?
+			memcmp(TGAheader, TGAcompare, sizeof(TGAheader)) != 0 ||					// Does The Header Match What We Want?
+			fread(header, 1, sizeof(header), file) != sizeof(header))					// If So Read Next 6 Header Bytes
+		{
+			if (memcmp(TGAheader, TGAcompare, sizeof(TGAheader)) != 0)
+				//MessageBox(NULL, L"Image header missmatch",NULL, NULL);
+				if (file == NULL)                       // Does The File Even Exist? *Added Jim Strong*
+				{
+					//dialog(NULL, L"Image file doesn't exist",NULL, NULL);
+					return false;
+				}
+				else                                // Otherwise
+				{
+					fclose(file);                       // If Anything Failed, Close The File
+					return false;                       // Return False
+				}
+		}
+
+		width = header[1] * 256 + header[0];               // Determine The TGA Width  (highbyte*256+lowbyte)
+		height = header[3] * 256 + header[2];               // Determine The TGA Height (highbyte*256+lowbyte)
+
+		if (width <= 0 ||                       // Is The Width Less Than Or Equal To Zero
+			height <= 0 ||                       // Is The Height Less Than Or Equal To Zero
+			(header[4] != 24 && header[4] != 32))               // Is The TGA 24 or 32 Bit?
+		{
+			fclose(file);                           // If Anything Failed, Close The File
+			return false;                           // Return False
+		}
+
+		bpp = header[4];                        // Grab The TGA's Bits Per Pixel (24 or 32)
+
+		if (bpp == 24)                         // Was The TGA 24 Bits
+			type = GL_RGB;                            // If So Set The 'type' To GL_RGB
+		else // if bits per pixel == 32, the image contains alpha channel.
+		{
+			type = GL_RGBA;
+		}
+
+		bytesPerPixel = bpp / 8;                    // Divide By 8 To Get The Bytes Per Pixel
+		imageSize = width * height*bytesPerPixel;   // Calculate The Memory Required For The TGA Data
+
+		imageData = (GLubyte *)malloc(imageSize);         // Reserve Memory To Hold The TGA Data
+
+		if (imageData == NULL ||                  // Does The Storage Memory Exist?
+			fread(imageData, 1, imageSize, file) != imageSize)    // Does The Image Size Match The Memory Reserved?
+		{
+			if (imageData != NULL)                 // Was Image Data Loaded
+				free(imageData);                // If So, Release The Image Data
+
+			fclose(file);                           // Close The File
+			return false;                           // Return False
+		}
+
+		for (GLuint i = 0; i<int(imageSize); i += bytesPerPixel)          // Loop Through The Image Data
+		{														// Swaps The 1st And 3rd Bytes ('R'ed and 'B'lue)
+			temp = imageData[i];							// Temporarily Store The Value At Image Data 'i'
+			imageData[i] = imageData[i + 2];        // Set The 1st Byte To The Value Of The 3rd Byte
+			imageData[i + 2] = temp;					// Set The 3rd Byte To The Value In 'temp' (1st Byte Value)
+		}
+
+		fclose(file);
+	}
+	return true;
 }

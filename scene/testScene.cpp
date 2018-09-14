@@ -27,7 +27,6 @@ void TestScene::initialize()
 
 	// inititlize the axes
 	initAxes();
-	mE_box4 = new mesher::meshLoader("..\\resources\\models\\terrain\\grassTest.obj", "..\\resources\\models\\terrain\\");
 
 	mE_brickTriangle.initEntity		(global2DTextureCount, "..\\resources\\textures\\brick.jpg");
 	//quad
@@ -41,6 +40,7 @@ void TestScene::initialize()
 	mE_cube.initEntity(true);
 	mE_ColoredSkybox.initEntity(false);
 	
+	mE_palm.initEntity();
 
 	_enableDebugCam = false;
 	//load camera
@@ -83,6 +83,8 @@ void TestScene::renderWorld()
 	//mE_X_axes.draw(data, getShaderLibrary()->colored_geometry);
 	//mE_Y_axes.draw(data, getShaderLibrary()->colored_geometry);
 	//mE_Z_axes.draw(data, getShaderLibrary()->colored_geometry);
+	
+	mE_palm.draw(data, getShaderLibrary()->mesh, glm::vec3(0, -0, 0));
 
 	m_ModelMat = data.glm_model;
 	m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(1224, 1224, 1224));
@@ -92,8 +94,9 @@ void TestScene::renderWorld()
 	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(0, 1, -2));
 	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(-2, 0, 0));
 	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(2, -1, 0));
+	
+	mE_palm.draw(data, getShaderLibrary()->mesh, glm::vec3(0, -0, 0));
 
-	mE_box4->draw(getShaderLibrary()->textured_colored_geometry);
 	glBindVertexArray(0);
 }
 

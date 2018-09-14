@@ -19,7 +19,7 @@ class E_textured_triangle : public Entity
 	ShaderBuffer	*m_TriangleData=NULL;
 	GLuint			 m_VaoHandle;
 	glm::mat4		 m_ModelMat;
-	texture			 m_T;
+	texture_jpg		*m_T;
 
 public:
 	E_textured_triangle() {}
@@ -27,7 +27,7 @@ public:
 
 	void initEntity(GLuint& globalTextureCount, std::string textureName) 
 	{
-		m_T = texture(globalTextureCount, "u_var_tex", textureName);
+		m_T = new texture_jpg(globalTextureCount, "u_var_tex", textureName);
 
 		std::vector<float> v1 = 
 		{ 
@@ -65,9 +65,9 @@ public:
 		m_ModelMat *= glm::translate(glm::mat4(1.0f), position);
 		m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(2));
 
-		glActiveTexture(GL_TEXTURE0 + m_T.getUniformID());
-		glBindTexture(GL_TEXTURE_2D, m_T.getTextureID());
-		shader->setUniform("u_var_tex", m_T.getTextureID());
+		glActiveTexture(GL_TEXTURE0 + m_T->getUniformID());
+		glBindTexture(GL_TEXTURE_2D, m_T->getTextureID());
+		shader->setUniform("u_var_tex", m_T->getTextureID());
 
 		shader->setUniform("u_m4MVP", data.glm_projection * data.glm_view * m_ModelMat);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -77,7 +77,7 @@ public:
 	{
 		m_TriangleData->deleteResource();
 		delete m_TriangleData;
-		m_T.deleteResource();
+		delete m_T;
 	}
 	GLuint getVAOHandle() { return m_VaoHandle; }
 	

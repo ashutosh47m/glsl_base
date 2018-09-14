@@ -51,8 +51,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lmCmdLine
 		printf("glfw not initialized\n");
 	}
 
-	int systemWidth  = GetSystemMetrics(SM_CXSCREEN);
-	int systemHeight = GetSystemMetrics(SM_CYSCREEN);
+//	int systemWidth  = GetSystemMetrics(SM_CXSCREEN);
+//	int systemHeight = GetSystemMetrics(SM_CYSCREEN);
 
 #ifdef _DEBUG
 	reactor->window->setWidth(1280);
@@ -70,11 +70,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lmCmdLine
 							reactor->window->getWidth(), 
 							reactor->window->getHeight(),
 							reactor->window->getName(), 
-							NULL, //glfwGetPrimaryMonitor(), 
+							NULL, // for full screen glfwGetPrimaryMonitor(), 
 							NULL);
 
 #if _DEBUG
-	glfwSetWindowPos(window2, 410, 0);
+	glfwSetWindowPos(window2, 0, 0);
 #else
 	if(systemWidth == reactor->window->getWidth())
 		glfwSetWindowPos(window2, 0, 0);

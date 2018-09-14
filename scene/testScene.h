@@ -18,6 +18,7 @@ Nov 2017, Ashutosh Morwal
 #include "../Entity/E_textured_triangle.h"
 #include "../Entity/E_volume.h"
 #include "../Entity/E_cube.h"
+#include "../Entity/E_mesh.h"
 #include "../Entity/E_volume_ray_caster.h"
 
 #include "../resources/framebuffer_handler.h"
@@ -39,9 +40,9 @@ namespace usr_scene
 
 		E_colored_line				mE_X_axes, mE_Y_axes, mE_Z_axes;
 
+		E_mesh						mE_palm;
 		//E_3d_texture_volume		mE_vol;
 
-		mesher::meshLoader		   *mE_box4;
 
 		E_cube						mE_cube;
 		E_cube						mE_ColoredSkybox;
@@ -74,8 +75,7 @@ public:
 		}
 		~TestScene()
 		{
-			delete mT_camera;
-			delete mE_box4;
+			if(!mT_camera) delete mT_camera;
 		}
 
 		void setResolution(int w, int h)
