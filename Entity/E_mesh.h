@@ -20,10 +20,12 @@ class E_mesh : public Entity
 public:
 	E_mesh() {}
 
-	void initEntity() 
+	void initEntity()
+	{}
+
+	void initEntity(std::string model_location, std::string texture_path)
 	{
-		m_mesh = new mesher::meshLoader("..\\resources\\models\\vegetation\\palm\\palm_04.obj",
-			"..\\resources\\models\\vegetation\\palm\\");
+		m_mesh = new mesher::meshLoader(model_location.c_str(), texture_path.c_str());
 	}
 
 	void draw(glsl_data& data) {}

@@ -40,7 +40,7 @@ void TestScene::initialize()
 	mE_cube.initEntity(true);
 	mE_ColoredSkybox.initEntity(false);
 	
-	mE_palm.initEntity();
+	mE_palm.initEntity("..\\resources\\models\\vegetation\\palm\\palm_04.obj", "..\\resources\\models\\vegetation\\palm\\");
 
 	_enableDebugCam = false;
 	//load camera
@@ -95,8 +95,6 @@ void TestScene::renderWorld()
 	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(-2, 0, 0));
 	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(2, -1, 0));
 	
-	mE_palm.draw(data, getShaderLibrary()->mesh, glm::vec3(0, -0, 0));
-
 	glBindVertexArray(0);
 }
 

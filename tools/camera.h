@@ -12,10 +12,10 @@ May 2017, Ashutosh Morwal
 #ifndef M_PI
 #define M_PI 3.1415926535f
 #endif
-#include <GLFW/glfw3.h>
 #include <windows.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <stdio.h>
+#include <GLFW/glfw3.h>
 
 class YP_Camera
 {
