@@ -10,13 +10,14 @@ Sept 2018, Ashutosh Morwal
 #define TERSCN
 
 #include "scene_handler.h"
-#include "../Entity/E_mesh.h"
-
 #include "../resources/framebuffer_handler.h"
 #include "../resources/texture_handler.h"
 #include "../tools/camera.h"
 #include "../tools/keys.h"
 #include "../tools/meshLoader.h"
+
+#include "../Entity/E_mesh.h"
+#include "../Entity/E_cube.h"
 
 namespace ter_scene
 {
@@ -30,7 +31,11 @@ namespace ter_scene
 	glm::mat4					m_ModelMat;
 	bool						_enableDebugCam;
 	glm::vec3					_debugCamPosition = glm::vec3(4, 4, 4);
+	
+//====================Entities====================================================	
 	E_mesh						mE_palm;
+	E_cube						mE_cube;
+//================================================================================	
 
 	bool						wasd[4] = { false };
 

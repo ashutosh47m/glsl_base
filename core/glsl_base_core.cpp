@@ -74,7 +74,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lmCmdLine
 							NULL);
 
 #if _DEBUG
-	glfwSetWindowPos(window2, 0, 0);
+	glfwSetWindowPos(window2, 500, 100);
 #else
 	if(systemWidth == reactor->window->getWidth())
 		glfwSetWindowPos(window2, 0, 0);

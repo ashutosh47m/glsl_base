@@ -395,20 +395,25 @@ public:
 		);
 		shaderfx->setUniform("u_lightPos", glm::vec2(m_lightPosOnSS.x, m_lightPosOnSS.y));
 		//printf("%f %f \n, ", m_lightPosOnSS.x, m_lightPosOnSS.y);
+		shaderfx->setUniform("u_NUM_SAMPLES", m_numSamples.getValue());
+		shaderfx->setUniform("u_exposure", m_exposure.getValue());
+		shaderfx->setUniform("u_decay", m_decay.getValue());
+		shaderfx->setUniform("u_density", m_density.getValue());
+		shaderfx->setUniform("u_weight", m_weight.getValue());
 	}
 
 	~FBOLightScatter()
 	{
 #ifdef _DEBUG
 // this code will write the values of light scatter before quitting in a file.
-/*
+
 		FILE * f;
 		fopen_s(&f,"scattersetting.txt", "w");
 		fprintf(f, "%d\n%f\n%f\n%f\n%f\n", m_numSamples.getValue(), m_exposure.getValue(),
 			m_decay.getValue(), m_density.getValue(), m_weight.getValue());
 		fclose(f);
 		delete m_FBO;
-*/
+
 #endif
 	}
 };
