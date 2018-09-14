@@ -84,7 +84,7 @@ public:
 		glDisable(GL_BLEND);
 	}
 
-	glm::mat4 getModel() { return m_ModelMat; }
+	glm::mat4 getModelMatrix() { return m_ModelMat; }
 
 	void enable()
 	{

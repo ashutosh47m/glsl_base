@@ -41,7 +41,7 @@ public:
 
 		m_mesh->draw(shader);
 	}
-
+	glm::mat4 getModelMatrix() { return m_ModelMat; }
 	void enable()
 	{
 		//glBindVertexArray(m_VaoHandle);
