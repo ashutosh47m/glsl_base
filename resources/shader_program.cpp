@@ -96,7 +96,7 @@ void Shader::initializeShader(std::string sourcefile, int shadertype)
 	glShaderSource(shaderHandle, 1, &source, NULL);
 
 	if (Shader::compileShader(shaderHandle) == false)
-		exit(-9);
+		printf("shader compilation failed! \n");
 }
 
 

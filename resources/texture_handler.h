@@ -15,38 +15,36 @@ Nov 2017, Ashutosh Morwal
 
 class texture
 {
-	GLuint		uniform_ID;  
+public:
+	GLuint		uniform_ID;
 	GLuint		ui_texID;
-	GLuint		jpg_ID;
 	std::string	uniform_var;
 	std::string	location;
-
-public:
+	
 	GLuint getTextureID() { return ui_texID; }
 	GLuint getUniformID() { return uniform_ID; }
+};
+
+class texture_jpg : public texture
+{
+	GLuint jpg_ID;
+public:
 	
-	texture(GLuint& cnt, std::string u_var, std::string text_location) :
-		uniform_ID(++cnt),
-		uniform_var(u_var),
-		location(text_location)
+	texture_jpg(GLuint& cnt, std::string u_var, std::string text_location)
 	{
+		uniform_var		= u_var;
+		location		= text_location;
+		uniform_ID		= ++cnt;
 		loadtexture();
 	}
-	texture(){}
-	~texture() 
-	{
-	}
 
-	void deleteResource()
+	texture_jpg(){}
+	~texture_jpg()
 	{
 		glDeleteTextures(1, &ui_texID);
 		ilDeleteImage(jpg_ID);
 	}
 
-	//void init()
-	//{
-	//	loadtexture();
-	//}
 	bool loadtexture()
 	{
 		float aniso = 16.0f;

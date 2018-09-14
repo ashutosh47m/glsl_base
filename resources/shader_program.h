@@ -91,7 +91,7 @@ public:
 	ShaderProgram *colored_geometry;			//colored_geometry
 	ShaderProgram *volume_shader;				//volume: 3d texture
 	ShaderProgram *volume_ray_caster;			//volume: ray caster
-	
+	ShaderProgram *mesh;						//volume: ray caster
 	// post fx shaders
 	ShaderProgram *fx_rendertarget;				// a simple quad used for rendertargets
 	ShaderProgram *fx_lightscatter;				// god rays
@@ -109,6 +109,7 @@ public:
 		colored_geometry			= new ShaderProgram("../src/renderer/shaders/colored_geometry", "colored_geometry");
 		volume_shader				= new ShaderProgram("../src/renderer/shaders/volume", "volume");
 		volume_ray_caster			= new ShaderProgram("../src/renderer/shaders/ray_caster", "ray_caster");
+		mesh						= new ShaderProgram("../src/renderer/shaders/mesh", "mesh");
 
 		fx_rendertarget				= new ShaderProgram("../src/renderer/shaders/rendertarget", "rendertarget");
 		fx_lightscatter				= new ShaderProgram("../src/renderer/shaders/lightscatter", "lightscatter");
@@ -134,6 +135,8 @@ public:
 			delete colored_geometry;
 		if (volume_shader != NULL)
 			delete volume_shader;
+		if (mesh != NULL)
+			delete mesh;
 		if (volume_ray_caster != NULL)
 			delete volume_ray_caster;
 		if (fx_lightscatter!= NULL)
