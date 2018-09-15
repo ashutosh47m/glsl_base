@@ -213,13 +213,13 @@ meshLoader::~meshLoader()
         delete meshes[i];
 }
 
-void meshLoader::draw(ShaderProgram*& glProg, instancing *instance, GLuint instance_count)
+void meshLoader::draw(ShaderProgram*& glProg, bool w, instancing *instance, GLuint instance_count)
 {
 	glUseProgram(glProg->getShaderProgramHandle());
 	unsigned int i=0;
 
     for(; i<meshes.size(); i++)
-        meshes[i]->draw(glProg, instance,instance_count);
+        meshes[i]->draw(glProg, w, instance,instance_count);
 }
 
 //std::vector<mesh*> & getMeshes()
@@ -428,7 +428,7 @@ meshData::~meshData()
 	}
 }
 
-void meshData::draw(ShaderProgram*& glProg, instancing *instance, GLuint instance_count)
+void meshData::draw(ShaderProgram*& glProg, bool w, instancing *instance, GLuint instance_count)
 {
 	glBindVertexArray(meshVAOHandle );
 //	glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -451,18 +451,29 @@ void meshData::draw(ShaderProgram*& glProg, instancing *instance, GLuint instanc
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, iVBO);
 		//glBufferData(GL_ARRAY_BUFFER, (ml_instance->i_positions.size()*sizeof(glm::vec4)) , &ml_instance->i_positions[0], GL_STATIC_DRAW);
-//  		glPointSize(4);
- 		glDrawElementsInstanced(GL_TRIANGLES, (GLsizei)indices.size(), GL_UNSIGNED_INT, 0, instance_count);
-//		glDrawElementsInstanced(GL_LINES, indices.size(), GL_UNSIGNED_INT, 0, instance_count);
-//		glDrawElementsInstanced(GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0, instance_count);
+
+		if (w)
+		{
+			//glPointSize(4);
+			//glDrawElementsInstanced(GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0, instance_count);
+			glDrawElementsInstanced(GL_LINES, indices.size(), GL_UNSIGNED_INT, 0, instance_count);
+		}
+		else
+			glDrawElementsInstanced(GL_TRIANGLES, (GLsizei)indices.size(), GL_UNSIGNED_INT, 0, instance_count);
 	}
 	else if(instance==NULL)
 	{
-   	 	glDrawElements(GL_TRIANGLES, (GLsizei)indices.size(), GL_UNSIGNED_INT, 0);
-//  	glPointSize(4);
-// 		glLineWidth(1.4f);
-//		glDrawElements(GL_LINES, indices.size(), GL_UNSIGNED_INT, 0);
-// 		glDrawElements(GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0);
+		if (w)
+		{
+			//glPointSize(4);
+			//glDrawElementsInstanced(GL_POINTS, indices.size(), GL_UNSIGNED_INT, 0, instance_count);
+			glLineWidth(1.4f);
+			glDrawElements(GL_LINES, (GLsizei)indices.size(), GL_UNSIGNED_INT, 0);
+		}
+		else
+		{
+			glDrawElements(GL_TRIANGLES, (GLsizei)indices.size(), GL_UNSIGNED_INT, 0);
+		}
 	}
 
 	//---------------------------------------------------------------------

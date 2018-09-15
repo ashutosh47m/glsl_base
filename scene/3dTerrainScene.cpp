@@ -16,7 +16,11 @@ void modelscene::initialize()
 	if (mE_fxmainRT.fx.global_postprocess)
 		mE_fxmainRT.initEntity(global2DTextureCount, m_width, m_height, getShaderLibrary(), data);
 
+	mE_tree1.initEntity("..\\resources\\models\\vegetation\\8_2k.obj", "..\\resources\\models\\vegetation\\");
+	mE_tree2.initEntity("..\\resources\\models\\vegetation\\1_1k_default.obj", "..\\resources\\models\\vegetation\\");
 	mE_palm.initEntity("..\\resources\\models\\vegetation\\palm\\palm_04.obj", "..\\resources\\models\\vegetation\\palm\\");
+	mE_terrain.initEntity("..\\resources\\models\\terrain\\grassTest.obj", "..\\resources\\models\\vegetation\\palm\\");
+	mE_terrain.setWireframe(true);
 	mE_cube.initEntity(true);
 
 	_enableDebugCam = false;
@@ -67,18 +71,22 @@ void modelscene::renderWorld()
 	glClearColor(.0f, .0f, .0f, 1);
 
 	m_ModelMat = data.glm_model;
-	m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0,60,0));
-	m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(7, 7, 7));
+	m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0,460,0));
+	m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(117, 117, 117));
 	
 	mE_cube.draw(data, getShaderLibrary()->colored_geometry, m_ModelMat);
 
 	mE_palm.draw(data, getShaderLibrary()->mesh, glm::vec3(10, 0, 0));
+	mE_tree1.draw(data, getShaderLibrary()->mesh, glm::vec3(4, 0, 20));
 
 	mE_palm.draw(data, getShaderLibrary()->mesh, glm::vec3(10, 0, 10));
+	mE_tree2.draw(data, getShaderLibrary()->mesh, glm::vec3(5, 0, -20));
 
 	mE_palm.draw(data, getShaderLibrary()->mesh, glm::vec3(0, 0, 0));
 
 	mE_palm.draw(data, getShaderLibrary()->mesh, glm::vec3(0, 0, 10));
+
+	mE_terrain.draw(data, getShaderLibrary()->terrain, glm::vec3(0, -40, 0));
 
 	glBindVertexArray(0);
 }
@@ -168,7 +176,7 @@ void modelscene::keyProcess(int key, int scancode, int action, int mods)
 			break;
 		case _2am_KEY_R:
 		case _2am_KEY_F:
-			mE_fxmainRT.m_ZPosition.Toggle = 0;
+			//mE_fxmainRT.m_ZPosition.Toggle = 0;
 			break;
 		case _2am_KEY_T:
 		case _2am_KEY_G:

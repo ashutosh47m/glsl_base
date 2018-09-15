@@ -299,11 +299,11 @@ public:
 	// to increase performance set to low
 	High
 	{
-		 150,
-		.894f,
-		.968803f,
-		.81997f,
-		.414f
+		150,
+		0.894000f,
+		0.968803f,
+		0.956968f,
+		0.208002f
 	},
 	Medium
 	{
@@ -347,11 +347,8 @@ public:
 
 	FrameBuffer			   *m_FBO;
 
-	FBOLightScatter(int w, int h, GLuint &globalTextureCount, ShaderProgram *& fx, GLuint MRTtextureID) 
+	void setGodRayUniforms(ShaderProgram *&fx)
 	{
-		m_FBO = new FrameBuffer(w, h, m_downsample, globalTextureCount);
-
-		// the information which needs to be updated only once should be sent here.
 		glUseProgram(fx->getShaderProgramHandle());
 
 		fx->setUniform("u_NUM_SAMPLES", m_numSamples.getValue());
@@ -359,6 +356,14 @@ public:
 		fx->setUniform("u_decay", m_decay.getValue());
 		fx->setUniform("u_density", m_density.getValue());
 		fx->setUniform("u_weight", m_weight.getValue());
+	}
+
+	FBOLightScatter(int w, int h, GLuint &globalTextureCount, ShaderProgram *& fx, GLuint MRTtextureID) 
+	{
+		m_FBO = new FrameBuffer(w, h, m_downsample, globalTextureCount);
+
+		// the information which needs to be updated only once should be sent here.
+		setGodRayUniforms(fx);
 
 		// MRTtextureID + 0 : default colore albedo texture which will be written from the MRT.  
 		// MRTtextureID + 1 : will represent the lights in the scene for which we need god rays.
@@ -384,6 +389,9 @@ public:
 		glUseProgram(shaderfx->getShaderProgramHandle());
 		shaderfx->setUniform("u_m4MVP", mvp_model);
 
+		// comment the following line when you're done editing the godray params
+		setGodRayUniforms(shaderfx);
+
 		m_lightPosOnSS =
 		(
 			glm::vec3(
@@ -395,11 +403,6 @@ public:
 		);
 		shaderfx->setUniform("u_lightPos", glm::vec2(m_lightPosOnSS.x, m_lightPosOnSS.y));
 		//printf("%f %f \n, ", m_lightPosOnSS.x, m_lightPosOnSS.y);
-		shaderfx->setUniform("u_NUM_SAMPLES", m_numSamples.getValue());
-		shaderfx->setUniform("u_exposure", m_exposure.getValue());
-		shaderfx->setUniform("u_decay", m_decay.getValue());
-		shaderfx->setUniform("u_density", m_density.getValue());
-		shaderfx->setUniform("u_weight", m_weight.getValue());
 	}
 
 	~FBOLightScatter()
@@ -484,14 +487,15 @@ public:
 
 	void update()
 	{
-		//m_ZPosition.update(1);
-		/*
+		// comment the function when you're done editing the godray params
+		m_ZPosition.update(1);
+		
 		m_LightScatter->m_numSamples.update(1);
 		m_LightScatter->m_exposure.update(.001f);
 		m_LightScatter->m_decay.update(.0001f);
 		m_LightScatter->m_density.update(.001f);
 		m_LightScatter->m_weight.update(.001f);
-		*/
+		
 	}
 
 	void postProcessPass(glsl_data& data, ShaderLibrary* shaderLib, glm::mat4 &mvp_lightposition)

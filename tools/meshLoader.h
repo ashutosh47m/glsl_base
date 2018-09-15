@@ -59,7 +59,7 @@ namespace mesher
 		  meshData (std::vector <vertexData>* vd,  std::vector <GLuint> *id,  std::vector <textureData> *td = NULL);
 
 		~meshData();
-		void draw(ShaderProgram*& glProg, instancing *instance=NULL, GLuint instance_count=0);
+		void draw(ShaderProgram*& glProg, bool, instancing *instance=NULL, GLuint instance_count=0);
 	}; 
 
 	class meshLoader
@@ -79,7 +79,7 @@ namespace mesher
 		std::vector<meshData*> meshes; 
 		void recProcess  (aiNode* ,const  aiScene* );
 		void processMesh (aiMesh* ,const  aiScene* );
-		void draw(ShaderProgram*& glProg,instancing *instance = NULL, GLuint instance_count=0);
+		void draw(ShaderProgram*& glProg, bool, instancing *instance = NULL, GLuint instance_count=0);
 		GLuint loadTexture(std::string file, GLuint&);
 	};
 

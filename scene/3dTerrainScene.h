@@ -34,7 +34,10 @@ namespace ter_scene
 	
 //====================Entities====================================================	
 	E_mesh						mE_palm;
+	E_mesh						mE_tree1;
+	E_mesh						mE_tree2;
 	E_cube						mE_cube;
+	E_mesh						mE_terrain;
 //================================================================================	
 
 	bool						wasd[4] = { false };

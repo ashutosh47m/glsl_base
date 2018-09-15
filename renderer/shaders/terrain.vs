@@ -11,13 +11,8 @@ out vec3 vs_model_v3Tangent;
 out vec3 vs_model_v3Color;
 out vec2 vs_model_v2UV;
 
-
 uniform mat4 u_m4MVP;
-uniform mat4 m4_model;
-uniform mat4 m4_view;
-uniform mat4 m4_projection;
 uniform mat3 u_m3NormalMatrix;
-
 
 void main()
 {

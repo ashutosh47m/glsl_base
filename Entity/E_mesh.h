@@ -17,6 +17,7 @@ class E_mesh : public Entity
 {
 	glm::mat4			 m_ModelMat;
 	mesher::meshLoader	*m_mesh;
+	bool				 m_isWireframe;
 public:
 	E_mesh() {}
 
@@ -25,7 +26,13 @@ public:
 
 	void initEntity(std::string model_location, std::string texture_path)
 	{
+		m_isWireframe = false;
 		m_mesh = new mesher::meshLoader(model_location.c_str(), texture_path.c_str());
+	}
+		
+	void setWireframe(bool w)
+	{
+		m_isWireframe = w; 
 	}
 
 	void draw(glsl_data& data) {}
@@ -39,7 +46,7 @@ public:
 		
 		shader->setUniform("u_m4MVP", data.glm_projection * data.glm_view * m_ModelMat);
 
-		m_mesh->draw(shader);
+		m_mesh->draw(shader, m_isWireframe);
 	}
 	glm::mat4 getModelMatrix() { return m_ModelMat; }
 	void enable()
