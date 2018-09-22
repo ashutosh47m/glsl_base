@@ -13,9 +13,9 @@ May 2018, Ashutosh Morwal
 #include "../resources/texture_handler.h"
 #include "../tools/camera.h"
 #include "../tools/keys.h"
-#include "../Entity/E_origin_axis.h"
-#include "../Entity/E_cube.h"
-#include "../Entity/E_textured_quad.h"
+#include "../scene/Entity/E_origin_axis.h"
+#include "../scene/Entity/E_cube.h"
+#include "../scene/Entity/E_textured_quad.h"
 
 namespace mrt_scene
 {

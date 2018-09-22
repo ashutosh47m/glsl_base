@@ -8,9 +8,9 @@
 #ifndef GL_RENDERER_H
 #define GL_RENDERER_H
 
-#include "..\scene\testScene.h"
-#include "..\scene\3dTerrainScene.h"
-#include "..\scene\MRT_fboScene.h"
+#include "..\scene\Scene_test.h"
+#include "..\scene\Scene_flat_terrain.h"
+#include "..\scene\Scene_MRT_fbo.h"
 namespace opengl_renderer
 {
 	class renderer

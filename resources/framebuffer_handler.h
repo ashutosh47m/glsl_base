@@ -8,7 +8,7 @@ May 2018, Ashutosh Morwal
 #ifndef _FBO_
 #define _FBO_
 
-#include "../Entity/Entity.h"
+#include "../scene/Entity/Entity.h"
 #include "../resources/buffer_handler.h"
 #include "../resources/shader_program.h"
 #include "../tools/variables.h"

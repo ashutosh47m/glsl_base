@@ -1,5 +1,5 @@
-#include "MRT_fboScene.h"
-#include "../Entity/E_textured_quad.h"
+#include "Scene_MRT_fbo.h"
+#include "../scene/Entity/E_textured_quad.h"
 
 using namespace mrt_scene;
 

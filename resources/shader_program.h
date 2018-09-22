@@ -110,7 +110,7 @@ public:
 		colored_geometry			= new ShaderProgram("../src/renderer/shaders/colored_geometry", "colored_geometry");
 		volume_shader				= new ShaderProgram("../src/renderer/shaders/volume", "volume");
 		volume_ray_caster			= new ShaderProgram("../src/renderer/shaders/ray_caster", "ray_caster");
-		mesh						= new ShaderProgram("../src/renderer/shaders/mesh", "mesh");
+		mesh						= new ShaderProgram("../src/renderer/shaders/flat_mesh", "flat_mesh");
 		terrain						= new ShaderProgram("../src/renderer/shaders/terrain", "terrain");
 
 		fx_rendertarget				= new ShaderProgram("../src/renderer/shaders/rendertarget", "rendertarget");

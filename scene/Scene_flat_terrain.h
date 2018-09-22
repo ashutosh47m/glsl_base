@@ -16,8 +16,8 @@ Sept 2018, Ashutosh Morwal
 #include "../tools/keys.h"
 #include "../tools/meshLoader.h"
 
-#include "../Entity/E_mesh.h"
-#include "../Entity/E_cube.h"
+#include "../scene/Entity/E_mesh.h"
+#include "../scene/Entity/E_cube.h"
 
 namespace ter_scene
 {

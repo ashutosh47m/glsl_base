@@ -1,10 +1,10 @@
 #version 400
 // ------------------------ model
-in vec3 vs_model_v3Position; 
-in vec3 vs_model_v3Normal;
-in vec3 vs_model_v3Tangent;
-in vec3 vs_model_v3Color;
-in vec2 vs_model_v2UV;
+flat in vec3 vs_model_v3Position; 
+flat in vec3 vs_model_v3Normal;
+flat in vec3 vs_model_v3Tangent;
+flat in vec3 vs_model_v3Color;
+flat in vec2 vs_model_v2UV;
 uniform sampler2D texture0;
 
 void main()
