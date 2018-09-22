@@ -5,11 +5,11 @@ layout (location = 2) in vec3 in_model_v3Tangent;
 layout (location = 3) in vec3 in_model_v3Color;
 layout (location = 4) in vec2 in_model_v2UV;
 
-out vec3 vs_model_v3Position; 
-out vec3 vs_model_v3Normal;
-out vec3 vs_model_v3Tangent;
-out vec3 vs_model_v3Color;
-out vec2 vs_model_v2UV;
+flat out vec3 vs_model_v3Position; 
+flat out vec3 vs_model_v3Normal;
+flat out vec3 vs_model_v3Tangent;
+flat out vec3 vs_model_v3Color;
+flat out vec2 vs_model_v2UV;
 
 uniform mat4 u_m4MVP;
 uniform mat3 u_m3NormalMatrix;
