@@ -112,7 +112,9 @@ public:
 		shader->setUniform("u_m4MVP", data.glm_projection * data.glm_view * m_ModelMat);
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
 	}
-	
+
+	glm::mat4 getModelMatrix() { return m_ModelMat; }
+
 	void enable()
 	{
 		glBindVertexArray(m_VaoHandle);

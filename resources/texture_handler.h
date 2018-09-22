@@ -90,8 +90,7 @@ public:
 		}
 		else
 		{
-			printf("texture not loaded\n");
-			//MessageBox(NULL, L"Texture not loaded", NULL, NULL);
+			printf(" %ls texture not loaded\n", t.c_str());
 			return false;
 		}
 

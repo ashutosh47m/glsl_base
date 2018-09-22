@@ -16,11 +16,14 @@ void modelscene::initialize()
 	if (mE_fxmainRT.fx.global_postprocess)
 		mE_fxmainRT.initEntity(global2DTextureCount, m_width, m_height, getShaderLibrary(), data);
 
+	mE_terrain.initEntity("..\\resources\\models\\terrain\\grassTest.obj", "..\\resources\\models\\vegetation\\palm\\",
+		global2DTextureCount, "..\\resources\\textures\\terrain\\dry-green_CLR.jpg");
+	mE_terrain.getMesh().setWireframe(false);
+
 	mE_tree1.initEntity("..\\resources\\models\\vegetation\\8_2k.obj", "..\\resources\\models\\vegetation\\");
 	mE_tree2.initEntity("..\\resources\\models\\vegetation\\1_1k_default.obj", "..\\resources\\models\\vegetation\\");
 	mE_palm.initEntity("..\\resources\\models\\vegetation\\palm\\palm_04.obj", "..\\resources\\models\\vegetation\\palm\\");
-	mE_terrain.initEntity("..\\resources\\models\\terrain\\grassTest.obj", "..\\resources\\models\\vegetation\\palm\\");
-	mE_terrain.setWireframe(false);
+
 	mE_cube.initEntity(true);
 
 	_enableDebugCam = false;
@@ -56,7 +59,7 @@ void modelscene::draw()
 		renderWorld();
 		mE_fxmainRT.unBindFBO();
 
-		mE_fxmainRT.postProcessPass(data, getShaderLibrary(), mE_palm.getModelMatrix());
+		mE_fxmainRT.postProcessPass(data, getShaderLibrary(), mE_cube.getModelMatrix());
 	}
 	else
 	{
@@ -71,7 +74,7 @@ void modelscene::renderWorld()
 	glClearColor(.0f, .0f, .0f, 1);
 
 	m_ModelMat = data.glm_model;
-	m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0,380,0));
+	m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(380,280,0));
 	m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(117, 117, 117));
 	
 	mE_cube.draw(data, getShaderLibrary()->colored_geometry, m_ModelMat);

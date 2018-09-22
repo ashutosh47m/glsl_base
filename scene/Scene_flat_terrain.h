@@ -18,6 +18,7 @@ Sept 2018, Ashutosh Morwal
 
 #include "../scene/Entity/E_mesh.h"
 #include "../scene/Entity/E_cube.h"
+#include "../scene/Scene Entities/se_terrain.h"
 
 namespace ter_scene
 {
@@ -36,8 +37,9 @@ namespace ter_scene
 	E_mesh						mE_palm;
 	E_mesh						mE_tree1;
 	E_mesh						mE_tree2;
+	se_terrain					mE_terrain;
+
 	E_cube						mE_cube;
-	E_mesh						mE_terrain;
 //================================================================================	
 
 	bool						wasd[4] = { false };
