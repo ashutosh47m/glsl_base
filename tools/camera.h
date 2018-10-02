@@ -36,7 +36,7 @@ class YP_Camera
 	// Initial Field of View, can be used for zooming later.
 	//float		initialFoV			= 45.0f;
 
-	const float speed				= 3.3f; // units / second
+	const float speed				= 8.3f; // units / second
 	float		mouseSpeed;
 	bool		debug_cam			;	// allows you to move fast in the scene
 	int			window_width;

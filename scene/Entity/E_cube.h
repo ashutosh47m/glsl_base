@@ -50,7 +50,7 @@ public:
 			2,5,1
 		};
 
-		std::vector<float> v3 =
+		std::vector<float> multi_colored =
 		{
 			1.0f,  0.0f,   0.0f,
 			1.0f,   .0f,   1.0f,
@@ -62,10 +62,22 @@ public:
 			0.0f,  1.0f,   0.0f,
 		};
 
+		std::vector<float> flat_white =
+		{
+			1.0f,  1.0f,   1.0f,
+			1.0f,  1.0f,   1.0f,
+			1.0f,  0.0f,   1.0f,
+			1.0f,  1.0f,   1.0f,
+			1.0f,  1.0f,   1.0f,
+			1.0f,  1.0f,   1.0f,
+			1.0f,  1.0f,   1.0f,
+			1.0f,  1.0f,   1.0f,
+		};
+
 
 		if (colored)
 		{
-			m_CubeData = new ShaderBuffer_POS_IND_COL(v1, v2, v3);
+			m_CubeData = new ShaderBuffer_POS_IND_COL(v1, v2, flat_white);
 			m_VaoHandle = m_CubeData->getVAOHandle();
 		}
 		else

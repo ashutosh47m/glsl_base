@@ -88,7 +88,7 @@ public:
 	ShaderProgram *red_triangle_shader;			//first_red_triangle
 	ShaderProgram *triangle_shader;				//first_triangle
 	ShaderProgram *textured_colored_geometry;	//textured_geometry
-	ShaderProgram *colored_geometry;			//colored_geometry
+	ShaderProgram *sun;							//sun
 	ShaderProgram *volume_shader;				//volume: 3d texture
 	ShaderProgram *volume_ray_caster;			//volume: ray caster
 	ShaderProgram *mesh;						//meshloader : generic
@@ -107,7 +107,7 @@ public:
 		red_triangle_shader			= new ShaderProgram("../src/renderer/shaders/first_red_triangle", "first_red_triangle");
 		triangle_shader				= new ShaderProgram("../src/renderer/shaders/first_triangle", "first_triangle");
 		textured_colored_geometry	= new ShaderProgram("../src/renderer/shaders/textured_colored_geometry", "textured_colored_geometry");
-		colored_geometry			= new ShaderProgram("../src/renderer/shaders/colored_geometry", "colored_geometry");
+		sun							= new ShaderProgram("../src/renderer/shaders/sun", "sun");
 		volume_shader				= new ShaderProgram("../src/renderer/shaders/volume", "volume");
 		volume_ray_caster			= new ShaderProgram("../src/renderer/shaders/ray_caster", "ray_caster");
 		mesh						= new ShaderProgram("../src/renderer/shaders/flat_mesh", "flat_mesh");
@@ -133,8 +133,8 @@ public:
 			delete triangle_shader;
 		if (textured_colored_geometry != NULL)
 			delete textured_colored_geometry;
-		if (colored_geometry != NULL)
-			delete colored_geometry;
+		if (sun != NULL)
+			delete sun;
 		if (volume_shader != NULL)
 			delete volume_shader;
 		if (mesh != NULL)

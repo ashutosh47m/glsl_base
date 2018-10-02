@@ -80,20 +80,20 @@ void TestScene::renderWorld()
 	mE_grassStonequad.draw	(data, getShaderLibrary()->textured_colored_geometry,	glm::vec3(  2.2, 0, 0));
 	//glEnable(GL_CULL_FACE);
 
-	//mE_X_axes.draw(data, getShaderLibrary()->colored_geometry);
-	//mE_Y_axes.draw(data, getShaderLibrary()->colored_geometry);
-	//mE_Z_axes.draw(data, getShaderLibrary()->colored_geometry);
+	//mE_X_axes.draw(data, getShaderLibrary()->sun);
+	//mE_Y_axes.draw(data, getShaderLibrary()->sun);
+	//mE_Z_axes.draw(data, getShaderLibrary()->sun);
 	
 	mE_palm.draw(data, getShaderLibrary()->mesh, glm::vec3(0, -0, 0));
 
 	m_ModelMat = data.glm_model;
 	m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(1224, 1224, 1224));
-	mE_ColoredSkybox.draw(data, getShaderLibrary()->colored_geometry, m_ModelMat);
+	mE_ColoredSkybox.draw(data, getShaderLibrary()->sun, m_ModelMat);
 
-	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(0, 2, 2));
-	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(0, 1, -2));
-	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(-2, 0, 0));
-	mE_cube.draw(data, getShaderLibrary()->colored_geometry, glm::vec3(2, -1, 0));
+	mE_cube.draw(data, getShaderLibrary()->sun, glm::vec3(0, 2, 2));
+	mE_cube.draw(data, getShaderLibrary()->sun, glm::vec3(0, 1, -2));
+	mE_cube.draw(data, getShaderLibrary()->sun, glm::vec3(-2, 0, 0));
+	mE_cube.draw(data, getShaderLibrary()->sun, glm::vec3(2, -1, 0));
 	
 	glBindVertexArray(0);
 }
