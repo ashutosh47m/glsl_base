@@ -23,7 +23,7 @@ public:
 		GLuint& globalTextureCount, 
 		std::string textureName)
 	{
-		mE_terrain.initEntity(modelPath, modelTexturePath);
+		mE_terrain.initEntity("terrain", modelPath, modelTexturePath);
 		m_Texdry = new texture_jpg(globalTextureCount, "u_dryTex", textureName);
 	}
 

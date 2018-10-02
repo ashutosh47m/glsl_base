@@ -41,7 +41,7 @@ public:
 	glm::mat4 glm_model; 
 	glm::mat4 glm_view ;
 	glm::mat4 glm_projection;
-	glm::mat4 glm_modelView;	
+	glm::mat4 getModelView() { return glm_model * glm_view;  }
 	glm::mat4 getDefaultEye() { return default_view; }
 	glm::vec3 glm_eye;			// global camera position
 								// all the objects in the scene will be 

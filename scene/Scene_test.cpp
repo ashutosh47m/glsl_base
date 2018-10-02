@@ -40,7 +40,7 @@ void TestScene::initialize()
 	mE_cube.initEntity(true);
 	mE_ColoredSkybox.initEntity(false);
 	
-	mE_palm.initEntity("..\\resources\\models\\vegetation\\palm\\palm_04.obj", "..\\resources\\models\\vegetation\\palm\\");
+	mE_palm.initEntity("palm", "..\\resources\\models\\vegetation\\palm\\palm_04.obj", "..\\resources\\models\\vegetation\\palm\\");
 
 	_enableDebugCam = false;
 	//load camera

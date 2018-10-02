@@ -20,11 +20,11 @@ void modelscene::initialize()
 		global2DTextureCount, "..\\resources\\textures\\terrain\\soil2_CLR.jpg");
 	mE_terrain.getMesh().setWireframe(false);
 
-	mE_tree1.initEntity("..\\resources\\models\\vegetation\\8_2k.obj", "..\\resources\\models\\vegetation\\");
-	mE_tree2.initEntity("..\\resources\\models\\vegetation\\1_1k_default.obj", "..\\resources\\models\\vegetation\\");
-	mE_palm.initEntity("..\\resources\\models\\vegetation\\palm\\palm_04.obj", "..\\resources\\models\\vegetation\\palm\\");
-
-	mE_sun.initEntity("..\\resources\\models\\sky\\sun.obj", "..\\resources\\models\\sky\\");
+	mE_tree1.initEntity("8_2 tree", "..\\resources\\models\\vegetation\\8_2k.obj", "..\\resources\\models\\vegetation\\");
+	mE_tree2.initEntity("1_1 tree", "..\\resources\\models\\vegetation\\1_1k_default.obj", "..\\resources\\models\\vegetation\\");
+	mE_palm.initEntity("palm", "..\\resources\\models\\vegetation\\palm\\palm_04.obj", "..\\resources\\models\\vegetation\\palm\\");
+	mE_palm.setCull(false);
+	mE_sun.initEntity("sun", "..\\resources\\models\\sky\\sun.obj", "..\\resources\\models\\sky\\");
 
 	_enableDebugCam = false;
 	//load camera
@@ -32,15 +32,14 @@ void modelscene::initialize()
 		mT_camera = new YP_Camera(m_width, m_height);
 	else
 		data.setViewMatrix(_debugCamPosition);
+	//by default back faces of objects are NOT hidden
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 }
 
 void modelscene::update()
 {
 	glEnable(GL_DEPTH_TEST);
-
-	//by default back faces of objects are NOT hidden
-	//glEnable(GL_CULL_FACE);
-	//glCullFace(GL_BACK);
 
 	glClearColor(.0f, .0f, .0f, 1);
 	if (_enableDebugCam)
@@ -74,7 +73,7 @@ void modelscene::renderWorld()
 	glClearColor(.0f, .0f, .0f, 1);
 
 	m_ModelMat = data.glm_model;
-	m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(380,280,0));
+	m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(580,580,0));
 	m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(47, 47, 47));
 	
 	mE_sun.draw(data, getShaderLibrary()->sun, m_ModelMat);
