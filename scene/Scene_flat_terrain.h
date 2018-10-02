@@ -39,7 +39,7 @@ namespace ter_scene
 	E_mesh						mE_tree2;
 	se_terrain					mE_terrain;
 
-	E_cube						mE_sun;
+	E_mesh						mE_sun;
 //================================================================================	
 
 	bool						wasd[4] = { false };

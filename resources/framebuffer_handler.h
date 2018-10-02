@@ -369,7 +369,7 @@ public:
 		// MRTtextureID + 1 : will represent the lights in the scene for which we need god rays.
 
 		// interesting fact: if you were to use MRTtextureID + 0 instead of 1, you will see some interesting effects.
-		fx->setUniform("u_RT1_tex", MRTtextureID + 1); 
+		fx->setUniform("u_RT1_tex", MRTtextureID); 
 	}
 
 	// this function is only for the debug purposes
@@ -525,7 +525,7 @@ public:
 			(
 				shaderLib->fx_combineLightscatter,											  // shader which combines 2 shaders
 				m_LightScatter->m_FBO->m_MRTTextureID, m_LightScatter->m_FBO->m_ColorTexture, // processed god rays texture
-				m_MRTFrameBuffer->m_MRTTextureID, m_MRTFrameBuffer->m_ColorTexture[0],		  // color texture 
+				m_MRTFrameBuffer->m_MRTTextureID, m_MRTFrameBuffer->m_ColorTexture[1],		  // color texture 
 				data.glm_projection * data.getDefaultEye() * m_ModelMat						  // modelViewMatrix
 			);
 		}

@@ -10,8 +10,7 @@ uniform sampler2D u_dryTex;
 void main()
 {
 	vec4 diff = texture( u_dryTex, vs_model_v2UV * 40);
-	gl_FragData[0] = diff;
-	gl_FragData[1] = vec4(normalize(vs_model_v3Normal), 1);
+	gl_FragData[1] = diff;
 	gl_FragData[2] = vec4(vs_model_v3Position,1);
-	gl_FragData[3] = vec4(1,0,1,1);
+	gl_FragData[3] = vec4(normalize(vs_model_v3Normal), 1);
 }

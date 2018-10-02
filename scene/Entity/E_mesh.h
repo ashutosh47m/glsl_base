@@ -48,6 +48,14 @@ public:
 
 		m_mesh->draw(shader, m_isWireframe);
 	}
+
+	void draw(glsl_data& data, ShaderProgram *& shader, glm::mat4 modelmat)
+	{
+		glUseProgram(shader->getShaderProgramHandle());
+		shader->setUniform("u_m4MVP", data.glm_projection * data.glm_view * modelmat);
+		m_mesh->draw(shader, m_isWireframe);
+	}
+
 	glm::mat4 getModelMatrix() { return m_ModelMat; }
 	void enable()
 	{

@@ -24,7 +24,7 @@ void modelscene::initialize()
 	mE_tree2.initEntity("..\\resources\\models\\vegetation\\1_1k_default.obj", "..\\resources\\models\\vegetation\\");
 	mE_palm.initEntity("..\\resources\\models\\vegetation\\palm\\palm_04.obj", "..\\resources\\models\\vegetation\\palm\\");
 
-	mE_sun.initEntity(true);
+	mE_sun.initEntity("..\\resources\\models\\sky\\sun.obj", "..\\resources\\models\\sky\\");
 
 	_enableDebugCam = false;
 	//load camera
@@ -75,7 +75,7 @@ void modelscene::renderWorld()
 
 	m_ModelMat = data.glm_model;
 	m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(380,280,0));
-	m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(117, 117, 117));
+	m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(47, 47, 47));
 	
 	mE_sun.draw(data, getShaderLibrary()->sun, m_ModelMat);
 
