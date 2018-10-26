@@ -38,7 +38,6 @@ void renderer::shutdownGL()
 
 void renderer::resizeGL(int w, int h)
 {
-	printf("%d %d \n", w,h);
 	if(h == 0)
 		h = 1;
 	glViewport (0, 0, w, h);

@@ -69,7 +69,7 @@ public:
 	GLuint					 m_Width, m_Height;
 	// the number of render targets this MRT is going to have. 
 	// this value cannot be less than 1, as 1 render target is must for rendering	; 	
-	static const GLuint		 m_MRTCount = 4;
+	static const GLuint		 m_MRTCount = 6;
 	
 	GLuint					 m_ColorTexture[m_MRTCount];
 	GLuint					 m_MRTTextureID;
@@ -159,14 +159,35 @@ public:
 class PostProcess
 {
 	rt_quad		m_RTQuad;
-
+	glm::vec3	viewPosition;
+	struct S_light
+	{
+		glm::vec3 position;
+		glm::vec3 color;
+	};
+	static const GLuint		 LIGHT_CNT = 22;
+	S_light lights[LIGHT_CNT];
+	float x, y = 30, z;
 public:
 	PostProcess() {}
+
+	void setViewPosition(glm::vec3 p)
+	{
+		viewPosition = p;
+	}
 
 	void initData(GLuint &vaohandle)
 	{
 		m_RTQuad.initEntity();
 		vaohandle = m_RTQuad.getVaoHandle();
+		for(int i=0; i< LIGHT_CNT; i++)
+		{
+			x = 10.0f * cos(40.0f + (i * 10.0f));
+			z = 10.0f * sin(40.0f + (i * 10.0f));
+
+			lights[i].position = glm::vec3(x,y,z);
+			lights[i].color = glm::vec3(0.08f,0.04f,0.04f);
+		}
 	}
 
 	void draw(ShaderProgram *& shader, GLuint textureID, GLuint texture, glm::mat4& model)
@@ -199,6 +220,43 @@ public:
 		shader->setUniform("u_colorTex", textureID2);
 
 		shader->setUniform("u_m4MVP", model);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		glUseProgram(0);
+	}
+
+	void DeferredDraw(
+		ShaderProgram *& shader,
+		GLuint textureID1, GLuint texture1,
+		GLuint textureID2, GLuint texture2,
+		GLuint textureID3, GLuint texture3,
+		glm::mat4& model)
+	{
+		glUseProgram(shader->getShaderProgramHandle());
+
+		glActiveTexture(GL_TEXTURE0 + textureID1);
+		glBindTexture(GL_TEXTURE_2D, texture1);
+		shader->setUniform("u_albedo", textureID1);
+
+		glActiveTexture(GL_TEXTURE0 + textureID2);
+		glBindTexture(GL_TEXTURE_2D, texture2);
+		shader->setUniform("u_position", textureID2);
+
+		glActiveTexture(GL_TEXTURE0 + textureID3);
+		glBindTexture(GL_TEXTURE_2D, texture3);
+		shader->setUniform("u_normal", textureID3);
+
+		shader->setUniform("u_m4MVP", model);
+		shader->setUniform("u_v3ViewPos", viewPosition);
+
+		for (int i = 0; i < LIGHT_CNT; i++)
+		{
+			std::string pos = "u_lights[" + std::to_string(i) + "].Position";
+			std::string col = "u_lights[" + std::to_string(i) + "].Color";
+
+			shader->setUniform(pos.c_str(), lights[i].position);
+			shader->setUniform(col.c_str(), lights[i].color);
+		}
+
 		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		glUseProgram(0);
 	}
@@ -442,11 +500,13 @@ class E_fxMRT
 	
 public:
 
-	fxGlobalSettings		 fx{ true, true};
+	fxGlobalSettings		 fx{ true, false};
 	FBOLightScatter			*m_LightScatter = NULL;
 	variable<GLfloat>		 m_ZPosition; 				// the position of the render target, u can move it closer to eye, or away from it
 
 	E_fxMRT() {}
+
+	PostProcess& getPostProcessObject() { return postprocess; }
 
 	void initEntity(GLuint &globalTextureCount, int w, int h, ShaderLibrary* lib, glsl_data &data)
 	{
@@ -513,13 +573,12 @@ public:
 			m_LightScatter->sendLightPositionForScatter
 			(
 				shaderLib->fx_lightscatter,
-				m_MRTFrameBuffer->m_MRTTextureID + 1,
+				m_MRTFrameBuffer->m_MRTTextureID + 1,					 // god ray white extract, basically your sun.
 				data.glm_projection * data.getDefaultEye() * m_ModelMat, // mvp for render target
 				data.glm_projection * data.glm_view * mvp_lightposition  // mvp for light
 			);
 
-			// commenting line below will increase performance, this calls the shader which creates god rays using sampling
-			m_LightScatter->m_FBO->renderToTexture();
+			m_LightScatter->m_FBO->renderToTexture();					// this will process the godray texture
 			//----------------------------------------------------------------------------------		
 			postprocess.CombinedDraw
 			(
@@ -531,14 +590,22 @@ public:
 		}
 		else
 		{
-			// draw the normal color buffer gotten from the MRT
-			postprocess.draw
-			(
-				shaderLib->fx_rendertarget,
-				m_MRTFrameBuffer->m_MRTTextureID, m_MRTFrameBuffer->m_ColorTexture[0],
-				data.glm_projection * data.getDefaultEye() * m_ModelMat
-			);
+			//postprocess.draw
+			//(
+			//	shaderLib->fx_rendertarget,
+			//	m_MRTFrameBuffer->m_MRTTextureID,	m_MRTFrameBuffer->m_ColorTexture[1],
+			//	data.glm_projection * data.getDefaultEye() * m_ModelMat
+			//);
 		}
+
+		postprocess.DeferredDraw
+		(
+			shaderLib->fx_deferred_ADS,
+			m_MRTFrameBuffer->m_MRTTextureID, m_MRTFrameBuffer->m_ColorTexture[1],
+			m_MRTFrameBuffer->m_MRTTextureID + 1, m_MRTFrameBuffer->m_ColorTexture[2],
+			m_MRTFrameBuffer->m_MRTTextureID + 2, m_MRTFrameBuffer->m_ColorTexture[3],
+			data.glm_projection * data.getDefaultEye() * m_ModelMat
+		);
 	}
 
 	~E_fxMRT()

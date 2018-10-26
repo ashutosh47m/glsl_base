@@ -74,7 +74,7 @@ void modelscene::renderWorld()
 
 	m_ModelMat = data.glm_model;
 	m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(580,580,0));
-	m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(47, 47, 47));
+	m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(87, 87, 88));
 	
 	mE_sun.draw(data, getShaderLibrary()->sun, m_ModelMat);
 
@@ -166,14 +166,18 @@ void modelscene::keyProcess(int key, int scancode, int action, int mods)
 		{
 		case _2am_KEY_W:
 			wasd[0] = false;
+			mE_fxmainRT.getPostProcessObject().setViewPosition(mT_camera->getPosition());
 			break;
 		case _2am_KEY_A:
+			mE_fxmainRT.getPostProcessObject().setViewPosition(mT_camera->getPosition());
 			wasd[1] = false;
 			break;
 		case _2am_KEY_S:
+			mE_fxmainRT.getPostProcessObject().setViewPosition(mT_camera->getPosition());
 			wasd[2] = false;
 			break;
 		case _2am_KEY_D:
+			mE_fxmainRT.getPostProcessObject().setViewPosition(mT_camera->getPosition());
 			wasd[3] = false;
 			break;
 		case _2am_KEY_R:

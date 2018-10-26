@@ -26,7 +26,7 @@ class YP_Camera
 	POINT mouse;
 
 	// position
-	glm::vec3	position = glm::vec3(0, 0, 1);
+	glm::vec3	position = glm::vec3(0, 20, 12);
 	// horizontal angle : toward -Z, pitch
 	float		horizontalAngle		= 3.14f;
 
@@ -46,6 +46,12 @@ class YP_Camera
 	double		currentTime;
 	float		deltaTime;
 public:
+
+	glm::vec3 getPosition() 
+	{
+		return position;
+	}
+
 	YP_Camera() 
 	{
 		lastTime = glfwGetTime();
