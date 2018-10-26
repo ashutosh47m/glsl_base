@@ -11,8 +11,8 @@ void main()
 	
 	texture2D(u_colorTex,fs_uv) + 
 	(texture2D(u_godraysIntermediateTex, fs_uv)
-	//*vec4(1.200, .449, 0.000,1)	// orange 
-	*vec4(0.855, 0.647, 0.125, 1)	// THE SUN : golden rod
+	*vec4(1.200, .449, 0.000,1)	// orange 
+	//*vec4(0.855, 0.647, 0.125, 1)	// THE SUN : golden rod
 	//*vec4(.200, .449, 1.000, 1)	// blue
 	//*vec4(0.498, 1.000, 0.831, 1) // aqua marine
 	//*vec4(1.000, 0.078, 0.576, 1) // deep pink

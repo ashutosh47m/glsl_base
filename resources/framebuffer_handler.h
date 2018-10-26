@@ -69,7 +69,7 @@ public:
 	GLuint					 m_Width, m_Height;
 	// the number of render targets this MRT is going to have. 
 	// this value cannot be less than 1, as 1 render target is must for rendering	; 	
-	static const GLuint		 m_MRTCount = 6;
+	static const GLuint		 m_MRTCount = 4;
 	
 	GLuint					 m_ColorTexture[m_MRTCount];
 	GLuint					 m_MRTTextureID;
@@ -153,6 +153,85 @@ public:
 	}
 };
 
+// single frame buffer
+class FrameBuffer
+{
+public:
+	GLuint					 m_ID;				// used for generating the FBO
+	GLuint					 m_ColorTexture;
+	GLuint					 m_DepthTexture;
+	GLuint					 m_Width, m_Height;
+	GLuint					 m_MRTTextureID;
+	GLuint					 m_Wdownsampled, m_Hdownsampled;
+
+	FrameBuffer() {}
+
+	FrameBuffer(GLuint w, GLuint h, int downsample, GLuint &globalTextureCount) :
+		m_Width(w),
+		m_Height(h)
+	{
+		m_Wdownsampled = w / downsample;
+		m_Hdownsampled = h / downsample;
+
+		m_MRTTextureID = ++globalTextureCount;
+
+		glGenFramebuffers(1, &m_ID);
+		glBindFramebuffer(GL_FRAMEBUFFER, m_ID);
+
+		glGenTextures(1, &m_ColorTexture);
+		glBindTexture(GL_TEXTURE_2D, m_ColorTexture);
+		//	change GL_RGBA8 to GL_RGBA32 for better results
+		glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB32F, m_Wdownsampled, m_Hdownsampled);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glGenTextures(1, &m_DepthTexture);
+		globalTextureCount++;
+		glBindTexture(GL_TEXTURE_2D, m_DepthTexture);
+		glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT, m_Wdownsampled, m_Hdownsampled);
+
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_ColorTexture, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_DepthTexture, 0);
+
+		static const GLenum draw_buffers[] = { GL_COLOR_ATTACHMENT0 };
+		glDrawBuffers(1, draw_buffers);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+
+
+	void bindFBO()
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, m_ID);
+		// in FBO when only one color attachment is present, you do not need to explicitely call glDrawBuffers 
+			//static const GLenum draw_buffers[] = { GL_COLOR_ATTACHMENT0 };
+			//glDrawBuffers(1, draw_buffers);
+		glViewport(0, 0, m_Wdownsampled, m_Hdownsampled);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+	void renderToTexture()
+	{
+		bindFBO();
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		unbindFBO();
+	}
+	void unbindFBO()
+	{
+		glViewport(0, 0, m_Width, m_Height);
+		glBindTexture(GL_TEXTURE_2D, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glUseProgram(0);
+	}
+
+	~FrameBuffer()
+	{
+		glDeleteTextures(1, &m_ColorTexture);
+		glDeleteTextures(1, &m_DepthTexture);
+		glDeleteFramebuffers(1, &m_ID);
+	}
+};
+
+
 // after the multi-render pass post-process is used for rendering the desired framebuffer object onto the screen
 // this is what user will see.
 // this contents the rt_quad data
@@ -165,19 +244,24 @@ class PostProcess
 		glm::vec3 position;
 		glm::vec3 color;
 	};
-	static const GLuint		 LIGHT_CNT = 22;
+	static const GLuint		 LIGHT_CNT = 122;
 	S_light lights[LIGHT_CNT];
 	float x, y = 30, z;
+
 public:
+	FrameBuffer			   *m_DeferredFBO;
 	PostProcess() {}
+	~PostProcess() { delete m_DeferredFBO;  }
 
 	void setViewPosition(glm::vec3 p)
 	{
 		viewPosition = p;
 	}
 
-	void initData(GLuint &vaohandle)
+	void initData(GLuint &vaohandle, int w, int h, GLuint& texCnt)
 	{
+		m_DeferredFBO = new FrameBuffer(w, h, 1, texCnt);
+
 		m_RTQuad.initEntity();
 		vaohandle = m_RTQuad.getVaoHandle();
 		for(int i=0; i< LIGHT_CNT; i++)
@@ -257,86 +341,9 @@ public:
 			shader->setUniform(col.c_str(), lights[i].color);
 		}
 
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		//glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		m_DeferredFBO->renderToTexture();					
 		glUseProgram(0);
-	}
-};
-
-// single frame buffer
-class FrameBuffer
-{
-public:
-	GLuint					 m_ID;				// used for generating the FBO
-	GLuint					 m_ColorTexture;
-	GLuint					 m_DepthTexture;
-	GLuint					 m_Width, m_Height;
-	GLuint					 m_MRTTextureID;
-	GLuint					 m_Wdownsampled, m_Hdownsampled;
-	
-	FrameBuffer() {}
-
-	FrameBuffer(GLuint w, GLuint h, int downsample, GLuint &globalTextureCount) :
-		m_Width(w),
-		m_Height(h) 
-	{
-		m_Wdownsampled = w / downsample;
-		m_Hdownsampled = h / downsample;
-
-		m_MRTTextureID = ++globalTextureCount;
-
-		glGenFramebuffers(1, &m_ID);
-		glBindFramebuffer(GL_FRAMEBUFFER, m_ID);
-
-		glGenTextures(1, &m_ColorTexture);
-		glBindTexture(GL_TEXTURE_2D, m_ColorTexture);
-		//	change GL_RGBA8 to GL_RGBA32 for better results
-		glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB32F, m_Wdownsampled, m_Hdownsampled);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		glGenTextures(1, &m_DepthTexture);
-		globalTextureCount++;
-		glBindTexture(GL_TEXTURE_2D, m_DepthTexture);
-		glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT, m_Wdownsampled, m_Hdownsampled);
-
-		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_ColorTexture, 0);
-		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_DepthTexture, 0);
-
-		static const GLenum draw_buffers[] = { GL_COLOR_ATTACHMENT0 };
-		glDrawBuffers(1, draw_buffers);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	}
-
-
-	void bindFBO()
-	{
-		glBindFramebuffer(GL_FRAMEBUFFER, m_ID);
-	// in FBO when only one color attachment is present, you do not need to explicitely call glDrawBuffers 
-		//static const GLenum draw_buffers[] = { GL_COLOR_ATTACHMENT0 };
-		//glDrawBuffers(1, draw_buffers);
-		glViewport(0, 0, m_Wdownsampled, m_Hdownsampled);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	}
-	void renderToTexture()
-	{
-		bindFBO();
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		unbindFBO();
-	}
-	void unbindFBO()
-	{
-		glViewport(0, 0, m_Width, m_Height);
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glUseProgram(0);
-	}
-	
-	~FrameBuffer()
-	{
-		glDeleteTextures(1, &m_ColorTexture);
-		glDeleteTextures(1, &m_DepthTexture);
-		glDeleteFramebuffers(1, &m_ID);
 	}
 };
 
@@ -347,7 +354,7 @@ public:
 	glm::vec3				m_lightPosOnSS;
 	glm::mat4				m_MVP;
 	// set this to 1 for no downsampling
-	int						m_downsample = 2; 
+	int						m_downsample = 1; 
 
 	struct scatterSetting
 	{
@@ -500,7 +507,7 @@ class E_fxMRT
 	
 public:
 
-	fxGlobalSettings		 fx{ true, false};
+	fxGlobalSettings		 fx{ true, true};
 	FBOLightScatter			*m_LightScatter = NULL;
 	variable<GLfloat>		 m_ZPosition; 				// the position of the render target, u can move it closer to eye, or away from it
 
@@ -523,7 +530,7 @@ public:
 											lib->fx_lightscatter, 
 											m_MRTFrameBuffer->m_MRTTextureID);
 
-		postprocess.initData(m_VaoHandle);
+		postprocess.initData(m_VaoHandle, w, h, globalTextureCount);
 	}
 
 	void bindFBOForDraw()
@@ -566,37 +573,17 @@ public:
 		m_MRTFrameBuffer->activateMRTTextures();
 #ifdef _DEBUG 
 		m_MRTFrameBuffer->drawDebugRenderTargets(data, shaderLib->fx_rendertarget);
-#endif		
-		if (fx.godrays)
-		{
-			// light scatter aka god rays ------------------------------------------------------
-			m_LightScatter->sendLightPositionForScatter
-			(
-				shaderLib->fx_lightscatter,
-				m_MRTFrameBuffer->m_MRTTextureID + 1,					 // god ray white extract, basically your sun.
-				data.glm_projection * data.getDefaultEye() * m_ModelMat, // mvp for render target
-				data.glm_projection * data.glm_view * mvp_lightposition  // mvp for light
-			);
-
-			m_LightScatter->m_FBO->renderToTexture();					// this will process the godray texture
-			//----------------------------------------------------------------------------------		
-			postprocess.CombinedDraw
-			(
-				shaderLib->fx_combineLightscatter,											  // shader which combines 2 shaders
-				m_LightScatter->m_FBO->m_MRTTextureID, m_LightScatter->m_FBO->m_ColorTexture, // processed god rays texture
-				m_MRTFrameBuffer->m_MRTTextureID, m_MRTFrameBuffer->m_ColorTexture[1],		  // color texture 
-				data.glm_projection * data.getDefaultEye() * m_ModelMat						  // modelViewMatrix
-			);
-		}
-		else
-		{
-			//postprocess.draw
-			//(
-			//	shaderLib->fx_rendertarget,
-			//	m_MRTFrameBuffer->m_MRTTextureID,	m_MRTFrameBuffer->m_ColorTexture[1],
-			//	data.glm_projection * data.getDefaultEye() * m_ModelMat
-			//);
-		}
+#endif
+		
+		// light scatter aka god rays ------------------------------------------------------
+		m_LightScatter->sendLightPositionForScatter
+		(
+			shaderLib->fx_lightscatter,
+			m_MRTFrameBuffer->m_MRTTextureID + 1,					 // god ray white extract, basically your sun.
+			data.glm_projection * data.getDefaultEye() * m_ModelMat, // mvp for render target
+			data.glm_projection * data.glm_view * mvp_lightposition  // mvp for light
+		);
+		m_LightScatter->m_FBO->renderToTexture();					// this will process the godray texture
 
 		postprocess.DeferredDraw
 		(
@@ -606,6 +593,16 @@ public:
 			m_MRTFrameBuffer->m_MRTTextureID + 2, m_MRTFrameBuffer->m_ColorTexture[3],
 			data.glm_projection * data.getDefaultEye() * m_ModelMat
 		);
+
+		//----------------------------------------------------------------------------------		
+		postprocess.CombinedDraw
+		(
+			shaderLib->fx_combineLightscatter,											  // shader which combines 2 shaders
+			m_LightScatter->m_FBO->m_MRTTextureID, m_LightScatter->m_FBO->m_ColorTexture, // processed god rays texture
+			postprocess.m_DeferredFBO->m_MRTTextureID, postprocess.m_DeferredFBO->m_ColorTexture, // lit colored texture
+			data.glm_projection * data.getDefaultEye() * m_ModelMat						  // modelViewMatrix
+		);
+
 	}
 
 	~E_fxMRT()
