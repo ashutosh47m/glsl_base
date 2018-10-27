@@ -93,7 +93,7 @@ void modelscene::renderWorld()
 	mE_terrain.draw(data, getShaderLibrary()->terrain, glm::vec3(0, -40, 0));
 
 	slights = mE_fxmainRT.getLights();
-	for (int i = 0; i < mE_fxmainRT.getLightCount(); i++)
+	for (unsigned int i = 0; i < mE_fxmainRT.getLightCount(); i++)
 	{
 		mE_LightCube.draw(data, getShaderLibrary()->triangle_shader, slights[i].position);
 	}
@@ -134,10 +134,10 @@ void modelscene::keyProcess(int key, int scancode, int action, int mods)
 			_debugCamPosition.y++;
 			break;
 		case _2am_KEY_C:
-			if (mT_camera->getDebugCam())
-				mT_camera->setDebugCam(false);
+			if (mT_camera->getFastCam())
+				mT_camera->setFastCam(false);
 			else
-				mT_camera->setDebugCam(true);
+				mT_camera->setFastCam(true);
 			break;
 		case _2am_KEY_Z:
 			_debugCamPosition.y--;
@@ -173,23 +173,27 @@ void modelscene::keyProcess(int key, int scancode, int action, int mods)
 		{
 		case _2am_KEY_W:
 			wasd[0] = false;
-			mE_fxmainRT.getPostProcessObject().setViewPosition(mT_camera->getPosition());
+			if (!_enableDebugCam)
+				mE_fxmainRT.getPostProcessObject().setViewPosition(mT_camera->getPosition());
 			break;
 		case _2am_KEY_A:
-			mE_fxmainRT.getPostProcessObject().setViewPosition(mT_camera->getPosition());
+			if (!_enableDebugCam)
+				mE_fxmainRT.getPostProcessObject().setViewPosition(mT_camera->getPosition());
 			wasd[1] = false;
 			break;
 		case _2am_KEY_S:
-			mE_fxmainRT.getPostProcessObject().setViewPosition(mT_camera->getPosition());
+			if (!_enableDebugCam)
+				mE_fxmainRT.getPostProcessObject().setViewPosition(mT_camera->getPosition());
 			wasd[2] = false;
 			break;
 		case _2am_KEY_D:
-			mE_fxmainRT.getPostProcessObject().setViewPosition(mT_camera->getPosition());
+			if (!_enableDebugCam)
+				mE_fxmainRT.getPostProcessObject().setViewPosition(mT_camera->getPosition());
 			wasd[3] = false;
 			break;
 		case _2am_KEY_R:
 		case _2am_KEY_F:
-			//mE_fxmainRT.m_ZPosition.Toggle = 0;
+			mE_fxmainRT.m_ZPosition.Toggle = 0;
 			break;
 		case _2am_KEY_T:
 		case _2am_KEY_G:

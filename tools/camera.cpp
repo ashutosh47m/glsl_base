@@ -15,7 +15,7 @@ void YP_Camera::cam_control(bool *wasd, glm::vec3& f_position, glm::mat4& view, 
 	deltaTime   = float(currentTime - lastTime);
 
 #if _DEBUG
-	if(debug_cam)
+	if(enableFastCam)
 		deltaTime = 1.0f;
 #endif
 
@@ -65,8 +65,6 @@ void YP_Camera::cam_control(bool *wasd, glm::vec3& f_position, glm::mat4& view, 
 		position + direction,	// and looks here : at the same position, plus "direction"
 		up						// Head is up (set to 0,-1,0 to look upside-down)
 		);
-
-	//view = glm::lookAt ( position,	glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 
 	lookatdir = position + direction;
 	f_position = position;

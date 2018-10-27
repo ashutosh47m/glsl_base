@@ -151,10 +151,10 @@ void TestScene::keyProcess(int key, int scancode, int action, int mods)
 			_debugCamPosition.y++;
 			break;
 		case _2am_KEY_C:
-			if(mT_camera->getDebugCam())
-				mT_camera->setDebugCam(false);
+			if(mT_camera->getFastCam())
+				mT_camera->setFastCam(false);
 			else
-				mT_camera->setDebugCam(true);
+				mT_camera->setFastCam(true);
 			break;
 		case _2am_KEY_Z:
 			_debugCamPosition.y--;

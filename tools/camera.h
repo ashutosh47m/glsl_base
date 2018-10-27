@@ -38,7 +38,7 @@ class YP_Camera
 
 	const float speed				= 8.3f; // units / second
 	float		mouseSpeed;
-	bool		debug_cam			;	// allows you to move fast in the scene
+	bool		enableFastCam			;	// allows you to move fast in the scene
 	int			window_width;
 	int			window_height;
 	float		m_x_cc, m_y_cc;
@@ -55,21 +55,21 @@ public:
 	YP_Camera() 
 	{
 		lastTime = glfwGetTime();
-		debug_cam = false;
+		enableFastCam = false;
 		mouseSpeed = 0.005f;
 	}
 	~YP_Camera() {}
 	YP_Camera(int w, int h) : window_width(w), window_height(h) 
 	{
 		lastTime = glfwGetTime();
-		debug_cam = false;
+		enableFastCam = false;
 		mouseSpeed = 0.005f;
 	}
 
 	void cam_control(bool *wasd, glm::vec3& f_position, glm::mat4& view, glm::vec3& lookatdir);
 
-	void setDebugCam(bool val) { debug_cam = val; }
-	bool getDebugCam() { return debug_cam; }
+	void setFastCam(bool val) { enableFastCam = val; }
+	bool getFastCam() { return enableFastCam; }
 };
 
 
