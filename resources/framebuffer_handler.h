@@ -18,6 +18,8 @@ May 2018, Ashutosh Morwal
 #define MRT_WHITE_GODRAYS 1
 
 // used by post-process and debugRTDraw to draw on
+namespace FBO
+{
 class rt_quad
 {
 	GLuint			m_VaoHandle;
@@ -231,7 +233,11 @@ public:
 	}
 };
 
-
+struct S_light
+{
+	glm::vec3 position;
+	glm::vec3 color;
+};
 // after the multi-render pass post-process is used for rendering the desired framebuffer object onto the screen
 // this is what user will see.
 // this contents the rt_quad data
@@ -239,16 +245,14 @@ class PostProcess
 {
 	rt_quad		m_RTQuad;
 	glm::vec3	viewPosition;
-	struct S_light
-	{
-		glm::vec3 position;
-		glm::vec3 color;
-	};
 	static const GLuint		 LIGHT_CNT = 122;
+
 	S_light lights[LIGHT_CNT];
 	float x, y = 30, z;
 
 public:
+	GLuint getLightCount() { return LIGHT_CNT; }
+	S_light* getLights() { return lights; }
 	FrameBuffer			   *m_DeferredFBO;
 	PostProcess() {}
 	~PostProcess() { delete m_DeferredFBO;  }
@@ -266,8 +270,8 @@ public:
 		vaohandle = m_RTQuad.getVaoHandle();
 		for(int i=0; i< LIGHT_CNT; i++)
 		{
-			x = 10.0f * cos(40.0f + (i * 10.0f));
-			z = 10.0f * sin(40.0f + (i * 10.0f));
+			x = 10.0f * cos(40.0f + (i * 40.0f));
+			z = 10.0f * sin(40.0f + (i * 40.0f));
 
 			lights[i].position = glm::vec3(x,y,z);
 			lights[i].color = glm::vec3(0.08f,0.04f,0.04f);
@@ -515,6 +519,10 @@ public:
 
 	PostProcess& getPostProcessObject() { return postprocess; }
 
+	S_light* getLights() { return postprocess.getLights(); }
+	
+	GLuint getLightCount() { return postprocess.getLightCount(); }
+
 	void initEntity(GLuint &globalTextureCount, int w, int h, ShaderLibrary* lib, glsl_data &data)
 	{
 		m_ZPosition.setValue(DEFAULT_ZPOSITION_FOR_RENDER_TARGET);
@@ -617,6 +625,7 @@ public:
 		//glBindVertexArray(m_VaoHandle);
 	}
 };
+}; // namespace end
 
 
 #endif

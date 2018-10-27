@@ -26,6 +26,8 @@ void modelscene::initialize()
 	mE_palm.setCull(false);
 	mE_sun.initEntity("sun", "..\\resources\\models\\sky\\sun.obj", "..\\resources\\models\\sky\\");
 
+	mE_LightCube.initEntity(true);
+
 	_enableDebugCam = false;
 	//load camera
 	if (!_enableDebugCam)
@@ -90,6 +92,11 @@ void modelscene::renderWorld()
 
 	mE_terrain.draw(data, getShaderLibrary()->terrain, glm::vec3(0, -40, 0));
 
+	slights = mE_fxmainRT.getLights();
+	for (int i = 0; i < mE_fxmainRT.getLightCount(); i++)
+	{
+		mE_LightCube.draw(data, getShaderLibrary()->triangle_shader, slights[i].position);
+	}
 	glBindVertexArray(0);
 }
 
