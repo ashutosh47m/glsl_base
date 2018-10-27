@@ -245,7 +245,7 @@ class PostProcess
 {
 	rt_quad		m_RTQuad;
 	glm::vec3	viewPosition;
-	static const GLuint		 LIGHT_CNT = 122;
+	static const GLuint		 LIGHT_CNT = 32;
 
 	S_light lights[LIGHT_CNT];
 	float x, y = 30, z;
@@ -317,7 +317,9 @@ public:
 		GLuint textureID1, GLuint texture1,
 		GLuint textureID2, GLuint texture2,
 		GLuint textureID3, GLuint texture3,
-		glm::mat4& model)
+		glm::mat4& model,
+		bool drawIntermediate // if enabled this will draw on intermediate FBO, else we'll draw on the screen
+	)
 	{
 		glUseProgram(shader->getShaderProgramHandle());
 
@@ -345,8 +347,10 @@ public:
 			shader->setUniform(col.c_str(), lights[i].color);
 		}
 
-		//glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-		m_DeferredFBO->renderToTexture();					
+		if(drawIntermediate)
+			m_DeferredFBO->renderToTexture();					
+		else
+			glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 		glUseProgram(0);
 	}
 };
@@ -511,7 +515,7 @@ class E_fxMRT
 	
 public:
 
-	fxGlobalSettings		 fx{ true, true};
+	fxGlobalSettings		 fx{ true, false};
 	FBOLightScatter			*m_LightScatter = NULL;
 	variable<GLfloat>		 m_ZPosition; 				// the position of the render target, u can move it closer to eye, or away from it
 
@@ -583,34 +587,39 @@ public:
 		m_MRTFrameBuffer->drawDebugRenderTargets(data, shaderLib->fx_rendertarget);
 #endif
 		
-		// light scatter aka god rays ------------------------------------------------------
-		m_LightScatter->sendLightPositionForScatter
-		(
-			shaderLib->fx_lightscatter,
-			m_MRTFrameBuffer->m_MRTTextureID + 1,					 // god ray white extract, basically your sun.
-			data.glm_projection * data.getDefaultEye() * m_ModelMat, // mvp for render target
-			data.glm_projection * data.glm_view * mvp_lightposition  // mvp for light
-		);
-		m_LightScatter->m_FBO->renderToTexture();					// this will process the godray texture
-
+		if (fx.godrays)
+		{
+			// light scatter aka god rays ------------------------------------------------------
+			m_LightScatter->sendLightPositionForScatter
+			(
+				shaderLib->fx_lightscatter,
+				m_MRTFrameBuffer->m_MRTTextureID + 1,					 // god ray white extract, basically your sun.
+				data.glm_projection * data.getDefaultEye() * m_ModelMat, // mvp for render target
+				data.glm_projection * data.glm_view * mvp_lightposition  // mvp for light
+			);
+			m_LightScatter->m_FBO->renderToTexture();					// this will process the godray texture
+		}
 		postprocess.DeferredDraw
 		(
 			shaderLib->fx_deferred_ADS,
 			m_MRTFrameBuffer->m_MRTTextureID, m_MRTFrameBuffer->m_ColorTexture[1],
 			m_MRTFrameBuffer->m_MRTTextureID + 1, m_MRTFrameBuffer->m_ColorTexture[2],
 			m_MRTFrameBuffer->m_MRTTextureID + 2, m_MRTFrameBuffer->m_ColorTexture[3],
-			data.glm_projection * data.getDefaultEye() * m_ModelMat
+			data.glm_projection * data.getDefaultEye() * m_ModelMat,
+			fx.godrays
 		);
 
-		//----------------------------------------------------------------------------------		
-		postprocess.CombinedDraw
-		(
-			shaderLib->fx_combineLightscatter,											  // shader which combines 2 shaders
-			m_LightScatter->m_FBO->m_MRTTextureID, m_LightScatter->m_FBO->m_ColorTexture, // processed god rays texture
-			postprocess.m_DeferredFBO->m_MRTTextureID, postprocess.m_DeferredFBO->m_ColorTexture, // lit colored texture
-			data.glm_projection * data.getDefaultEye() * m_ModelMat						  // modelViewMatrix
-		);
-
+		if (fx.godrays)
+		{
+			//----------------------------------------------------------------------------------		
+			postprocess.CombinedDraw
+			(
+				shaderLib->fx_combineLightscatter,											  // shader which combines 2 shaders
+				m_LightScatter->m_FBO->m_MRTTextureID, m_LightScatter->m_FBO->m_ColorTexture, // processed god rays texture
+				postprocess.m_DeferredFBO->m_MRTTextureID, postprocess.m_DeferredFBO->m_ColorTexture, // lit colored texture
+				data.glm_projection * data.getDefaultEye() * m_ModelMat						  // modelViewMatrix
+			);
+		}
 	}
 
 	~E_fxMRT()
