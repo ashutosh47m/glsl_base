@@ -80,15 +80,13 @@ void modelscene::renderWorld()
 	
 	mE_sun.draw(data, getShaderLibrary()->sun, m_ModelMat);
 
-	mE_palm.draw(data, getShaderLibrary()->mesh, glm::vec3(10, 0, 0));
-	mE_tree1.draw(data, getShaderLibrary()->mesh, glm::vec3(4, 0, 20));
+	mE_tree1.draw(data, getShaderLibrary()->mesh, glm::vec3(4, 1.3, 20));
+	mE_tree2.draw(data, getShaderLibrary()->mesh, glm::vec3(5, -4, -20));
 
-	mE_palm.draw(data, getShaderLibrary()->mesh, glm::vec3(10, 0, 10));
-	mE_tree2.draw(data, getShaderLibrary()->mesh, glm::vec3(5, 0, -20));
-
-	mE_palm.draw(data, getShaderLibrary()->mesh, glm::vec3(0, 0, 0));
-
-	mE_palm.draw(data, getShaderLibrary()->mesh, glm::vec3(0, 0, 10));
+	mE_palm.draw(data, getShaderLibrary()->mesh, glm::vec3(10, -4, 0));
+	mE_palm.draw(data, getShaderLibrary()->mesh, glm::vec3(10, -2, 10));
+	mE_palm.draw(data, getShaderLibrary()->mesh, glm::vec3(0, -5, 0));
+	mE_palm.draw(data, getShaderLibrary()->mesh, glm::vec3(0, -2, 10));
 
 	mE_terrain.draw(data, getShaderLibrary()->terrain, glm::vec3(0, -40, 0));
 
