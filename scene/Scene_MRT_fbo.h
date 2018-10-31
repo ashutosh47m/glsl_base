@@ -9,7 +9,7 @@ May 2018, Ashutosh Morwal
 #define _MRT_SCN_
 
 #include "scene_handler.h"
-#include "../resources/framebuffer_handler.h"
+#include "../resources/FBO_handler.h"
 #include "../resources/texture_handler.h"
 #include "../tools/camera.h"
 #include "../tools/keys.h"

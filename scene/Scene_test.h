@@ -21,7 +21,7 @@ Nov 2017, Ashutosh Morwal
 #include "../scene/Entity/E_mesh.h"
 #include "../scene/Entity/E_volume_ray_caster.h"
 
-#include "../resources/framebuffer_handler.h"
+#include "../resources/FBO_handler.h"
 #include "../resources/texture_handler.h"
 #include "../tools/camera.h"
 #include "../tools/keys.h"
