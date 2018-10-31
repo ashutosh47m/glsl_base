@@ -21,7 +21,7 @@ namespace mrt_scene
 {
 	class GodRayTestScene : public AbstractScene
 	{
-		FBO::E_fxMRT						mE_fxmainRT;
+		E_fxMRT						mE_fxmainRT;
 		int							m_width, m_height;
 		YP_Camera					*mT_camera;			// t stands for tools, i.e. YP_Camera comes under tools category
 		glm::vec3					mViewDirection;

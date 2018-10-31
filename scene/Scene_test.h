@@ -49,7 +49,7 @@ namespace usr_scene
 
 		E_volume_ray_caster			mE_vrc; // volume ray caster
 
-		FBO::E_fxMRT						mE_fxmainRT;
+		E_fxMRT						mE_fxmainRT;
 
 		int							m_width, m_height;
 		YP_Camera					*mT_camera;			// t stands for tools, i.e. YP_Camera comes under tools category

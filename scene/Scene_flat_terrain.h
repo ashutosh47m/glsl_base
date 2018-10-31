@@ -24,8 +24,8 @@ namespace ter_scene
 {
 	class modelscene : public AbstractScene
 {
-	FBO::E_fxMRT				mE_fxmainRT;
-	FBO::S_light 				*slights;
+	E_fxMRT				mE_fxmainRT;
+	S_light 				*slights;
 	int							m_width, m_height;
 	YP_Camera					*mT_camera;			// t stands for tools, i.e. YP_Camera comes under tools category
 	glm::vec3					mViewDirection;

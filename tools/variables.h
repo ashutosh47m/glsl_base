@@ -9,6 +9,8 @@ May 2017, Ashutosh Morwal
 //this class will host such variables which can be easily incremented or decremented.
 //these variables will typically be changed from user input.
 
+#ifndef _VARS_HH_
+#define _VARS_HH_
 
 #include <iostream>
 template<class T>
@@ -63,3 +65,5 @@ public:
 
 	inline void decr(T dec) { m_var -= dec; }
 };
+
+#endif
