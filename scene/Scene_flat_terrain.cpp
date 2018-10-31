@@ -74,11 +74,13 @@ void modelscene::renderWorld()
 	// we need this clear color to change the color inside the main RT
 	glClearColor(.0f, .0f, .0f, 1);
 
-	m_ModelMat = data.glm_model;
-	m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(580,580,0));
-	m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(87, 87, 88));
-	
-	mE_sun.draw(data, getShaderLibrary()->sun, m_ModelMat);
+	// commenting draw god ray sun
+	// ToDo : bug 1 - the position where we're rendering SUN should match the position of light...
+	//		  bug 2 - we need to consult framebuffer handler if we're using GOD RAYS, if we're using god rays then only we render the sun..	
+	//m_ModelMat = data.glm_model;
+	//m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(580,580,0));
+	//m_ModelMat *= glm::scale(glm::mat4(1.0f), glm::vec3(87, 87, 88));
+	//mE_sun.draw(data, getShaderLibrary()->sun, m_ModelMat);
 
 	mE_tree1.draw(data, getShaderLibrary()->mesh, glm::vec3(4, 1.3, 20));
 	mE_tree2.draw(data, getShaderLibrary()->mesh, glm::vec3(5, -4, -20));
