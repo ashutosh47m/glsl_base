@@ -65,7 +65,7 @@ void GodRayTestScene::renderWorld()
 
 void GodRayTestScene::draw()
 {
-	if (mE_fxmainRT.fx.global_postprocess)
+	if (mE_fxmainRT.getFXSettings().global_postprocess)
 	{
 		mE_fxmainRT.bindFBOForDraw();
 		renderWorld();

@@ -1,8 +1,8 @@
 #version 400
 // ------------------------ model
-flat in vec3 vs_model_v3Position; 
+ in vec3 vs_model_v3Position; 
 in vec3 vs_model_v3Normal;
-flat in vec3 vs_model_v3Tangent;
+ in vec3 vs_model_v3Tangent;
  in vec2 vs_model_v2UV;
 
 uniform sampler2D u_dryTex;

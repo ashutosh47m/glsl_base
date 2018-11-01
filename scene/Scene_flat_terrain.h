@@ -49,6 +49,7 @@ namespace ter_scene
 	void initialize();
 	void update();
 	void draw();
+	void drawModels(ShaderProgram *&);
 	void renderWorld();
 
 public:

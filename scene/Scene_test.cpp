@@ -21,7 +21,7 @@ void TestScene::initialize()
 	global3DTextureCount = 0;
 	//render target
 	// the globalTextureCount will be incremented inside mainRTs initEntity based on the count of textures for RT
-	if (mE_fxmainRT.fx.global_postprocess)
+	if (mE_fxmainRT.getFXSettings().global_postprocess)
 		mE_fxmainRT.initEntity(global2DTextureCount, m_width, m_height, getShaderLibrary(), data);
 
 
@@ -100,7 +100,7 @@ void TestScene::renderWorld()
 
 void TestScene::draw()
 {
-	if(mE_fxmainRT.fx.global_postprocess)
+	if(mE_fxmainRT.getFXSettings().global_postprocess)
 	{ 
 		mE_fxmainRT.update();
 
@@ -163,20 +163,20 @@ void TestScene::keyProcess(int key, int scancode, int action, int mods)
 		case _2am_KEY_R: mE_fxmainRT.m_ZPosition.Toggle = 1; break;
 		case _2am_KEY_F: mE_fxmainRT.m_ZPosition.Toggle = 2; break;
 
-		case _2am_KEY_T: mE_fxmainRT.m_LightScatter->m_numSamples.Toggle = 1; break;
-		case _2am_KEY_G: mE_fxmainRT.m_LightScatter->m_numSamples.Toggle = 2; break;
+		case _2am_KEY_T: mE_fxmainRT.getLightScatter()->m_numSamples.Toggle = 1; break;
+		case _2am_KEY_G: mE_fxmainRT.getLightScatter()->m_numSamples.Toggle = 2; break;
 
-		case _2am_KEY_Y: mE_fxmainRT.m_LightScatter->m_exposure.Toggle = 1; break;
-		case _2am_KEY_H: mE_fxmainRT.m_LightScatter->m_exposure.Toggle = 2; break;
+		case _2am_KEY_Y: mE_fxmainRT.getLightScatter()->m_exposure.Toggle = 1; break;
+		case _2am_KEY_H: mE_fxmainRT.getLightScatter()->m_exposure.Toggle = 2; break;
 
-		case _2am_KEY_U: mE_fxmainRT.m_LightScatter->m_decay.Toggle = 1; break;
-		case _2am_KEY_J: mE_fxmainRT.m_LightScatter->m_decay.Toggle = 2; break;
+		case _2am_KEY_U: mE_fxmainRT.getLightScatter()->m_decay.Toggle = 1; break;
+		case _2am_KEY_J: mE_fxmainRT.getLightScatter()->m_decay.Toggle = 2; break;
 
-		case _2am_KEY_I: mE_fxmainRT.m_LightScatter->m_density.Toggle = 1; break;
-		case _2am_KEY_K: mE_fxmainRT.m_LightScatter->m_density.Toggle = 2; break;
+		case _2am_KEY_I: mE_fxmainRT.getLightScatter()->m_density.Toggle = 1; break;
+		case _2am_KEY_K: mE_fxmainRT.getLightScatter()->m_density.Toggle = 2; break;
 
-		case _2am_KEY_O: mE_fxmainRT.m_LightScatter->m_weight.Toggle = 1; break;
-		case _2am_KEY_L: mE_fxmainRT.m_LightScatter->m_weight.Toggle = 2; break;
+		case _2am_KEY_O: mE_fxmainRT.getLightScatter()->m_weight.Toggle = 1; break;
+		case _2am_KEY_L: mE_fxmainRT.getLightScatter()->m_weight.Toggle = 2; break;
 
 		case _2am_KEY_UP: break;
 		case _2am_KEY_DOWN: break;
@@ -206,31 +206,31 @@ void TestScene::keyProcess(int key, int scancode, int action, int mods)
 			break;
 		case _2am_KEY_T:
 		case _2am_KEY_G:
-			mE_fxmainRT.m_LightScatter->m_numSamples.Toggle = 0;
+			mE_fxmainRT.getLightScatter()->m_numSamples.Toggle = 0;
 			break;
 
 		case _2am_KEY_Y:
 		case _2am_KEY_H:
-			mE_fxmainRT.m_LightScatter->m_exposure.Toggle = 0;
+			mE_fxmainRT.getLightScatter()->m_exposure.Toggle = 0;
 			break;
 
 		case _2am_KEY_U:
 		case _2am_KEY_J:
-			mE_fxmainRT.m_LightScatter->m_decay.Toggle = 0;
+			mE_fxmainRT.getLightScatter()->m_decay.Toggle = 0;
 			break;
 			
 		case _2am_KEY_I:
 		case _2am_KEY_K:
-			mE_fxmainRT.m_LightScatter->m_density.Toggle = 0;
+			mE_fxmainRT.getLightScatter()->m_density.Toggle = 0;
 			break;
 			
 		case _2am_KEY_O:
 		case _2am_KEY_L:
-			mE_fxmainRT.m_LightScatter->m_weight.Toggle = 0;
+			mE_fxmainRT.getLightScatter()->m_weight.Toggle = 0;
 			break;
 		case _2am_KEY_SPACE:
 			// reset changed uniform params for light scatter
-			//mE_fxmainRT.m_LightScatter->resetSettings();
+			//mE_fxmainRT.getLightScatter()->resetSettings();
 			break;
 		}
 

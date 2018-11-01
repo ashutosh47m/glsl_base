@@ -99,6 +99,7 @@ public:
 	ShaderProgram *fx_grayscale;
 	ShaderProgram *fx_combineLightscatter;
 	ShaderProgram *fx_deferred_ADS;
+	ShaderProgram *fx_depthcapture;
 
 	ShaderLibrary()
 	{ }
@@ -111,7 +112,7 @@ public:
 		sun							= new ShaderProgram("../src/renderer/shaders/sun",							"sun");
 		volume_shader				= new ShaderProgram("../src/renderer/shaders/volume",						"volume");
 		volume_ray_caster			= new ShaderProgram("../src/renderer/shaders/ray_caster",					"ray_caster");
-		mesh						= new ShaderProgram("../src/renderer/shaders/flat_mesh",					"flat_mesh");
+		mesh						= new ShaderProgram("../src/renderer/shaders/mesh",							"mesh");
 		terrain						= new ShaderProgram("../src/renderer/shaders/terrain",						"terrain");
 
 		fx_rendertarget				= new ShaderProgram("../src/renderer/shaders/rendertarget",					"rendertarget");
@@ -119,6 +120,7 @@ public:
 		fx_grayscale				= new ShaderProgram("../src/renderer/shaders/grayscale",					"grayscale");
 		fx_combineLightscatter		= new ShaderProgram("../src/renderer/shaders/combineLightscatter",			"combineLightscatter");
 		fx_deferred_ADS				= new ShaderProgram("../src/renderer/shaders/def_ADS",						"def_ADS");
+		fx_depthcapture				= new ShaderProgram("../src/renderer/shaders/depthcapture",					"depthcapture");
 	}
 
 	~ShaderLibrary()
@@ -127,6 +129,8 @@ public:
 			delete fx_combineLightscatter;
 		if (fx_deferred_ADS != NULL)
 			delete fx_deferred_ADS;
+		if (fx_depthcapture != NULL)
+			delete fx_depthcapture;
 		if (fx_rendertarget != NULL)
 			delete fx_rendertarget;
 		if (fx_grayscale!= NULL)

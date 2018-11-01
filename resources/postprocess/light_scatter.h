@@ -8,7 +8,7 @@ Oct 2018, Ashutosh Morwal
 
 #ifndef _FBO_SS_SCATTER_ 
 #define _FBO_SS_SCATTER_ 
-#include "../resources/shader_program.h"
+#include "../shader_program.h"
 #include "../tools/variables.h"
 #include "framebuffer.h"
 

@@ -13,7 +13,7 @@ May 2018, Ashutosh Morwal
 #include "MRT_Framebuffer.h"
 #include "post_process.h"
 #include "light_scatter.h"
-
+#include "shadow_map.h"
 
 
 #define DEFAULT_ZPOSITION_FOR_RENDER_TARGET 2.0f  
@@ -33,17 +33,21 @@ class E_fxMRT
 	MRTFrameBuffer			*m_MRTFrameBuffer	= NULL;
 	PostProcess				 postprocess;
 	glm::mat4				 m_ModelMat;
-	
+	FBOLightScatter			*m_LightScatter = NULL;
+
 	struct fxGlobalSettings
 	{
 		bool	global_postprocess;
 		bool	godrays;
 	};
-	
+	fxGlobalSettings		 fx{ true, true };
+
 public:
 
-	fxGlobalSettings		 fx{ true, true};
-	FBOLightScatter			*m_LightScatter = NULL;
+	FBOLightScatter*& getLightScatter() { return m_LightScatter; }
+
+	fxGlobalSettings getFXSettings() { return fx; }
+
 	variable<GLfloat>		 m_ZPosition; 				// the position of the render target, u can move it closer to eye, or away from it
 
 	E_fxMRT() {}
