@@ -10,7 +10,7 @@ Sept 2018, Ashutosh Morwal
 #define TERSCN
 
 #include "scene_handler.h"
-#include "../resources/FBO_handler.h"
+#include "../resources/postprocess/FBO_handler.h"
 #include "../resources/texture_handler.h"
 #include "../tools/camera.h"
 #include "../tools/keys.h"

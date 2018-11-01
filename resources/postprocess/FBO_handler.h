@@ -10,9 +10,9 @@ May 2018, Ashutosh Morwal
 
 #include "../scene/Entity/Entity.h"
 #include "../resources/shader_program.h"
-#include "../resources/MRT_Framebuffer.h"
-#include "../resources/post_process.h"
-#include "../resources/light_scatter.h"
+#include "MRT_Framebuffer.h"
+#include "post_process.h"
+#include "light_scatter.h"
 
 
 

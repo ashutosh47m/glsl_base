@@ -23,7 +23,7 @@ public:
 
 	FrameBuffer() {}
 
-	FrameBuffer(GLuint w, GLuint h, int downsample, GLuint &globalTextureCount) :
+	FrameBuffer(GLuint w, GLuint h, int downsample, GLuint &globalTextureCount, bool isDepth) :
 		m_Width(w),
 		m_Height(h)
 	{
@@ -38,14 +38,21 @@ public:
 		glGenTextures(1, &m_ColorTexture);
 		glBindTexture(GL_TEXTURE_2D, m_ColorTexture);
 		//	change GL_RGBA8 to GL_RGBA32 for better results
-		glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB32F, m_Wdownsampled, m_Hdownsampled);
-
+		if (isDepth)
+		{
+			glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT, m_Width, m_Height);
+			glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_DepthTexture, 0);
+		}
+		else
+		{
+			glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB32F, m_Wdownsampled, m_Hdownsampled);
+			glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_ColorTexture, 0);
+		}
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_ColorTexture, 0);
 
 		static const GLenum draw_buffers[] = { GL_COLOR_ATTACHMENT0 };
 		glDrawBuffers(1, draw_buffers);

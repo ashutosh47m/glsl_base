@@ -5,8 +5,8 @@ Oct 2018, Ashutosh Morwal
 @Email ashutosh47m@gmail.com
 @blog http://www.explicitgfx.wordpress.com/
 */
-#include "../resources/rt_quad.h"
-#include "../resources/framebuffer.h"
+#include "rt_quad.h"
+#include "framebuffer.h"
 
 #ifndef _FBO_POST_PROCESS_
 #define _FBO_POST_PROCESS_
@@ -44,7 +44,7 @@ public:
 
 	void initData(GLuint &vaohandle, int w, int h, GLuint& texCnt)
 	{
-		m_DeferredFBO = new FrameBuffer(w, h, 1, texCnt);
+		m_DeferredFBO = new FrameBuffer(w, h, 1, texCnt, false);
 
 		m_RTQuad.initEntity();
 		vaohandle = m_RTQuad.getVaoHandle();

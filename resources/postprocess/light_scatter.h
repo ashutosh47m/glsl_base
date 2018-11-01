@@ -10,7 +10,7 @@ Oct 2018, Ashutosh Morwal
 #define _FBO_SS_SCATTER_ 
 #include "../resources/shader_program.h"
 #include "../tools/variables.h"
-#include "../resources/framebuffer.h"
+#include "framebuffer.h"
 
 // this class is nothing but an FBO, with loaded information
 class FBOLightScatter
@@ -56,7 +56,7 @@ public:
 
 	FBOLightScatter(int w, int h, GLuint &globalTextureCount, ShaderProgram *& fx, GLuint MRTtextureID)
 	{
-		m_FBO = new FrameBuffer(w, h, m_downsample, globalTextureCount);
+		m_FBO = new FrameBuffer(w, h, m_downsample, globalTextureCount, false);
 
 		// the information which needs to be updated only once should be sent here.
 		setGodRayUniforms(fx);
