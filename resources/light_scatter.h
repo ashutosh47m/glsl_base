@@ -27,10 +27,10 @@ public:
 	}
 	// setting presets for god rays.
 	// to increase performance set to low
-	High{ 150,	0.894000f,	0.968803f,	0.956968f,	0.208002f },
-		Medium{ 100,	0.987f,		0.952f,		0.960f,		0.400f, },
-		Low{ 50,		0.899999f,	0.933296f,	0.603005f,	0.454999f, },
-		defaultScatter{ 80,		0.6f,		0.93f,		.96f,		0.4f },
+		High{				150,	0.894000f,	0.968803f,	0.956968f,	0.208002f },
+		Medium{				100,	0.987f,		0.952f,		0.960f,		0.400f, },
+		Low{				50,		0.899999f,	0.933296f,	0.603005f,	0.454999f, },
+		defaultScatter{		80,		0.6f,		0.93f,		.96f,		0.4f },
 		Test{ }, off{ 0, };
 
 	scatterSetting			m_current = High;

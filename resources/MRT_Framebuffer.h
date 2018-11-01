@@ -46,8 +46,6 @@ public:
 		glBindFramebuffer(GL_FRAMEBUFFER, m_ID);
 
 		glGenTextures(m_MRTCount, m_ColorTexture);
-		globalTextureCount++;
-		glGenTextures(1, &m_DepthTexture);
 
 		for (GLuint i = 0; i < m_MRTCount; i++)
 		{
@@ -61,9 +59,10 @@ public:
 			m_drawBuffers.push_back(GL_COLOR_ATTACHMENT0 + i);
 		}
 
+		globalTextureCount++;
+		glGenTextures(1, &m_DepthTexture);
 		glBindTexture(GL_TEXTURE_2D, m_DepthTexture);
 		glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH_COMPONENT, m_Width, m_Height);
-
 		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_DepthTexture, 0);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);

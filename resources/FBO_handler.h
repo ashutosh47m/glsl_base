@@ -42,7 +42,7 @@ class E_fxMRT
 	
 public:
 
-	fxGlobalSettings		 fx{ true, false};
+	fxGlobalSettings		 fx{ true, true};
 	FBOLightScatter			*m_LightScatter = NULL;
 	variable<GLfloat>		 m_ZPosition; 				// the position of the render target, u can move it closer to eye, or away from it
 

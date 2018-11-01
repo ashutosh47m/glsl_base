@@ -310,7 +310,6 @@ public:
 	}
 };
 
-
 class ShaderBuffer_POS_COL_UV : public ShaderBuffer
 {
 	GLuint bufferHandle[3];
