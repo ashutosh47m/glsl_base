@@ -54,18 +54,9 @@ public:
 		fx->setUniform("u_weight", m_weight.getValue());
 	}
 
-	FBOLightScatter(int w, int h, GLuint &globalTextureCount, ShaderProgram *& fx, GLuint MRTtextureID)
+	FBOLightScatter(int w, int h, GLuint &globalTextureCount)
 	{
 		m_FBO = new FrameBuffer(w, h, m_downsample, globalTextureCount, false);
-
-		// the information which needs to be updated only once should be sent here.
-		setGodRayUniforms(fx);
-
-		// MRTtextureID + 0 : default colore albedo texture which will be written from the MRT.  
-		// MRTtextureID + 1 : will represent the lights in the scene for which we need god rays.
-
-		// interesting fact: if you were to use MRTtextureID + 0 instead of 1, you will see some interesting effects.
-		fx->setUniform("u_RT1_tex", MRTtextureID);
 	}
 
 	// this function is only for the debug purposes

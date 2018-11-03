@@ -34,6 +34,7 @@ class E_fxMRT
 	PostProcess				 postprocess;
 	glm::mat4				 m_ModelMat;
 	FBOLightScatter			*m_LightScatter = NULL;
+	FBOShadowMap			*m_ShadowMap = NULL;
 
 	struct fxGlobalSettings
 	{
@@ -43,6 +44,8 @@ class E_fxMRT
 	fxGlobalSettings		 fx{ true, true };
 
 public:
+
+	FBOShadowMap*& getShadowMap() { return m_ShadowMap; }
 
 	FBOLightScatter*& getLightScatter() { return m_LightScatter; }
 
@@ -69,10 +72,9 @@ public:
 		m_ModelMat *= glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, m_ZPosition.getValue()));
 
 		m_MRTFrameBuffer	= new MRTFrameBuffer (w, h, globalTextureCount);
-		m_LightScatter		= new FBOLightScatter(w, h, globalTextureCount, 
-											lib->fx_lightscatter, 
-											m_MRTFrameBuffer->m_MRTTextureID);
-
+		m_LightScatter		= new FBOLightScatter(w, h, globalTextureCount);
+		m_ShadowMap			= new FBOShadowMap(w, h, globalTextureCount);
+		m_ShadowMap->setShadowResolutionMultiplier(1);
 		postprocess.initData(m_VaoHandle, w, h, globalTextureCount);
 	}
 
@@ -97,7 +99,7 @@ public:
 
 	void update()
 	{
-		// comment the function when you're done editing the godray params
+		// the parameters in the functions below suggest by how many we're varying the individual variables
 		m_ZPosition.update(1);
 		
 		m_LightScatter->m_numSamples.update(1);
@@ -105,7 +107,6 @@ public:
 		m_LightScatter->m_decay.update(.0001f);
 		m_LightScatter->m_density.update(.001f);
 		m_LightScatter->m_weight.update(.001f);
-		
 	}
 
 	void postProcessPass(glsl_data& data, ShaderLibrary* shaderLib, glm::mat4 &mvp_lightposition)
@@ -148,6 +149,7 @@ public:
 				shaderLib->fx_combineLightscatter,											  // shader which combines 2 shaders
 				m_LightScatter->m_FBO->m_MRTTextureID, m_LightScatter->m_FBO->m_ColorTexture, // processed god rays texture
 				postprocess.m_DeferredFBO->m_MRTTextureID, postprocess.m_DeferredFBO->m_ColorTexture, // lit colored texture
+				//m_ShadowMap->m_FBO->m_MRTTextureID, m_ShadowMap->m_FBO->m_DepthTexture,
 				data.glm_projection * data.getDefaultEye() * m_ModelMat						  // modelViewMatrix
 			);
 		}
@@ -157,6 +159,7 @@ public:
 	{
 		delete m_LightScatter;
 		delete m_MRTFrameBuffer;
+		delete m_ShadowMap;
 	}
 	GLuint getVAOHandle() { return m_VaoHandle; }
 

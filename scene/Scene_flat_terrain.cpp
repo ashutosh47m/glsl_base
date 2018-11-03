@@ -54,12 +54,20 @@ void modelscene::draw()
 {
 	if (mE_fxmainRT.getFXSettings().global_postprocess)
 	{
+		// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- depth capture, pass 1 for shadow mapping
+//		mE_fxmainRT.getShadowMap()->enableDepthCapture();
+//			drawModels(getShaderLibrary()->fx_depthcapture);
+//		mE_fxmainRT.getShadowMap()->disableDepthCapture();
+
+		// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- update light params
 		mE_fxmainRT.update();
 
+		// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- render MRT
 		mE_fxmainRT.bindFBOForDraw();
-		renderWorld();
+			renderWorld();
 		mE_fxmainRT.unBindFBO();
 
+		// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- start post processing			   
 		mE_fxmainRT.postProcessPass(data, getShaderLibrary(), mE_sun.getModelMatrix());
 	}
 	else
