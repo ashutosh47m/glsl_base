@@ -1,0 +1,5 @@
+$(SolutionDir)/../GLLibs/glm;$(SolutionDir)/../GLLibs/glew/include;$(SolutionDir)/../GLLibs/glfw/include;$(SolutionDir)/../GLLibs/DevIL/include;$(SolutionDir)/../GLLibs/assimp/include;%(AdditionalIncludeDirectories)
+
+$(SolutionDir)/../GLLibs/assimp/lib/assimp_release-dll_x64;$(SolutionDir)/../GLLibs/DevIL/lib/x64/Release;$(SolutionDir)/../GLLibs/glew/lib/Release/x64;$(SolutionDir)/../GLLibs/glfw/lib-vc2017;%(AdditionalLibraryDirectories)
+
+OpenGL32.lib;glew32.lib;DevIL.lib;ILU.lib;ILUT.lib;glfw3.lib;assimp.lib;%(AdditionalDependencies)
