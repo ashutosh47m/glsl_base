@@ -27,20 +27,21 @@ void TestScene::initialize()
 
 	// inititlize the axes
 	initAxes();
+	std::string filename = "C:\\Programming\\OpenGL\\glsl_base\\glsl_base_vs2017\\x64";
 
-	mE_brickTriangle.initEntity		(global2DTextureCount, "..\\resources\\textures\\brick.jpg");
+	mE_brickTriangle.initEntity		(global2DTextureCount, filename + "\\resources\\textures\\brick.jpg");
 	//quad
-	mE_Junglequad.initEntity		(global2DTextureCount, "..\\resources\\textures\\jungle.jpg");
-	mE_Woodenquad.initEntity		(global2DTextureCount, "..\\resources\\textures\\wooden.jpg");
-	mE_grassStonequad.initEntity	(global2DTextureCount, "..\\resources\\textures\\green.jpg");
+	mE_Junglequad.initEntity		(global2DTextureCount, filename+"\\resources\\textures\\jungle.jpg");
+	mE_Woodenquad.initEntity		(global2DTextureCount, filename+"\\resources\\textures\\wooden.jpg");
+	mE_grassStonequad.initEntity	(global2DTextureCount, filename+"\\resources\\textures\\green.jpg");
 	
-	mE_vrc.initEntity				(global3DTextureCount, "..\\resources\\volumes\\head256x256x109\\head256x256x109.raw", 256,256,109);
+	mE_vrc.initEntity				(global3DTextureCount, filename+"\\resources\\volumes\\head256x256x109\\head256x256x109.raw", 256,256,109);
 	
 	//cube			
 	mE_cube.initEntity(true);
 	mE_ColoredSkybox.initEntity(false);
 	
-	mE_palm.initEntity("palm", "..\\resources\\models\\vegetation\\palm\\palm_04.obj", "..\\resources\\models\\vegetation\\palm\\");
+	mE_palm.initEntity("palm", filename+"\\resources\\models\\vegetation\\palm\\palm_04.obj", filename + "\\resources\\models\\vegetation\\palm\\");
 
 	_enableDebugCam = false;
 	//load camera
@@ -107,8 +108,8 @@ void TestScene::draw()
 		mE_fxmainRT.bindFBOForDraw();
 			renderWorld();
 		mE_fxmainRT.unBindFBO();
-	
-		mE_fxmainRT.postProcessPass(data, getShaderLibrary(), mE_vrc.getModelMatrix());
+		glm::mat4 t=  mE_vrc.getModelMatrix();
+		mE_fxmainRT.postProcessPass(data, getShaderLibrary(),t);
 	}
 	else
 	{

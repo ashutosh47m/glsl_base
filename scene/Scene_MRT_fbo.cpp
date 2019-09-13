@@ -27,7 +27,8 @@ void GodRayTestScene::initialize()
 	initAxes();
 
 	mE_ColoredSkybox.initEntity(false);
-	mE_Marblequad.initEntity(++global2DTextureCount, "..\\resources\\textures\\jungle.jpg");
+	std::string filename = "C:\\Programming\\OpenGL\\glsl_base\\glsl_base_vs2017\\x64";
+	mE_Marblequad.initEntity(++global2DTextureCount, filename+"\\resources\\textures\\jungle.jpg");
 
 	//load camera
 	mT_camera = new YP_Camera(m_width, m_height);
@@ -55,9 +56,9 @@ void GodRayTestScene::renderWorld()
 	mE_ColoredSkybox.draw(data, getShaderLibrary()->sun, m_ModelMat);
 
 	glLineWidth(10.0f);
-	mE_X_axes.draw(data, getShaderLibrary()->sun);
-	mE_Y_axes.draw(data, getShaderLibrary()->sun);
-	mE_Z_axes.draw(data, getShaderLibrary()->sun);
+	mE_X_axes.draw(data, getShaderLibrary()->textured_colored_geometry);
+	mE_Y_axes.draw(data, getShaderLibrary()->textured_colored_geometry);
+	mE_Z_axes.draw(data, getShaderLibrary()->textured_colored_geometry);
 
 	mE_Marblequad.enable();
 	mE_Marblequad.draw(data, getShaderLibrary()->textured_colored_geometry, glm::vec3(0, 0,  0));
@@ -71,7 +72,7 @@ void GodRayTestScene::draw()
 		renderWorld();
 		mE_fxmainRT.unBindFBO();
 
-//		mE_fxmainRT.postProcessPass(data, getShaderLibrary());
+		mE_fxmainRT.postProcessPass(data, getShaderLibrary(),  mE_ColoredSkybox.getModelMatrix());
 	}
 	else
 	{

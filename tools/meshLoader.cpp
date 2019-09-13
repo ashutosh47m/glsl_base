@@ -280,7 +280,7 @@ GLuint meshLoader::loadTexture(std::string file, GLuint& id)
 		ilBindImage(texture.jpg_id);
 		std::wstring t(texture.location.begin(), texture.location.end());
 
-		success = ilLoadImage(t.c_str());
+		success = ilLoadImage(texture.location.c_str());
 		if (success)
 		{
 			success = ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE); // Convert every colour component into
