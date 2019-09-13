@@ -17,19 +17,6 @@
 #include <GLFW/glfw3.h>
 
 //you need these for OpenGL linking..
-#pragma comment(lib, "OpenGL32.lib")
-#pragma comment(lib, "glew32.lib")
-#pragma comment(lib, "DevIL.lib")
-#pragma comment(lib, "ILU.lib")
-#pragma comment(lib, "ILUT.lib")
-#pragma comment(lib, "glfw3.lib")
-#pragma comment(lib, "assimp-vc140-mt.lib")
-
-/*
-#pragma comment(lib, "assimp.lib")
-#pragma comment(lib, "freetype253.lib")
-#pragma comment(lib, "fmodex64_vc.lib")
-*/
 
 namespace WINDOW_WIN32
 {
