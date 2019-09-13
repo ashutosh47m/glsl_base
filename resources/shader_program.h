@@ -105,20 +105,22 @@ public:
 
 	void loadShaders()
 	{
-		red_triangle_shader			= new ShaderProgram("../src/renderer/shaders/first_red_triangle",			"first_red_triangle");
-		triangle_shader				= new ShaderProgram("../src/renderer/shaders/first_triangle",				"first_triangle");
-		textured_colored_geometry	= new ShaderProgram("../src/renderer/shaders/textured_colored_geometry",	"textured_colored_geometry");
-		sun							= new ShaderProgram("../src/renderer/shaders/sun",							"sun");
-		volume_shader				= new ShaderProgram("../src/renderer/shaders/volume",						"volume");
-		volume_ray_caster			= new ShaderProgram("../src/renderer/shaders/ray_caster",					"ray_caster");
-		mesh						= new ShaderProgram("../src/renderer/shaders/flat_mesh",					"flat_mesh");
-		terrain						= new ShaderProgram("../src/renderer/shaders/terrain",						"terrain");
+		std::string filename = "C:\\Programming\\OpenGL\\glsl_base";
 
-		fx_rendertarget				= new ShaderProgram("../src/renderer/shaders/rendertarget",					"rendertarget");
-		fx_lightscatter				= new ShaderProgram("../src/renderer/shaders/lightscatter",					"lightscatter");
-		fx_grayscale				= new ShaderProgram("../src/renderer/shaders/grayscale",					"grayscale");
-		fx_combineLightscatter		= new ShaderProgram("../src/renderer/shaders/combineLightscatter",			"combineLightscatter");
-		fx_deferred_ADS				= new ShaderProgram("../src/renderer/shaders/def_ADS",						"def_ADS");
+		red_triangle_shader			= new ShaderProgram(filename+"/renderer/shaders/first_red_triangle",			"first_red_triangle");
+		triangle_shader				= new ShaderProgram(filename+"/renderer/shaders/first_triangle",				"first_triangle");
+		textured_colored_geometry	= new ShaderProgram(filename+"/renderer/shaders/textured_colored_geometry",	"textured_colored_geometry");
+		sun							= new ShaderProgram(filename+"/renderer/shaders/sun",							"sun");
+		volume_shader				= new ShaderProgram(filename+"/renderer/shaders/volume",						"volume");
+		volume_ray_caster			= new ShaderProgram(filename+"/renderer/shaders/ray_caster",					"ray_caster");
+		mesh						= new ShaderProgram(filename+"/renderer/shaders/flat_mesh",					"flat_mesh");
+		terrain						= new ShaderProgram(filename+"/renderer/shaders/terrain",						"terrain");
+
+		fx_rendertarget				= new ShaderProgram(filename+"/renderer/shaders/rendertarget",					"rendertarget");
+		fx_lightscatter				= new ShaderProgram(filename+"/renderer/shaders/lightscatter",					"lightscatter");
+		fx_grayscale				= new ShaderProgram(filename+"/renderer/shaders/grayscale",					"grayscale");
+		fx_combineLightscatter		= new ShaderProgram(filename+"/renderer/shaders/combineLightscatter",			"combineLightscatter");
+		fx_deferred_ADS				= new ShaderProgram(filename+"/renderer/shaders/def_ADS",						"def_ADS");
 	}
 
 	~ShaderLibrary()

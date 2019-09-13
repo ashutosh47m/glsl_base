@@ -16,15 +16,18 @@ void modelscene::initialize()
 	if (mE_fxmainRT.fx.global_postprocess)
 		mE_fxmainRT.initEntity(global2DTextureCount, m_width, m_height, getShaderLibrary(), data);
 
-	mE_terrain.initEntity("..\\resources\\models\\terrain\\test_large.obj", "..\\resources\\models\\vegetation\\palm\\",
-		global2DTextureCount, "..\\resources\\textures\\terrain\\soil2_CLR.jpg");
-	mE_terrain.getMesh().setWireframe(false);
+	std::string filename = "C:\\Programming\\OpenGL\\glsl_base\\glsl_base_vs2017\\x64";
 
-	mE_tree1.initEntity("8_2 tree", "..\\resources\\models\\vegetation\\8_2k.obj", "..\\resources\\models\\vegetation\\");
-	mE_tree2.initEntity("1_1 tree", "..\\resources\\models\\vegetation\\1_1k_default.obj", "..\\resources\\models\\vegetation\\");
-	mE_palm.initEntity("palm", "..\\resources\\models\\vegetation\\palm\\palm_04.obj", "..\\resources\\models\\vegetation\\palm\\");
+	mE_terrain.initEntity(filename+"\\resources\\models\\terrain\\test_large.obj", 
+		filename + "\\resources\\textures\\terrain\\",
+		global2DTextureCount, 
+		filename + "\\resources\\textures\\terrain\\soil2_CLR.jpg");
+
+	mE_tree1.initEntity("8_2 tree", filename + "\\resources\\models\\vegetation\\8_2k.obj", filename + "\\resources\\models\\vegetation\\");
+	mE_tree2.initEntity("1_1 tree", filename + "\\resources\\models\\vegetation\\1_1k_default.obj", filename + "\\resources\\models\\vegetation\\");
+	mE_palm.initEntity("palm", filename + "\\resources\\models\\vegetation\\palm\\palm_04.obj", filename + "\\resources\\models\\vegetation\\palm\\");
 	mE_palm.setCull(false);
-	mE_sun.initEntity("sun", "..\\resources\\models\\sky\\sun.obj", "..\\resources\\models\\sky\\");
+	mE_sun.initEntity("sun", filename + "\\resources\\models\\sky\\sun.obj", filename + "\\resources\\models\\sky\\");
 
 	mE_LightCube.initEntity(true);
 
@@ -43,7 +46,7 @@ void modelscene::update()
 {
 	glEnable(GL_DEPTH_TEST);
 
-	glClearColor(.0f, .0f, .0f, 1);
+	glClearColor(.5f, .5f, .0f, 1);
 	if (_enableDebugCam)
 		data.setViewMatrix(_debugCamPosition);
 	else
@@ -71,7 +74,7 @@ void modelscene::draw()
 
 void modelscene::renderWorld()
 {
-	// we need this clear color to change the color inside the main RT
+	// we need this clear color to change the color inside the main RT	
 	glClearColor(.0f, .0f, .0f, 1);
 
 	m_ModelMat = data.glm_model;

@@ -58,7 +58,7 @@ public:
 		ilGenImages(1, &jpg_ID);
 		ilBindImage(jpg_ID);
 
-		success = ilLoadImage(t.c_str());
+		success = ilLoadImage(location.c_str());
 		if (success)
 		{
 			success = ilConvertImage(IL_RGB, IL_UNSIGNED_BYTE); /* Convert every colour component into
