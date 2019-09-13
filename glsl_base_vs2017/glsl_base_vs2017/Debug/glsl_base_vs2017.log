@@ -1,0 +1,5 @@
+﻿  camera.cpp
+c:\programming\opengl\glsl_base\tools\camera.h(16): fatal error C1083: Cannot open include file: 'glm/gtc/matrix_transform.hpp': No such file or directory
+  meshLoader.cpp
+c:\programming\opengl\glsl_base\tools\meshloader.h(6): fatal error C1083: Cannot open include file: 'glm/glm.hpp': No such file or directory
+  Generating Code...

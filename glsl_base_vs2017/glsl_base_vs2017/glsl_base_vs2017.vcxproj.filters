@@ -1,0 +1,233 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\tools\camera.cpp">
+      <Filter>tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tools\meshLoader.cpp">
+      <Filter>tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\scene\Scene_flat_terrain.cpp">
+      <Filter>scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\scene\Scene_MRT_fbo.cpp">
+      <Filter>scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\scene\Scene_test.cpp">
+      <Filter>scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\resources\shader_program.cpp">
+      <Filter>resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\renderer\glrenderer.cpp">
+      <Filter>renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\window_handler.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\core\glsl_base_core.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\tools\variables.h">
+      <Filter>tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\tools\camera.h">
+      <Filter>tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\tools\keys.h">
+      <Filter>tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\tools\meshLoader.h">
+      <Filter>tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\scene\Scene_test.h">
+      <Filter>scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\scene\Scene_flat_terrain.h">
+      <Filter>scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\scene\scene_handler.h">
+      <Filter>scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\scene\Scene_MRT_fbo.h">
+      <Filter>scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\scene\Scene Entities\se_terrain.h">
+      <Filter>scenes\scene entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\scene\Entity\E_colored_quad.h">
+      <Filter>scenes\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\scene\Entity\E_cube.h">
+      <Filter>scenes\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\scene\Entity\E_first_red_triangle.h">
+      <Filter>scenes\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\scene\Entity\E_first_triangle.h">
+      <Filter>scenes\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\scene\Entity\E_mesh.h">
+      <Filter>scenes\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\scene\Entity\E_origin_axis.h">
+      <Filter>scenes\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\scene\Entity\E_textured_quad.h">
+      <Filter>scenes\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\scene\Entity\E_textured_triangle.h">
+      <Filter>scenes\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\scene\Entity\E_volume.h">
+      <Filter>scenes\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\scene\Entity\E_volume_ray_caster.h">
+      <Filter>scenes\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\scene\Entity\Entity.h">
+      <Filter>scenes\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\resources\buffer_handler.h">
+      <Filter>resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\resources\framebuffer_handler.h">
+      <Filter>resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\resources\shader_program.h">
+      <Filter>resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\resources\texture_handler.h">
+      <Filter>resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\renderer\glrenderer.h">
+      <Filter>renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\window_handler.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\core\glsl_base_core.h">
+      <Filter>core</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="tools">
+      <UniqueIdentifier>{a3f50842-5670-47fb-a6bd-b82538dd4dfc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="scenes">
+      <UniqueIdentifier>{e6e6c41a-9a95-4f38-9683-c75370713d38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="scenes\entity">
+      <UniqueIdentifier>{ef70e57e-d0c0-4234-b475-8b287df4cae1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="scenes\scene entity">
+      <UniqueIdentifier>{434e907d-5979-43fa-b151-4f0c5dc30c9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources">
+      <UniqueIdentifier>{b1d162e5-5da7-4ff4-bc60-1b9978b876dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="renderer">
+      <UniqueIdentifier>{75d07f11-102e-44d5-a724-b188547ac1c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="renderer\shaders">
+      <UniqueIdentifier>{c7d55e14-7b0f-4183-ad5e-ab9d329b203f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core">
+      <UniqueIdentifier>{65b0bf01-384d-40d5-8027-e58f5977e347}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\renderer\shaders\colored_quad.fs">
+      <Filter>renderer\shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\shaders\colored_quad.vs">
+      <Filter>renderer\shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\shaders\combineLightscatter.fs">
+      <Filter>renderer\shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\shaders\combineLightscatter.vs">
+      <Filter>renderer\shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\shaders\def_ADS.fs">
+      <Filter>renderer\shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\shaders\def_ADS.vs">
+      <Filter>renderer\shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\shaders\first_red_triangle.fs">
+      <Filter>renderer\shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\shaders\first_red_triangle.vs">
+      <Filter>renderer\shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\shaders\first_triangle.fs">
+      <Filter>renderer\shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\shaders\first_triangle.vs">
+      <Filter>renderer\shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\shaders\flat_mesh.fs">
+      <Filter>renderer\shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\shaders\flat_mesh.vs">
+      <Filter>renderer\shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\shaders\grayscale.fs">
+      <Filter>renderer\shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\shaders\grayscale.vs">
+      <Filter>renderer\shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\shaders\lightscatter.fs">
+      <Filter>renderer\shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\shaders\lightscatter.vs">
+      <Filter>renderer\shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\shaders\ray_caster.fs">
+      <Filter>renderer\shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\shaders\ray_caster.vs">
+      <Filter>renderer\shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\shaders\rendertarget.fs">
+      <Filter>renderer\shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\shaders\rendertarget.vs">
+      <Filter>renderer\shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\shaders\sun.fs">
+      <Filter>renderer\shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\shaders\sun.vs">
+      <Filter>renderer\shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\shaders\terrain.fs">
+      <Filter>renderer\shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\shaders\terrain.vs">
+      <Filter>renderer\shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\shaders\textured_colored_geometry.fs">
+      <Filter>renderer\shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\shaders\textured_colored_geometry.vs">
+      <Filter>renderer\shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\shaders\textured_quad.fs">
+      <Filter>renderer\shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\shaders\textured_quad.vs">
+      <Filter>renderer\shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\shaders\volume.fs">
+      <Filter>renderer\shaders</Filter>
+    </None>
+    <None Include="..\..\renderer\shaders\volume.vs">
+      <Filter>renderer\shaders</Filter>
+    </None>
+  </ItemGroup>
+</Project>
