@@ -1,0 +1,53 @@
+# Blender MTL File: 'None'
+# Material Count: 4
+
+newmtl WC_Palm_Washingtonia_01.001
+Ns 9.803922
+Ka 0.000000 0.000000 0.000000
+Kd 0.000000 0.000000 0.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd WC_Palm_Washingtonia-01_512.tga
+map_Ka WC_Palm_Washingtonia-01_512.tga
+map_d WC_Palm_Washingtonia-01_512.tga
+
+newmtl WC_Palm_Washingtonia_03.001
+Ns 9.803922
+Ka 0.000000 0.000000 0.000000
+Kd 0.000000 0.000000 0.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd WC_Palm_Washingtonia-03_512.tga
+map_Ka WC_Palm_Washingtonia-03_512.tga
+map_d WC_Palm_Washingtonia-03_512.tga
+
+newmtl WC_Palm_Washingtonia_04.001
+Ns 9.803922
+Ka 0.588000 0.588000 0.588000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd WC_Palm_Washingtonia-04_512.tga
+map_Ka WC_Palm_Washingtonia-04_512.tga
+map_d WC_Palm_Washingtonia-04_512.tga
+
+newmtl WC_Palm_Washingtonia_Bark.001
+Ns 9.803922
+Ka 0.588000 0.588000 0.588000
+Kd 0.588000 0.588000 0.588000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd WC_Palm_Washingtonia_Bark_1024.tga
+map_Ka WC_Palm_Washingtonia_Bark_1024.tga
