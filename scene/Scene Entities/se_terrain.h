@@ -25,6 +25,7 @@ public:
 	{
 		mE_terrain.initEntity("terrain", modelPath, modelTexturePath);
 		m_Texdry = new texture_jpg(globalTextureCount, "u_dryTex", textureName);
+		mE_terrain.setWireframe(false);
 	}
 
 	void draw()
