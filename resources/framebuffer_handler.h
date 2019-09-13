@@ -295,7 +295,7 @@ public:
 		ShaderProgram *& shader, 
 		GLuint textureID1, GLuint texture1, 
 		GLuint textureID2, GLuint texture2, 
-		glm::mat4& model)
+		glm::mat4 model)
 	{
 		glUseProgram(shader->getShaderProgramHandle());
 
@@ -317,7 +317,7 @@ public:
 		GLuint textureID1, GLuint texture1,
 		GLuint textureID2, GLuint texture2,
 		GLuint textureID3, GLuint texture3,
-		glm::mat4& model,
+		glm::mat4 model,
 		bool drawIntermediate // if enabled this will draw on intermediate FBO, else we'll draw on the screen
 	)
 	{
@@ -457,7 +457,7 @@ public:
 	}
 #endif
 
-	void sendLightPositionForScatter(ShaderProgram*& shaderfx, GLuint textureID, glm::mat4& mvp_model, glm::mat4 mvp_lightposition)
+	void sendLightPositionForScatter(ShaderProgram*& shaderfx, GLuint textureID, glm::mat4 mvp_model, glm::mat4 mvp_lightposition)
 	{
 		glUseProgram(shaderfx->getShaderProgramHandle());
 		shaderfx->setUniform("u_m4MVP", mvp_model);
@@ -515,7 +515,7 @@ class E_fxMRT
 	
 public:
 
-	fxGlobalSettings		 fx{ true, false};
+	fxGlobalSettings		 fx{ false, false};
 	FBOLightScatter			*m_LightScatter = NULL;
 	variable<GLfloat>		 m_ZPosition; 				// the position of the render target, u can move it closer to eye, or away from it
 
@@ -577,7 +577,7 @@ public:
 		
 	}
 
-	void postProcessPass(glsl_data& data, ShaderLibrary* shaderLib, glm::mat4 &mvp_lightposition)
+	void postProcessPass(glsl_data& data, ShaderLibrary* shaderLib, glm::mat4 mvp_lightposition)
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glBindVertexArray(m_VaoHandle); // this is a vaoHandle for the render target quad
